@@ -1,0 +1,117 @@
+<%- include('partials/atop', { tittel: 'Prosjekt' }) %>
+
+<p class="admin-forklaring">Vis fram jobbar de er stolte av! Kvart prosjekt får si eiga side under
+<code>/prosjekt/…</code>. Vel eit «før»- og eit «etter»-bilete for å få den interaktive
+før/etter-glidaren øvst på prosjektsida. Intro og SEO for oversiktssida endrar du under
+<a href="/admin/sider/prosjekt">Sider → Prosjekt og galleri</a>.</p>
+
+<h2>Nytt prosjekt</h2>
+<form method="post" action="/admin/prosjekt/lagre" class="admin-skjema">
+  <input type="hidden" name="_csrf" value="<%= csrf %>" />
+  <input type="hidden" name="index" value="-1" />
+  <div class="felt"><label for="ny-title">Tittel (t.d. «Komplett baderom, einebustad»)</label>
+    <input id="ny-title" name="title" required /></div>
+  <div class="felt-rad">
+    <div class="felt"><label for="ny-category">Kategori (t.d. Baderom, Varmeanlegg)</label>
+      <input id="ny-category" name="category" list="teneste-forslag" /></div>
+    <div class="felt"><label for="ny-place">Stad</label><input id="ny-place" name="place" /></div>
+    <div class="felt"><label for="ny-year">År</label><input id="ny-year" name="year" /></div>
+  </div>
+  <datalist id="teneste-forslag">
+    <% for (const s of content.services) { %><option value="<%= s.title %>"></option><% } %>
+  </datalist>
+  <div class="felt"><label for="ny-description">Beskriving (tom linje = nytt avsnitt)</label>
+    <textarea id="ny-description" name="description" rows="4"></textarea></div>
+  <button type="submit" class="knapp knapp-primar">Opprett prosjekt</button>
+  <p class="felt-hint">Etter oppretting kan du laste opp bilete til prosjektet nedanfor.</p>
+</form>
+
+<h2>Prosjekta (<%= (content.projects || []).length %>)</h2>
+<% (content.projects || []).forEach((p, i) => { %>
+<details class="admin-detalj">
+  <summary><strong><%= p.title %></strong> <span class="admin-dus"><%= [p.category, p.place, p.year].filter(Boolean).join(' · ') %> · <%= (p.images || []).length %> bilete</span></summary>
+
+  <form method="post" action="/admin/prosjekt/lagre" class="admin-skjema">
+    <input type="hidden" name="_csrf" value="<%= csrf %>" />
+    <input type="hidden" name="index" value="<%= i %>" />
+    <div class="felt"><label for="p-title-<%= i %>">Tittel</label>
+      <input id="p-title-<%= i %>" name="title" value="<%= p.title %>" required /></div>
+    <div class="felt-rad">
+      <div class="felt"><label for="p-category-<%= i %>">Kategori</label>
+        <input id="p-category-<%= i %>" name="category" value="<%= p.category || '' %>" list="teneste-forslag" /></div>
+      <div class="felt"><label for="p-place-<%= i %>">Stad</label>
+        <input id="p-place-<%= i %>" name="place" value="<%= p.place || '' %>" /></div>
+      <div class="felt"><label for="p-year-<%= i %>">År</label>
+        <input id="p-year-<%= i %>" name="year" value="<%= p.year || '' %>" /></div>
+    </div>
+    <div class="felt"><label for="p-description-<%= i %>">Beskriving</label>
+      <textarea id="p-description-<%= i %>" name="description" rows="5"><%= p.description || '' %></textarea></div>
+    <div class="felt-rad">
+      <div class="felt"><label for="p-cover-<%= i %>">Framsidebilete</label>
+        <select id="p-cover-<%= i %>" name="cover">
+          <option value="">(auto: første bilete)</option>
+          <% for (const id of (p.images || [])) { %><option value="<%= id %>" <%= p.cover === id ? 'selected' : '' %>><%= id %></option><% } %>
+        </select></div>
+      <div class="felt"><label for="p-before-<%= i %>">«Før»-bilete</label>
+        <select id="p-before-<%= i %>" name="before">
+          <option value="">(ikkje valt)</option>
+          <% for (const id of (p.images || [])) { %><option value="<%= id %>" <%= p.before === id ? 'selected' : '' %>><%= id %></option><% } %>
+        </select></div>
+      <div class="felt"><label for="p-after-<%= i %>">«Etter»-bilete</label>
+        <select id="p-after-<%= i %>" name="after">
+          <option value="">(ikkje valt)</option>
+          <% for (const id of (p.images || [])) { %><option value="<%= id %>" <%= p.after === id ? 'selected' : '' %>><%= id %></option><% } %>
+        </select></div>
+    </div>
+    <p class="felt-hint">Før/etter-glidaren blir vist når både «før» og «etter» er valde.
+    Vel bilete med om lag same utsnitt for best effekt.</p>
+    <button type="submit" class="knapp knapp-primar">Lagre</button>
+    <a class="knapp knapp-liten" href="/prosjekt/<%= p.id %>">Sjå sida →</a>
+  </form>
+
+  <div class="admin-skjema">
+    <h3>Bilete i prosjektet</h3>
+    <% if ((p.images || []).length) { %>
+    <ul class="admin-bilete-rutenett">
+      <% for (const id of p.images) { %>
+      <li class="admin-bilete-kort">
+        <img src="/media/<%= id %>-sm.webp" alt="" loading="lazy" width="160" height="120" />
+        <p class="admin-bilete-namn"><code><%= id %></code>
+          <% if (p.cover === id) { %><span class="admin-merke">framside</span><% } %>
+          <% if (p.before === id) { %><span class="admin-merke">før</span><% } %>
+          <% if (p.after === id) { %><span class="admin-merke">etter</span><% } %>
+        </p>
+        <form method="post" action="/admin/prosjekt/fjern-bilete">
+          <input type="hidden" name="_csrf" value="<%= csrf %>" />
+          <input type="hidden" name="index" value="<%= i %>" />
+          <input type="hidden" name="id" value="<%= id %>" />
+          <button class="knapp knapp-liten">Ta ut av prosjektet</button>
+        </form>
+      </li>
+      <% } %>
+    </ul>
+    <% } else { %>
+    <p class="admin-dus">Ingen bilete enno.</p>
+    <% } %>
+    <form method="post" action="/admin/prosjekt/last-opp" enctype="multipart/form-data">
+      <input type="hidden" name="_csrf" value="<%= csrf %>" />
+      <input type="hidden" name="index" value="<%= i %>" />
+      <div class="felt">
+        <label for="p-last-opp-<%= i %>">Last opp bilete til prosjektet (JPG/PNG/WebP)</label>
+        <input type="file" id="p-last-opp-<%= i %>" name="bilete" accept="image/jpeg,image/png,image/webp,image/avif" multiple required />
+      </div>
+      <button type="submit" class="knapp knapp-sekundar">Last opp</button>
+    </form>
+  </div>
+
+  <div class="admin-rad-handlingar">
+    <form method="post" action="/admin/prosjekt/slett" data-stadfest="Slette prosjektet «<%= p.title %>»? Bileta blir liggande i biblioteket.">
+      <input type="hidden" name="_csrf" value="<%= csrf %>" />
+      <input type="hidden" name="index" value="<%= i %>" />
+      <button class="knapp knapp-liten knapp-fare">Slett prosjektet</button>
+    </form>
+  </div>
+</details>
+<% }) %>
+
+<%- include('partials/abot') %>

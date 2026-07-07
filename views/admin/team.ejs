@@ -1,0 +1,47 @@
+<%- include('partials/atop', { tittel: 'Kontaktpersonar' }) %>
+
+<p class="admin-forklaring">Desse blir viste på «Om oss»- og kontaktsida.</p>
+
+<% content.team.forEach((t, i) => { %>
+<details class="admin-detalj">
+  <summary><strong><%= t.name %></strong> <span class="admin-dus"><%= t.role %></span></summary>
+  <form method="post" action="/admin/team/lagre" class="admin-skjema">
+    <input type="hidden" name="_csrf" value="<%= csrf %>" />
+    <input type="hidden" name="index" value="<%= i %>" />
+    <div class="felt-rad">
+      <div class="felt"><label for="p-name-<%= i %>">Namn</label><input id="p-name-<%= i %>" name="name" value="<%= t.name %>" required /></div>
+      <div class="felt"><label for="p-role-<%= i %>">Rolle</label><input id="p-role-<%= i %>" name="role" value="<%= t.role %>" /></div>
+    </div>
+    <div class="felt-rad">
+      <div class="felt"><label for="p-phone-<%= i %>">Telefon</label><input id="p-phone-<%= i %>" name="phone" value="<%= t.phone %>" /></div>
+      <div class="felt"><label for="p-email-<%= i %>">E-post</label><input id="p-email-<%= i %>" name="email" value="<%= t.email %>" /></div>
+    </div>
+    <div class="felt"><label for="p-image-<%= i %>">Bilete (valfritt)</label>
+      <select id="p-image-<%= i %>" name="image">
+        <option value="">(ikkje noko bilete)</option>
+        <% for (const m of (content.media || [])) { %><option value="<%= m.id %>" <%= t.image === m.id ? 'selected' : '' %>><%= m.id %></option><% } %>
+      </select></div>
+    <button type="submit" class="knapp knapp-primar">Lagre</button>
+  </form>
+  <div class="admin-rad-handlingar">
+    <form method="post" action="/admin/team/slett" data-stadfest="Slette «<%= t.name %>»?"><input type="hidden" name="_csrf" value="<%= csrf %>" /><input type="hidden" name="index" value="<%= i %>" /><button class="knapp knapp-liten knapp-fare">Slett</button></form>
+  </div>
+</details>
+<% }) %>
+
+<h2>Legg til person</h2>
+<form method="post" action="/admin/team/lagre" class="admin-skjema">
+  <input type="hidden" name="_csrf" value="<%= csrf %>" />
+  <input type="hidden" name="index" value="-1" />
+  <div class="felt-rad">
+    <div class="felt"><label for="np-name">Namn</label><input id="np-name" name="name" required /></div>
+    <div class="felt"><label for="np-role">Rolle</label><input id="np-role" name="role" /></div>
+  </div>
+  <div class="felt-rad">
+    <div class="felt"><label for="np-phone">Telefon</label><input id="np-phone" name="phone" /></div>
+    <div class="felt"><label for="np-email">E-post</label><input id="np-email" name="email" /></div>
+  </div>
+  <button type="submit" class="knapp knapp-primar">Legg til</button>
+</form>
+
+<%- include('partials/abot') %>

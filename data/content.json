@@ -1,0 +1,886 @@
+{
+  "site": {
+    "name": "Kr. A. Vik AS",
+    "legalName": "KR A VIK AS",
+    "tagline": "Rørleggaren i Nordfjord sidan 1933",
+    "orgnr": "917 176 442",
+    "phone": "57 87 14 88",
+    "email": "post@kravik.no",
+    "address": {
+      "street": "Visnesvegen 7",
+      "zip": "6783",
+      "city": "Stryn"
+    },
+    "departments": [
+      {
+        "name": "Stryn – hovudkontor og butikk",
+        "address": "Visnesvegen 7, 6783 Stryn",
+        "phone": "57 87 14 88",
+        "note": "Comfort-butikk og landbruksavdeling"
+      },
+      {
+        "name": "Nordfjordeid – avdeling",
+        "address": "Nordfjordeid",
+        "phone": "971 41 237",
+        "note": "Avdelingsleiar: Sam Kjetil Torheim"
+      }
+    ],
+    "openingHours": [],
+    "openingHoursNote": "",
+    "social": [],
+    "mapEmbed": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d476685.3161109886!2d5.7909074982162725!3d62.17963947959808!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x461662afffd4a859%3A0xe4c235e5ab4ca7e4!2sComfort%20Stryn%20Kr.%20A.%20Vik!5e0!3m2!1sen!2sbg!4v1598266936234!5m2!1sen!2sbg"
+  },
+  "alert": {
+    "enabled": false,
+    "text": "",
+    "link": ""
+  },
+  "partners": [
+    {
+      "name": "Comfort",
+      "url": "https://www.comfort.no",
+      "logo": "logo-comfort",
+      "text": "Vi er tilknytta Comfort-kjeden – rørleggar og butikk på same plass."
+    },
+    {
+      "name": "Husqvarna",
+      "url": "https://www.husqvarna.com/no/",
+      "logo": "logo-husqvarna",
+      "text": "Maskiner og utstyr frå Husqvarna i landbruksavdelinga vår i Stryn."
+    },
+    {
+      "name": "Kellfri",
+      "url": "https://www.kellfri.no",
+      "logo": "logo-kellfri",
+      "text": "Utstyr til landbruket frå Kellfri – sjå utvalet i butikken i Stryn."
+    }
+  ],
+  "pages": {
+    "home": {
+      "seoTitle": "Rørleggar i Stryn og på Nordfjordeid | Kr. A. Vik AS",
+      "seoDescription": "Kr. A. Vik AS er ei familieeigd rørleggarbedrift i Stryn – sidan 1933. Bad, sanitær, varmeanlegg, sprinkler og VA. Comfort-butikk og landbruksavdeling. Ring 57 87 14 88.",
+      "heroTitle": "Rørleggaren i Nordfjord – sidan 1933",
+      "heroLead": "Familieeigd rørleggarbedrift med 21 fagfolk i Stryn og på Nordfjordeid. Frå draumebadet til komplette varmeanlegg – vi er der frå teikning til ferdig jobb.",
+      "heroImage": "hero-framsida",
+      "ctaPrimaryText": "Be om tilbod",
+      "ctaSecondaryText": "Ring oss"
+    },
+    "tenester": {
+      "title": "Tenester",
+      "seoTitle": "Tenester – bad, varme, sanitær, VA og sprinkler | Kr. A. Vik AS",
+      "seoDescription": "Rørleggartenester i Nordfjord: baderom, sanitæranlegg, varmepumper og varmeanlegg, sprinkler, VA, røyrsveising, kamerainspeksjon og kjerneboring. Kr. A. Vik AS, Stryn.",
+      "intro": "Vi tek på oss alt frå små servicejobbar til komplette anlegg i hus, hytter og større prosjekt. Fagfolka våre har spesialkompetanse innan mellom anna sprinkler og VA.",
+      "headerImage": "header-om-oss"
+    },
+    "omOss": {
+      "title": "Om oss",
+      "seoTitle": "Om oss – familieeigd rørleggarbedrift sidan 1933 | Kr. A. Vik AS",
+      "seoDescription": "Kr. A. Vik AS er ei familieeigd rørleggarbedrift i fjerde generasjon, med 21 tilsette i Stryn og på Nordfjordeid. Sentralt godkjend og Miljøfyrtårn-sertifisert.",
+      "headerImage": "header-om-oss",
+      "body": "Kr. A. Vik AS er ei familieeigd rørleggarbedrift som har vore i rørleggarbransjen sidan 1933.\n\nKristian Vik er dagleg leiar og fjerde generasjon i familien Vik som driv bedrifta. Vi er totalt 21 tilsette fordelte på to avdelingar: hovudkontor og butikk i Stryn i indre Nordfjord, og underavdeling på Nordfjordeid. Bedrifta er tilknytta Comfort-kjeden.\n\nVåre tilsette har mykje spesialkompetanse, mellom anna innan sprinkler og VA.\n\nI tillegg til rørleggardrifta har vi i Stryn ei landbruksavdeling med maskiner og varer frå mellom anna Husqvarna og Kellfri."
+    },
+    "butikk": {
+      "title": "Butikk og landbruk",
+      "seoTitle": "Comfort-butikk og landbruksavdeling i Stryn | Kr. A. Vik AS",
+      "seoDescription": "Besøk Comfort-butikken vår i Visnesvegen 7 i Stryn: baderomsutstyr og VVS – pluss landbruksavdeling med maskiner og utstyr frå Husqvarna og Kellfri.",
+      "headerImage": "header-kontakt",
+      "intro": "I Visnesvegen 7 i Stryn finn du både Comfort-butikken vår og landbruksavdelinga. Her møter du fagfolk bak disken – rørleggar og butikk på same plass.",
+      "comfortText": "Som del av Comfort-kjeden har vi butikk med utstyr til bad og VVS. Treng du hjelp til å planlegge badet, hjelper vi deg med teikning og løysingsval.",
+      "landbrukText": "Landbruksavdelinga i Stryn fører maskiner og varer frå mellom anna Husqvarna og Kellfri – innom oss finn du utstyr til gard, skog og hage.",
+      "image": "header-om-oss"
+    },
+    "opplaering": {
+      "title": "Opplæringsbedrift",
+      "seoTitle": "Lærling i rørleggarfaget? | Kr. A. Vik AS – godkjend opplæringsbedrift",
+      "seoDescription": "Kr. A. Vik AS er godkjend opplæringsbedrift i rørleggarfaget og har til ei kvar tid 1–2 lærlingar. Vil du bli lærling i Stryn eller på Nordfjordeid? Ta kontakt!",
+      "headerImage": "header-opplaering",
+      "body": "Vi er opptekne av rekruttering til faget og ønskjer å gi ungdomar og vaksne høve til å fullføre ei fagutdanning.\n\nVi er stolte over å vere ei lærebedrift. Å vere lærebedrift betyr at vi er godkjende av fylkeskommunen til å ta inn lærlingar. Vi har til ei kvar tid 1–2 lærlingar i bedrifta vår."
+    },
+    "eigedom": {
+      "title": "Kr. A. Vik Eigedom AS",
+      "seoTitle": "Leilegheit til leige – Kr. A. Vik Eigedom AS",
+      "seoDescription": "Kr. A. Vik Eigedom AS leiger ut sentrumsnære leilegheiter av god standard i Stryn, Bergen, Oslo, Trondheim og Stavanger. Kontakt oss for leige.",
+      "headerImage": "header-eigedom",
+      "orgnr": "915 319 092",
+      "body": "Kr. A. Vik Eigedom AS er eit eigedomsselskap som vart etablert i 2015. Vi eig leilegheiter i Stryn, Trondheim, Stavanger, Bergen og Oslo, i tillegg til næringsbygg i Stryn. Vi investerer i sentrumsnære leilegheiter av god standard og driv utleige. Per no har vi ein portefølje på 30 leilegheiter.\n\nDagleg leiar for eigedomsselskapet er Hilde Eikenæs Vik, og styreformann er Kristian Vik.",
+      "contactName": "Hilde Eikenæs Vik",
+      "contactRole": "Dagleg leiar",
+      "contactPhone": "918 61 480",
+      "contactEmail": "hilde@kravik.no",
+      "contactImage": "hilde"
+    },
+    "miljo": {
+      "title": "Miljø og berekraft",
+      "seoTitle": "Miljø og berekraft – Miljøfyrtårn-sertifisert | Kr. A. Vik AS",
+      "seoDescription": "Kr. A. Vik AS vart Miljøfyrtårn-sertifisert i 2022. Les om korleis vi reduserer utslepp, sparer ressursar og vel løysingar med låg miljøbelastning.",
+      "headerImage": "header-miljo",
+      "body": "Kr. A. Vik AS vart Miljøfyrtårn-sertifisert i 2022.\n\nSom rørleggarbedrift bidreg vi både direkte og indirekte til klima- og miljøpåverknad. Vi tek ansvar ved å redusere utslepp, spare ressursar og velje løysingar med låg miljøbelastning.\n\nVi gjer vårt beste for å leggje til rette for eit godt arbeidsmiljø, og terskelen er låg for å kome med innspel og tilbakemeldingar om moglege forbetringar.\n\nSaman med samarbeidspartnarar og tilsette ønskjer vi å jobbe mot ein grønare kvardag!",
+      "docs": [
+        {
+          "title": "Miljøprofil",
+          "url": "https://drive.google.com/file/d/17aQICoe_6B7qbz5SIJENA2EuMndBbi7n/view?usp=drive_link"
+        },
+        {
+          "title": "Returordning",
+          "url": "https://drive.google.com/file/d/1u5xkBE8DMZqYPNF91SvxT1cShMcv293h/view?usp=drive_link"
+        },
+        {
+          "title": "Overordna for klima, miljø og arbeidsmiljø",
+          "url": "https://drive.google.com/file/d/18dHwfq1PI-vFNDWbm6Go-rnLEYnaRQjR/view?usp=drive_link"
+        },
+        {
+          "title": "Innspel til klima- og miljøpåverknad",
+          "url": "https://drive.google.com/file/d/1pYsBu8krpDoUxrKAzGdiHW_KiqvZ0sDL/view?usp=drive_link"
+        },
+        {
+          "title": "Krav til leverandørar",
+          "url": "https://drive.google.com/file/d/1PTsScD8fj4r0ATVmrxuo62rdlSQRMxk9/view?usp=drive_link"
+        }
+      ]
+    },
+    "prosjekt": {
+      "title": "Prosjekt og galleri",
+      "seoTitle": "Prosjekt og bilete frå arbeid vi har utført | Kr. A. Vik AS",
+      "seoDescription": "Sjå prosjekt og bilete frå arbeid utført av Kr. A. Vik AS – baderom, varmeanlegg, sanitær og meir, i Stryn, på Nordfjordeid og elles i Nordfjord.",
+      "intro": "Her viser vi fram eit utval av prosjekta våre – og eit galleri med glimt frå arbeidskvardagen.",
+      "headerImage": "header-om-oss"
+    },
+    "kontakt": {
+      "title": "Kontakt oss",
+      "seoTitle": "Kontakt oss – rørleggar i Stryn og på Nordfjordeid | Kr. A. Vik AS",
+      "seoDescription": "Ta kontakt med Kr. A. Vik AS: telefon 57 87 14 88, e-post post@kravik.no. Besøk oss i Visnesvegen 7 i Stryn, eller på avdelinga på Nordfjordeid.",
+      "headerImage": "header-kontakt",
+      "intro": "Send oss ei melding, ring, eller stikk innom butikken i Stryn – vi hjelper deg gjerne, anten det gjeld ein liten servicejobb eller eit stort prosjekt."
+    },
+    "galleri": {
+      "title": "Galleri",
+      "seoTitle": "Galleri – prosjekt og arbeid | Kr. A. Vik AS",
+      "seoDescription": "Sjå bilete frå prosjekt og arbeid utført av Kr. A. Vik AS – rørleggarbedrift i Stryn og på Nordfjordeid.",
+      "legacy": "erstatta av «prosjekt» – behalden for eventuell import av gamle sikkerheitskopiar"
+    }
+  },
+  "services": [
+    {
+      "id": "baderom",
+      "title": "Baderom",
+      "icon": "bad",
+      "text": "Komplette baderom frå idé til ferdig resultat – vi hjelper deg òg med teikning av badet, slik at løysinga blir god før arbeidet startar."
+    },
+    {
+      "id": "sanitar",
+      "title": "Sanitæranlegg",
+      "icon": "kran",
+      "text": "Sanitæranlegg i hus, hytter og næringsbygg – med mykje meir. Vi tek både nyanlegg, rehabilitering og service."
+    },
+    {
+      "id": "varme",
+      "title": "Varmeanlegg og varmepumper",
+      "icon": "varme",
+      "text": "Komplette varmeanlegg, inkludert varmepumper luft/luft, luft/vatn og vatn/vatn – energieffektiv oppvarming tilpassa bygget ditt."
+    },
+    {
+      "id": "sprinkler",
+      "title": "Sprinkleranlegg",
+      "icon": "sprinkler",
+      "text": "Fagfolka våre har spesialkompetanse på sprinkler – automatisk brannsløkking for bustad, landbruk og næring."
+    },
+    {
+      "id": "va",
+      "title": "VA-anlegg",
+      "icon": "va",
+      "text": "Vatn- og avlaupsanlegg med spesialkompetanse – frå grøft til ferdig tilkopla anlegg."
+    },
+    {
+      "id": "sveising",
+      "title": "Speil- og elektromuffesveising",
+      "icon": "sveis",
+      "text": "Sertifisert samanføying av plastrøyr med speilsveising og elektromuffesveising – solide skøytar som varer."
+    },
+    {
+      "id": "kamera",
+      "title": "Kamera- og videoinspeksjon",
+      "icon": "kamera",
+      "text": "Vi finn feilen utan å grave: kamera- og videoinspeksjon av røyr og leidningsnett."
+    },
+    {
+      "id": "kjerneboring",
+      "title": "Kjerneboring i betong",
+      "icon": "bor",
+      "text": "Presis kjerneboring i betong for gjennomføringar av røyr og kanalar."
+    }
+  ],
+  "team": [
+    {
+      "name": "Kristian Vik",
+      "role": "Dagleg leiar / økonomisjef",
+      "phone": "900 95 233",
+      "email": "kristian@kravik.no",
+      "image": "kristian"
+    },
+    {
+      "name": "Sam Kjetil Torheim",
+      "role": "Avdelingsleiar Nordfjordeid",
+      "phone": "971 41 237",
+      "email": "sam@kravik.no"
+    },
+    {
+      "name": "Steinar Lunde",
+      "role": "Hus, hytter og større prosjekt",
+      "phone": "57 87 14 88",
+      "email": "steinar@kravik.no"
+    },
+    {
+      "name": "Aase Lunde Raftevold",
+      "role": "Butikksjef",
+      "phone": "57 87 14 88",
+      "email": "aase@kravik.no"
+    },
+    {
+      "name": "Hilde Eikenæs Vik",
+      "role": "Dagleg leiar, Kr. A. Vik Eigedom AS",
+      "phone": "918 61 480",
+      "email": "hilde@kravik.no",
+      "image": "hilde-2"
+    }
+  ],
+  "projects": [
+    {
+      "title": "Renovering bad",
+      "category": "Baderom",
+      "place": "Stryn",
+      "year": "2020",
+      "description": "Oppussing",
+      "cover": "nyttt-bad",
+      "before": "gammelt-bad-2",
+      "after": "nyttt-bad",
+      "images": [
+        "nyttt-bad",
+        "gammelt-bad-2"
+      ],
+      "id": "renovering-bad"
+    }
+  ],
+  "properties": [
+    {
+      "title": "Øvre Fjellsmauet 8, 5018 BERGEN",
+      "slug": "ovre-fjellsmauet-8-bergen",
+      "image": "leilegheit-1",
+      "status": "ledig",
+      "description": "kom å sjå i kveld!",
+      "facts": [
+        {
+          "label": "soverom",
+          "value": "2"
+        }
+      ],
+      "mapEmbed": "",
+      "lat": 60.396500996913225,
+      "lng": 5.329906021928492,
+      "images": [
+        "produkt-1-png-2",
+        "produkt-2-png"
+      ]
+    },
+    {
+      "title": "Øvregaten 7, Bergen",
+      "slug": "ovregaten-7-bergen",
+      "image": "leilegheit-2",
+      "status": "utleigd",
+      "description": "",
+      "facts": [],
+      "mapEmbed": "",
+      "images": []
+    },
+    {
+      "title": "Perhustunet, Stryn",
+      "slug": "perhustunet-stryn",
+      "image": "leilegheit-3"
+    },
+    {
+      "title": "Vinslottet, Oslo",
+      "slug": "vinslottet-oslo",
+      "image": "leilegheit-4"
+    },
+    {
+      "title": "Skottegaten 2, Bergen",
+      "slug": "skottegaten-2-bergen",
+      "image": "leilegheit-5"
+    },
+    {
+      "title": "Strandkanten Visnesvegen, Stryn",
+      "slug": "strandkanten-visnesvegen-stryn",
+      "image": "leilegheit-6"
+    }
+  ],
+  "testimonials": [
+    {
+      "quote": "Heilt fantastisk samarbeid! Renovering av bad. Resultatet vart fantastisk!",
+      "author": "Adrian Lefdal",
+      "context": "Oppussing",
+      "rating": 5
+    },
+    {
+      "quote": "Fikk i dag første klasses service av comfort stryn ved stian tusen hjertelig takk for glimrende utført arbeid mvh Eddie stryn bilpleie",
+      "author": "Eddie Doksæter",
+      "context": "Google-omtale",
+      "rating": 5
+    },
+    {
+      "quote": "Heilt fantastiske 👍",
+      "author": "Are Tenden",
+      "context": "Google-omtale",
+      "rating": 5
+    },
+    {
+      "quote": "Veldig hyggelige ansatte fra dama på sentralen til rørleggeren som kom og ordnet opp. Alt i alt god service.",
+      "author": "Agathe Zoè Sunde Fagerland",
+      "context": "Google-omtale",
+      "rating": 5
+    },
+    {
+      "quote": "God service. Hyggelig betjening.",
+      "author": "Karen Seime",
+      "context": "Google-omtale",
+      "rating": 5
+    },
+    {
+      "quote": "Kunnskapsrike og hjelpsomme",
+      "author": "Kjell Ove Bergset",
+      "context": "Google-omtale",
+      "rating": 5
+    },
+    {
+      "quote": "Ein god butikk å handle hagemaskiner i.",
+      "author": "Ådne Sølvberg",
+      "context": "Google-omtale",
+      "rating": 4
+    }
+  ],
+  "gallery": [
+    {
+      "image": "galleri-01"
+    },
+    {
+      "image": "galleri-02"
+    },
+    {
+      "image": "galleri-03"
+    },
+    {
+      "image": "galleri-04"
+    },
+    {
+      "image": "galleri-05"
+    },
+    {
+      "image": "galleri-06"
+    },
+    {
+      "image": "galleri-07"
+    },
+    {
+      "image": "galleri-08"
+    },
+    {
+      "image": "galleri-09"
+    },
+    {
+      "image": "galleri-10"
+    },
+    {
+      "image": "galleri-11"
+    },
+    {
+      "image": "galleri-12"
+    },
+    {
+      "image": "galleri-13"
+    },
+    {
+      "image": "galleri-14"
+    },
+    {
+      "image": "galleri-15"
+    },
+    {
+      "image": "galleri-16"
+    },
+    {
+      "image": "galleri-17"
+    },
+    {
+      "image": "galleri-18"
+    },
+    {
+      "image": "galleri-19"
+    },
+    {
+      "image": "galleri-20"
+    },
+    {
+      "image": "galleri-21"
+    },
+    {
+      "image": "galleri-22"
+    },
+    {
+      "image": "galleri-23"
+    },
+    {
+      "image": "galleri-24"
+    },
+    {
+      "image": "galleri-25"
+    },
+    {
+      "image": "galleri-26"
+    },
+    {
+      "image": "galleri-27"
+    },
+    {
+      "image": "galleri-28"
+    },
+    {
+      "image": "galleri-29"
+    },
+    {
+      "image": "galleri-30"
+    },
+    {
+      "image": "galleri-31"
+    },
+    {
+      "image": "galleri-32"
+    },
+    {
+      "image": "galleri-33"
+    },
+    {
+      "image": "galleri-34"
+    },
+    {
+      "image": "galleri-35"
+    },
+    {
+      "image": "galleri-36"
+    },
+    {
+      "image": "galleri-37"
+    },
+    {
+      "image": "galleri-38"
+    },
+    {
+      "image": "galleri-39"
+    },
+    {
+      "image": "galleri-40"
+    },
+    {
+      "image": "galleri-41"
+    },
+    {
+      "image": "galleri-42"
+    },
+    {
+      "image": "kristian"
+    },
+    {
+      "image": "hilde-2"
+    }
+  ],
+  "media": [
+    {
+      "id": "hero-framsida",
+      "w": 1280,
+      "h": 700,
+      "alt": "Moderne baderom med servant, spegel og badekar"
+    },
+    {
+      "id": "header-om-oss",
+      "w": 1200,
+      "h": 375,
+      "alt": ""
+    },
+    {
+      "id": "header-kontakt",
+      "w": 1200,
+      "h": 375,
+      "alt": ""
+    },
+    {
+      "id": "header-opplaering",
+      "w": 1200,
+      "h": 375,
+      "alt": ""
+    },
+    {
+      "id": "header-eigedom",
+      "w": 1200,
+      "h": 375,
+      "alt": ""
+    },
+    {
+      "id": "header-miljo",
+      "w": 1200,
+      "h": 521,
+      "alt": ""
+    },
+    {
+      "id": "hilde",
+      "w": 400,
+      "h": 439,
+      "alt": "Hilde Eikenæs Vik"
+    },
+    {
+      "id": "leilegheit-1",
+      "w": 282,
+      "h": 391,
+      "alt": ""
+    },
+    {
+      "id": "leilegheit-2",
+      "w": 282,
+      "h": 391,
+      "alt": ""
+    },
+    {
+      "id": "leilegheit-3",
+      "w": 282,
+      "h": 391,
+      "alt": ""
+    },
+    {
+      "id": "leilegheit-4",
+      "w": 282,
+      "h": 391,
+      "alt": ""
+    },
+    {
+      "id": "leilegheit-5",
+      "w": 282,
+      "h": 391,
+      "alt": ""
+    },
+    {
+      "id": "leilegheit-6",
+      "w": 282,
+      "h": 391,
+      "alt": ""
+    },
+    {
+      "id": "galleri-01",
+      "w": 825,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-02",
+      "w": 959,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-03",
+      "w": 900,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-04",
+      "w": 1200,
+      "h": 887,
+      "alt": ""
+    },
+    {
+      "id": "galleri-05",
+      "w": 974,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-06",
+      "w": 1200,
+      "h": 1052,
+      "alt": ""
+    },
+    {
+      "id": "galleri-07",
+      "w": 1003,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-08",
+      "w": 946,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-09",
+      "w": 975,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-10",
+      "w": 1200,
+      "h": 1186,
+      "alt": ""
+    },
+    {
+      "id": "galleri-11",
+      "w": 1182,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-12",
+      "w": 1200,
+      "h": 808,
+      "alt": ""
+    },
+    {
+      "id": "galleri-13",
+      "w": 1053,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-14",
+      "w": 1200,
+      "h": 1169,
+      "alt": ""
+    },
+    {
+      "id": "galleri-15",
+      "w": 1094,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-16",
+      "w": 1200,
+      "h": 1165,
+      "alt": ""
+    },
+    {
+      "id": "galleri-17",
+      "w": 900,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-18",
+      "w": 1060,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-19",
+      "w": 1200,
+      "h": 364,
+      "alt": ""
+    },
+    {
+      "id": "galleri-20",
+      "w": 1200,
+      "h": 1176,
+      "alt": ""
+    },
+    {
+      "id": "galleri-21",
+      "w": 1177,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-22",
+      "w": 676,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-23",
+      "w": 912,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-24",
+      "w": 609,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-25",
+      "w": 799,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-26",
+      "w": 932,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-27",
+      "w": 1200,
+      "h": 742,
+      "alt": ""
+    },
+    {
+      "id": "galleri-28",
+      "w": 1200,
+      "h": 1142,
+      "alt": ""
+    },
+    {
+      "id": "galleri-29",
+      "w": 900,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-30",
+      "w": 972,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-31",
+      "w": 799,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-32",
+      "w": 902,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-33",
+      "w": 983,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-34",
+      "w": 792,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-35",
+      "w": 965,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-36",
+      "w": 850,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-37",
+      "w": 974,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-38",
+      "w": 967,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-39",
+      "w": 850,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-40",
+      "w": 851,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "galleri-41",
+      "w": 1200,
+      "h": 1141,
+      "alt": ""
+    },
+    {
+      "id": "galleri-42",
+      "w": 969,
+      "h": 1200,
+      "alt": ""
+    },
+    {
+      "id": "product-studio-1-6-png-27",
+      "w": 2048,
+      "h": 2048,
+      "alt": ""
+    },
+    {
+      "id": "product-studio-1-6-png-28",
+      "w": 2048,
+      "h": 2048,
+      "alt": ""
+    },
+    {
+      "id": "product-studio-1-6-png-29",
+      "w": 2048,
+      "h": 2048,
+      "alt": ""
+    },
+    {
+      "id": "product-studio-1-6-png-31",
+      "w": 2048,
+      "h": 2048,
+      "alt": ""
+    },
+    {
+      "id": "produkt-1-png-2",
+      "w": 2048,
+      "h": 2048,
+      "alt": ""
+    },
+    {
+      "id": "produkt-2-png",
+      "w": 2048,
+      "h": 2048,
+      "alt": ""
+    },
+    {
+      "id": "kristian",
+      "w": 1371,
+      "h": 1369,
+      "alt": ""
+    },
+    {
+      "id": "hilde-2",
+      "w": 281,
+      "h": 400,
+      "alt": ""
+    },
+    {
+      "id": "nyttt-bad",
+      "w": 1408,
+      "h": 768,
+      "alt": ""
+    },
+    {
+      "id": "gammelt-bad-2",
+      "w": 1408,
+      "h": 768,
+      "alt": ""
+    }
+  ],
+  "updatedAt": "2026-07-03T21:35:56.512Z"
+}

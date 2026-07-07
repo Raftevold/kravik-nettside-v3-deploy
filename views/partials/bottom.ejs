@@ -1,0 +1,93 @@
+  </main>
+
+  <footer class="botn">
+    <div class="ramme botn-kolonnar">
+      <div>
+        <img src="/img/logo-kravik-kvit.png" alt="" width="171" height="64" loading="lazy" />
+        <p><%= site.tagline %></p>
+        <p class="botn-orgnr"><%= site.legalName || site.name %><br />Org.nr <%= site.orgnr %></p>
+        <img src="/img/sentralt-godkjent.png" alt="Sentralt godkjend verksemd" width="64" height="64" loading="lazy" />
+      </div>
+      <div>
+        <h2 class="botn-tittel">Kontakt</h2>
+        <address>
+          <p><%= site.address.street %><br /><%= site.address.zip %> <%= site.address.city %></p>
+          <p><a href="<%= telHref(site.phone) %>">Tlf: <%= site.phone %></a><br />
+          <a href="mailto:<%= site.email %>"><%= site.email %></a></p>
+        </address>
+        <% if (site.openingHours && site.openingHours.length) { %>
+        <h2 class="botn-tittel">Opningstider</h2>
+        <% for (const o of site.openingHours) { %><p class="botn-tider"><%= o.label %>: <%= o.value %></p><% } %>
+        <% } %>
+      </div>
+      <div>
+        <h2 class="botn-tittel">Snarvegar</h2>
+        <ul class="botn-lenker">
+          <li><a href="/tenester">Tenester</a></li>
+          <li><a href="/prosjekt">Prosjekt og galleri</a></li>
+          <li><a href="/butikk-og-landbruk">Butikk og landbruk</a></li>
+          <li><a href="/opplaeringsbedrift">Bli lærling</a></li>
+          <li><a href="/eigedom">Leilegheit til leige</a></li>
+          <li><a href="/miljo-og-berekraft">Miljø og berekraft</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2 class="botn-tittel">Samarbeidspartnarar</h2>
+        <ul class="botn-partnarar">
+          <% for (const p of (content.partners || [])) { %>
+          <li><a href="<%= p.url %>" rel="external noopener"><%= p.name %></a></li>
+          <% } %>
+        </ul>
+        <% if (site.social && site.social.length) { %>
+        <h2 class="botn-tittel">Følg oss</h2>
+        <ul class="botn-lenker">
+          <% for (const s of site.social) { %>
+          <li><a href="<%= s.url %>" rel="external noopener"><%= s.type.charAt(0).toUpperCase() + s.type.slice(1) %></a></li>
+          <% } %>
+        </ul>
+        <% } %>
+      </div>
+    </div>
+    <div class="ramme botn-juridisk">
+      <p>© <%= new Date().getFullYear() %> <%= site.name %></p>
+      <ul>
+        <li><a href="/personvern">Personvern</a></li>
+        <li><a href="/informasjonskapslar">Informasjonskapslar</a></li>
+        <li><button type="button" class="lenkeknapp" data-opne-samtykke>Endre samtykke</button></li>
+        <li><a href="/admin" rel="nofollow">Logg inn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <div class="mobil-cta">
+    <a class="knapp knapp-primar" href="<%= telHref(site.phone) %>">Ring <%= site.phone %></a>
+    <a class="knapp knapp-sekundar" href="/kontakt#kontaktskjema">Send melding</a>
+  </div>
+
+  <section class="samtykke" id="samtykke" hidden aria-label="Samtykke til informasjonskapslar">
+    <div class="samtykke-boks" role="dialog" aria-modal="false" aria-labelledby="samtykke-tittel" aria-describedby="samtykke-tekst">
+      <h2 id="samtykke-tittel">Informasjonskapslar og eksternt innhald</h2>
+      <p id="samtykke-tekst">
+        Denne nettsida set ingen sporingskapslar. Vi spør berre om lov til å vise
+        <strong>kart frå Google Maps</strong> – då kan Google setje sine eigne kapslar.
+        Du kan endre valet når som helst. <a href="/informasjonskapslar">Les meir</a>.
+      </p>
+      <div class="samtykke-knappar">
+        <button type="button" class="knapp knapp-primar" data-samtykke="alle">Godta alt</button>
+        <button type="button" class="knapp knapp-sekundar" data-samtykke="nodvendige">Berre nødvendige</button>
+      </div>
+    </div>
+  </section>
+
+  <dialog class="lysbilete" aria-label="Biletvising">
+    <button type="button" class="lysbilete-lukk knapp knapp-lys" autofocus>Lukk ✕</button>
+    <button type="button" class="lysbilete-pil lysbilete-forrige" aria-label="Førre bilete">‹</button>
+    <img src="" alt="" />
+    <button type="button" class="lysbilete-pil lysbilete-neste" aria-label="Neste bilete">›</button>
+    <p class="lysbilete-teljar" aria-live="polite"></p>
+  </dialog>
+
+  <script src="/js/site.js?v=<%= assetV %>" defer></script>
+  <script src="/js/motion.js?v=<%= assetV %>" defer></script>
+</body>
+</html>

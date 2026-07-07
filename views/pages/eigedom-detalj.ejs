@@ -1,0 +1,96 @@
+<%- include('../partials/top') %>
+<% const e = property; const pg = content.pages.eigedom; %>
+
+<% const framsideForStatus = e.cover || e.image; %>
+<div class="sidehovud sidehovud-utan-bilete">
+  <div class="ramme sidehovud-inner">
+    <p class="sidehovud-sti"><a href="/eigedom">← Alle leilegheiter</a></p>
+    <h1><%= e.title %></h1>
+    <% if (e.status && !framsideForStatus) { %>
+    <p class="sidehovud-ingress"><span class="status-merke status-<%= e.status %>"><%= e.status === 'ledig' ? 'Ledig' : 'Utleigd' %></span></p>
+    <% } %>
+  </div>
+</div>
+
+<section class="seksjon">
+  <div class="ramme delt">
+    <div>
+      <% const framside = e.cover || e.image;
+         const fleireBilete = [...new Set([...(e.images || []), ...(e.image ? [e.image] : [])])].filter((id) => id !== framside);
+         const kartSrc = e.mapEmbed || (e.lat && e.lng ? `https://www.google.com/maps?q=${e.lat},${e.lng}&z=16&output=embed` : ''); %>
+      <% if (framside) { %>
+      <div class="eigedom-hovudholdar">
+        <button type="button" class="galleri-knapp eigedom-hovudknapp" data-lysbilete="<%= mediaUrl(framside, 'lg') %>" data-alt="<%= mediaAlt(framside) || e.title %>">
+          <img class="eigedom-hovudbilete" src="<%= mediaUrl(framside, 'lg') %>" srcset="<%= srcset(framside) %>" sizes="(min-width: 800px) 60vw, 95vw" alt="<%= mediaAlt(framside) || e.title %>" />
+          <span class="sr-only">Vis biletet i full storleik</span>
+        </button>
+        <% if (e.status) { %><span class="status-merke status-merke-bilete status-<%= e.status %>"><%= e.status === 'ledig' ? 'Ledig' : 'Utleigd' %></span><% } %>
+      </div>
+      <% } %>
+      <% if (fleireBilete.length) { %>
+      <ul class="galleri-rutenett eigedom-galleri">
+        <% for (const id of fleireBilete) { %>
+        <li>
+          <button type="button" class="galleri-knapp" data-lysbilete="<%= mediaUrl(id, 'lg') %>" data-alt="<%= mediaAlt(id) %>">
+            <img src="<%= mediaUrl(id, 'sm') %>" srcset="<%= srcset(id) %>" sizes="(min-width: 800px) 15vw, 30vw" alt="<%= mediaAlt(id) || 'Bilete av ' + e.title %>" loading="lazy" width="400" height="400" />
+          </button>
+        </li>
+        <% } %>
+      </ul>
+      <% } %>
+      <div class="brodtekst">
+        <% if (e.description) { %>
+        <%- nl2p(e.description) %>
+        <% } else { %>
+        <p>Ta kontakt for meir informasjon om denne leilegheita.</p>
+        <% } %>
+      </div>
+      <%
+        // Strukturert nøkkelinfo – berre utfylte felt blir viste
+        const moblertTekst = { moblert: 'Møblert', delvis: 'Delvis møblert', umoblert: 'Umøblert' };
+        const nokkel = [];
+        if (e.soverom) nokkel.push(['Soverom', e.soverom]);
+        if (e.areal) nokkel.push(['Areal', e.areal + ' m²']);
+        if (e.leige) nokkel.push(['Månadsleige', e.leige.toLocaleString('no-NO') + ' kr']);
+        if (e.moblert) nokkel.push(['Møblert', moblertTekst[e.moblert]]);
+        if (e.dyrehold) nokkel.push(['Dyrehald', e.dyrehold === 'ja' ? 'Tillate' : 'Ikkje tillate']);
+        if (e.ledigFra) nokkel.push(['Ledig frå', e.ledigFra]);
+        for (const f of (e.facts || [])) nokkel.push([f.label, f.value]);
+      %>
+      <% if (nokkel.length) { %>
+      <h2>Nøkkelinfo</h2>
+      <dl class="opningstider-liste eigedom-fakta">
+        <% for (const [label, verdi] of nokkel) { %><div><dt><%= label %></dt><dd><%= verdi %></dd></div><% } %>
+      </dl>
+      <% } %>
+      <% if (e.fasilitetar && e.fasilitetar.length) { %>
+      <h2>Fasilitetar</h2>
+      <ul class="hake-liste fasilitetar-liste">
+        <% for (const f of e.fasilitetar) { %>
+        <li><%- include('../partials/icon', { name: 'sjekk' }) %> <%= f %></li>
+        <% } %>
+      </ul>
+      <% } %>
+      <% if (kartSrc) { %>
+      <h2>Kart</h2>
+      <div class="kart-holdar" data-kart-src="<%= kartSrc %>">
+        <div class="kart-plasshaldar">
+          <p>Kartet blir levert av Google Maps og blir først lasta når du samtykkjer til eksternt innhald.</p>
+          <button type="button" class="knapp knapp-sekundar" data-last-kart>Vis kart</button>
+        </div>
+      </div>
+      <% } %>
+    </div>
+    <div class="kontaktkort">
+      <h2>Interessert i å leige?</h2>
+      <% if (pg.contactImage) { %>
+      <img src="<%= mediaUrl(pg.contactImage, 'sm') %>" alt="<%= pg.contactName %>" width="120" height="120" loading="lazy" />
+      <% } %>
+      <p><strong><%= pg.contactName %></strong><br /><%= pg.contactRole %>, Kr. A. Vik Eigedom AS</p>
+      <p><a href="<%= telHref(pg.contactPhone) %>"><%- include('../partials/icon', { name: 'telefon' }) %> <%= pg.contactPhone %></a><br />
+      <a href="mailto:<%= pg.contactEmail %>?subject=<%= encodeURIComponent('Leige: ' + e.title) %>"><%- include('../partials/icon', { name: 'epost' }) %> <%= pg.contactEmail %></a></p>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/bottom') %>

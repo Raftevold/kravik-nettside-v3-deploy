@@ -1,0 +1,52 @@
+<%- include('../partials/top') %>
+<%- include('../partials/sidehovud', { title: 'Personvernerklæring', lead: null, image: null }) %>
+
+<section class="seksjon">
+  <div class="ramme brodtekst brodtekst-smal">
+    <p><strong>Behandlingsansvarleg:</strong> <%= site.legalName || site.name %> (org.nr <%= site.orgnr %>),
+    <%= site.address.street %>, <%= site.address.zip %> <%= site.address.city %>.
+    Kontakt: <a href="mailto:<%= site.email %>"><%= site.email %></a>, telefon <a href="<%= telHref(site.phone) %>"><%= site.phone %></a>.</p>
+
+    <h2>Kva opplysningar behandlar vi?</h2>
+    <p>Når du sender inn kontaktskjemaet, behandlar vi opplysningane du sjølv oppgir:
+    namn, e-postadresse og/eller telefonnummer, og innhaldet i meldinga.
+    Vi hentar ikkje inn andre personopplysningar om deg, og vi brukar ikkje
+    analyse- eller sporingsverktøy på nettsida.</p>
+
+    <h2>Føremål og rettsleg grunnlag</h2>
+    <p>Opplysningane blir brukte til å svare på førespurnaden din og følgje han opp
+    (GDPR artikkel 6 nr. 1 bokstav b – tiltak før avtaleinngåing, og bokstav f –
+    rettkomen interesse i å svare på førespurnader).</p>
+
+    <h2>Kor lenge lagrar vi opplysningane?</h2>
+    <p>Meldingar frå kontaktskjemaet blir lagra så lenge det er nødvendig for å
+    følgje opp saka di, og blir sletta når dei ikkje lenger trengst.</p>
+
+    <h2>Kven har tilgang?</h2>
+    <p>Berre tilsette som skal svare på førespurnaden har tilgang til meldingane.
+    Vi brukar databehandlarar for drift av nettsida (skyplattform for køyring og
+    lagring). Opplysningane blir ikkje selde eller delte med andre for marknadsføring.</p>
+
+    <h2>Statistikk</h2>
+    <p>Vi fører enkel, anonym statistikk over kor mange gonger sidene blir viste.
+    Teljinga brukar verken informasjonskapslar eller IP-adresser, og kan ikkje
+    knytast til deg som person.<% if (plausibleDomain) { %> I tillegg brukar vi
+    analyseverktøyet Plausible, som er informasjonskapsel-fritt og ikkje sporar
+    enkeltpersonar.<% } %></p>
+
+    <h2>Informasjonskapslar og eksternt innhald</h2>
+    <p>Nettsida set ingen informasjonskapslar for vanlege besøkande. Kart frå Google
+    Maps blir først lasta etter at du har samtykt – då gjeld
+    <a href="https://policies.google.com/privacy" rel="external noopener">Google sine personvernreglar</a>.
+    Sjå òg sida om <a href="/informasjonskapslar">informasjonskapslar</a>.</p>
+
+    <h2>Dine rettar</h2>
+    <p>Du har rett til innsyn, retting og sletting av opplysningane dine, og til å
+    protestere mot eller krevje avgrensa behandling. Ta kontakt på
+    <a href="mailto:<%= site.email %>"><%= site.email %></a>, så hjelper vi deg.
+    Du kan òg klage til <a href="https://www.datatilsynet.no" rel="external noopener">Datatilsynet</a>
+    dersom du meiner behandlinga bryt med regelverket.</p>
+  </div>
+</section>
+
+<%- include('../partials/bottom') %>

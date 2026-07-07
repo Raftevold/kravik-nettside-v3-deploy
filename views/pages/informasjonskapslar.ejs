@@ -1,0 +1,28 @@
+<%- include('../partials/top') %>
+<%- include('../partials/sidehovud', { title: 'Informasjonskapslar (cookies)', lead: null, image: null }) %>
+
+<section class="seksjon">
+  <div class="ramme brodtekst brodtekst-smal">
+    <p>Informasjonskapslar (cookies) er små tekstfiler som blir lagra på eininga di
+    når du besøkjer ei nettside. Denne nettsida er laga for å bruke så få som råd.</p>
+
+    <h2>Nødvendige</h2>
+    <p>For vanlege besøkande set nettsida <strong>ingen informasjonskapslar</strong>.
+    Valet ditt om samtykke blir lagra lokalt i nettlesaren din (localStorage) og blir
+    aldri sendt til oss. Ved innlogging til administrasjonssida blir det sett ein
+    nødvendig påloggingskapsel («kravik_admin») – denne gjeld berre dei som
+    administrerer sida.</p>
+
+    <h2>Eksternt innhald (krev samtykke)</h2>
+    <p>Kartet på kontakt- og butikksida blir levert av Google Maps. Det blir først
+    lasta når du har trykt «Godta alt» eller «Vis kart». Då kan Google setje sine
+    eigne informasjonskapslar, etter
+    <a href="https://policies.google.com/technologies/cookies" rel="external noopener">Google sine retningslinjer</a>.</p>
+
+    <h2>Endre valet ditt</h2>
+    <p>Du kan når som helst endre samtykket ditt:</p>
+    <p><button type="button" class="knapp knapp-sekundar" data-opne-samtykke>Endre samtykke</button></p>
+  </div>
+</section>
+
+<%- include('../partials/bottom') %>

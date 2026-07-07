@@ -1,0 +1,48 @@
+<%- include('../partials/top') %>
+<% const p = content.pages.eigedom; %>
+<%- include('../partials/sidehovud', { title: p.title, lead: null, image: p.headerImage }) %>
+
+<section class="seksjon">
+  <div class="ramme delt">
+    <div class="brodtekst">
+      <%- nl2p(p.body) %>
+      <% if (p.orgnr) { %><p class="botn-orgnr">Org.nr <%= p.orgnr %></p><% } %>
+    </div>
+    <div class="kontaktkort">
+      <h2>Kontakt oss for leige</h2>
+      <% if (p.contactImage) { %>
+      <img src="<%= mediaUrl(p.contactImage, 'sm') %>" alt="<%= p.contactName %>" width="120" height="120" loading="lazy" />
+      <% } %>
+      <p><strong><%= p.contactName %></strong><br /><%= p.contactRole %></p>
+      <p><a href="<%= telHref(p.contactPhone) %>"><%- include('../partials/icon', { name: 'telefon' }) %> <%= p.contactPhone %></a><br />
+      <a href="mailto:<%= p.contactEmail %>"><%- include('../partials/icon', { name: 'epost' }) %> <%= p.contactEmail %></a></p>
+    </div>
+  </div>
+</section>
+
+<% if (content.properties && content.properties.length) { %>
+<section class="seksjon seksjon-tona" aria-labelledby="leil-tittel">
+  <div class="ramme">
+    <div class="seksjon-hovud"><h2 id="leil-tittel">Eit lite utval av leilegheitene våre</h2></div>
+    <ul class="eigedom-rutenett">
+      <% for (const e of content.properties) { const framside = e.cover || e.image; %>
+      <li class="eigedom-kort">
+        <% if (e.slug) { %><a href="/eigedom/<%= e.slug %>"><% } %>
+        <% if (framside) { %>
+        <div class="eigedom-kort-bilete">
+          <img src="<%= mediaUrl(framside, 'sm') %>" srcset="<%= srcset(framside) %>" sizes="(min-width: 720px) 30vw, 90vw" alt="<%= mediaAlt(framside) || e.title %>" loading="lazy" width="282" height="391" />
+          <% if (e.status) { %><span class="status-merke status-merke-bilete status-<%= e.status %>"><%= e.status === 'ledig' ? 'Ledig' : 'Utleigd' %></span><% } %>
+        </div>
+        <% } %>
+        <h3><%= e.title %><% if (!framside && e.status) { %> <span class="status-merke status-<%= e.status %>"><%= e.status === 'ledig' ? 'Ledig' : 'Utleigd' %></span><% } %></h3>
+        <% const meta = [e.soverom ? e.soverom + ' soverom' : null, e.areal ? e.areal + ' m²' : null, e.ledigFra ? 'Ledig frå ' + e.ledigFra : null].filter(Boolean).join(' · '); %>
+        <% if (meta) { %><p class="eigedom-kort-meta"><%= meta %></p><% } %>
+        <% if (e.slug) { %></a><% } %>
+      </li>
+      <% } %>
+    </ul>
+  </div>
+</section>
+<% } %>
+
+<%- include('../partials/bottom') %>

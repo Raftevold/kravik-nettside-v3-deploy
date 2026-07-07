@@ -1,0 +1,29 @@
+<%- include('partials/atop', { tittel: 'Varsellinje' }) %>
+
+<p class="admin-forklaring">Ei smal melding som blir vist øvst på alle sider når ho er slått på –
+nyttig ved ferieavvikling, kampanjar eller driftsmeldingar.</p>
+
+<form method="post" action="/admin/varsellinje" class="admin-skjema">
+  <input type="hidden" name="_csrf" value="<%= csrf %>" />
+  <div class="felt felt-brytar">
+    <input type="checkbox" id="enabled" name="enabled" <%= alertBar.enabled ? 'checked' : '' %> />
+    <label for="enabled"><strong>Vis varsellinja</strong></label>
+  </div>
+  <div class="felt">
+    <label for="text">Tekst</label>
+    <input id="text" name="text" value="<%= alertBar.text %>" maxlength="300"
+      placeholder="T.d. «Butikken er feriestengd veke 28–29 – ring 57 87 14 88 ved akutte behov»" />
+  </div>
+  <div class="felt">
+    <label for="link">Lenkje (valfri – gjer heile varsellinja klikkbar, t.d. /kontakt)</label>
+    <input id="link" name="link" value="<%= alertBar.link %>" placeholder="/kontakt" />
+  </div>
+  <button type="submit" class="knapp knapp-primar">Lagre</button>
+</form>
+
+<% if (alertBar.enabled && alertBar.text) { %>
+<h2>Slik ser ho ut no</h2>
+<div class="varsellinje-forhand"><%= alertBar.text %><%= alertBar.link ? ' →' : '' %></div>
+<% } %>
+
+<%- include('partials/abot') %>

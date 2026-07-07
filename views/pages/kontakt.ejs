@@ -1,0 +1,109 @@
+<%- include('../partials/top') %>
+<% const p = content.pages.kontakt; %>
+<%- include('../partials/sidehovud', { title: p.title, lead: p.intro, image: p.headerImage }) %>
+
+<section class="seksjon">
+  <div class="ramme delt">
+    <div id="kontaktskjema" class="skjema-holdar">
+      <h2>Send oss ei melding</h2>
+      <% if (sent) { %>
+      <div class="skjema-kvittering" role="status">
+        <h3><%- include('../partials/icon', { name: 'sjekk' }) %> Takk for meldinga!</h3>
+        <p>Vi har motteke meldinga di og svarer så snart vi kan. Hastar det? Ring oss på
+        <a href="<%= telHref(site.phone) %>"><%= site.phone %></a>.</p>
+      </div>
+      <% } %>
+      <% if (formError) { %>
+      <div class="skjema-feil" role="alert"><p><%= formError %></p></div>
+      <% } %>
+      <form method="post" action="/kontakt" novalidate>
+        <div class="felt">
+          <label for="navn">Namn <span aria-hidden="true">*</span></label>
+          <input type="text" id="navn" name="navn" required autocomplete="name" value="<%= formValues.navn || '' %>" />
+        </div>
+        <div class="felt-rad">
+          <div class="felt">
+            <label for="jobbtype">Kva gjeld det?</label>
+            <select id="jobbtype" name="jobbtype">
+              <option value="" <%= !formValues.jobbtype ? 'selected' : '' %>>(vel gjerne type jobb)</option>
+              <% for (const s of content.services) { %>
+              <option value="<%= s.title %>" <%= formValues.jobbtype === s.title ? 'selected' : '' %>><%= s.title %></option>
+              <% } %>
+              <option value="Anna" <%= formValues.jobbtype === 'Anna' ? 'selected' : '' %>>Anna</option>
+            </select>
+          </div>
+          <div class="felt">
+            <label for="adresse">Adresse/stad for jobben</label>
+            <input type="text" id="adresse" name="adresse" autocomplete="street-address" value="<%= formValues.adresse || '' %>" placeholder="T.d. Setrevegen 12, Stryn" />
+          </div>
+        </div>
+        <div class="felt-rad">
+          <div class="felt">
+            <label for="epost">E-post</label>
+            <input type="email" id="epost" name="epost" autocomplete="email" value="<%= formValues.epost || '' %>" aria-describedby="kontaktinfo-hint" />
+          </div>
+          <div class="felt">
+            <label for="telefon">Telefon</label>
+            <input type="tel" id="telefon" name="telefon" autocomplete="tel" value="<%= formValues.telefon || '' %>" aria-describedby="kontaktinfo-hint" />
+          </div>
+        </div>
+        <p class="felt-hint" id="kontaktinfo-hint">Fyll ut e-post eller telefon, slik at vi får svart deg.</p>
+        <div class="felt">
+          <label for="melding">Kva kan vi hjelpe deg med? <span aria-hidden="true">*</span></label>
+          <textarea id="melding" name="melding" rows="6" required><%= formValues.melding || '' %></textarea>
+        </div>
+        <div class="felt felt-skjult" aria-hidden="true">
+          <label for="nettstad">La dette feltet stå tomt</label>
+          <input type="text" id="nettstad" name="nettstad" tabindex="-1" autocomplete="off" />
+        </div>
+        <p class="felt-hint">Vi brukar opplysningane berre til å svare på førespurnaden din.
+        Les meir i <a href="/personvern">personvernerklæringa</a>.</p>
+        <button type="submit" class="knapp knapp-primar knapp-stor">Send melding</button>
+      </form>
+    </div>
+
+    <div>
+      <h2>Direkte kontakt</h2>
+      <ul class="team-liste">
+        <% for (const t of content.team) { %>
+        <li>
+          <strong><%= t.name %></strong><br />
+          <span class="team-rolle"><%= t.role %></span><br />
+          <a href="<%= telHref(t.phone) %>"><%= t.phone %></a> · <a href="mailto:<%= t.email %>"><%= t.email %></a>
+        </li>
+        <% } %>
+      </ul>
+
+      <h2>Avdelingane våre</h2>
+      <ul class="avdelingar avdelingar-smal">
+        <% for (const d of site.departments) { %>
+        <li class="avdeling">
+          <h3><%= d.name %></h3>
+          <p><%= d.address %></p>
+          <p><a href="<%= telHref(d.phone) %>">Tlf: <%= d.phone %></a></p>
+        </li>
+        <% } %>
+      </ul>
+
+      <% if (site.openingHours && site.openingHours.length) { %>
+      <h2>Opningstider</h2>
+      <dl class="opningstider-liste"><% for (const o of site.openingHours) { %><div><dt><%= o.label %></dt><dd><%= o.value %></dd></div><% } %></dl>
+      <% if (site.openingHoursNote) { %><p><%= site.openingHoursNote %></p><% } %>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<section class="seksjon seksjon-tona">
+  <div class="ramme">
+    <h2>Finn fram til oss</h2>
+    <div class="kart-holdar kart-brei" data-kart-src="<%= site.mapEmbed %>">
+      <div class="kart-plasshaldar">
+        <p>Kartet blir levert av Google Maps og blir først lasta når du samtykkjer til eksternt innhald.</p>
+        <button type="button" class="knapp knapp-sekundar" data-last-kart>Vis kart</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/bottom') %>

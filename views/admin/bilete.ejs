@@ -1,0 +1,50 @@
+<%- include('partials/atop', { tittel: 'Bilete og galleri' }) %>
+
+<h2>Last opp nye bilete</h2>
+<form method="post" action="/admin/bilete/last-opp" enctype="multipart/form-data" class="admin-skjema">
+  <input type="hidden" name="_csrf" value="<%= csrf %>" />
+  <div class="felt">
+    <label for="bilete">Vel bilete (JPG/PNG/WebP, inntil 20 om gongen). Dei blir automatisk
+    komprimerte og laga i fleire storleikar.</label>
+    <input type="file" id="bilete" name="bilete" accept="image/jpeg,image/png,image/webp,image/avif" multiple required />
+  </div>
+  <div class="felt felt-brytar">
+    <input type="checkbox" id="tilGalleri" name="tilGalleri" checked />
+    <label for="tilGalleri">Legg dei òg i galleriet</label>
+  </div>
+  <button type="submit" class="knapp knapp-primar">Last opp</button>
+</form>
+
+<h2>Alle bilete (<%= (content.media || []).length %>)</h2>
+<p class="admin-forklaring">«I galleriet» styrer om biletet blir vist på galleri-sida. Skriv gjerne ein
+kort alt-tekst («kva viser biletet?») – det hjelper blinde brukarar og Google.</p>
+
+<ul class="admin-bilete-rutenett">
+  <% for (const m of (content.media || [])) { const iGalleri = (content.gallery || []).some(g => g.image === m.id); %>
+  <li class="admin-bilete-kort">
+    <img src="/media/<%= m.id %>-sm.webp" alt="<%= m.alt %>" loading="lazy" width="160" height="120" />
+    <p class="admin-bilete-namn"><code><%= m.id %></code> <span class="admin-dus"><%= m.w %>×<%= m.h %></span></p>
+    <form method="post" action="/admin/bilete/alt" class="admin-altform">
+      <input type="hidden" name="_csrf" value="<%= csrf %>" />
+      <input type="hidden" name="id" value="<%= m.id %>" />
+      <label class="sr-only" for="alt-<%= m.id %>">Alt-tekst for <%= m.id %></label>
+      <input id="alt-<%= m.id %>" name="alt" value="<%= m.alt %>" placeholder="Alt-tekst …" maxlength="200" />
+      <button class="knapp knapp-liten">Lagre</button>
+    </form>
+    <div class="admin-rad-handlingar">
+      <form method="post" action="/admin/galleri/toggle">
+        <input type="hidden" name="_csrf" value="<%= csrf %>" />
+        <input type="hidden" name="id" value="<%= m.id %>" />
+        <button class="knapp knapp-liten"><%= iGalleri ? '✓ I galleriet – ta ut' : 'Legg i galleriet' %></button>
+      </form>
+      <form method="post" action="/admin/bilete/slett" data-stadfest="Slette biletet «<%= m.id %>» for godt? Sjekk at det ikkje er i bruk på ei side.">
+        <input type="hidden" name="_csrf" value="<%= csrf %>" />
+        <input type="hidden" name="id" value="<%= m.id %>" />
+        <button class="knapp knapp-liten knapp-fare">Slett</button>
+      </form>
+    </div>
+  </li>
+  <% } %>
+</ul>
+
+<%- include('partials/abot') %>

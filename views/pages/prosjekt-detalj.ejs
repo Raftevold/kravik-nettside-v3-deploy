@@ -1,0 +1,60 @@
+<%- include('../partials/top') %>
+<% const pr = project; %>
+
+<div class="sidehovud sidehovud-utan-bilete">
+  <div class="ramme sidehovud-inner">
+    <p class="sidehovud-sti"><a href="/prosjekt">← Alle prosjekt</a></p>
+    <h1><%= pr.title %></h1>
+    <% if (pr.category || pr.place || pr.year) { %>
+    <p class="sidehovud-ingress"><%= [pr.category, pr.place, pr.year].filter(Boolean).join(' · ') %></p>
+    <% } %>
+  </div>
+</div>
+
+<section class="seksjon">
+  <div class="ramme">
+    <% if (pr.before && pr.after) { %>
+    <div class="foretter" data-foretter>
+      <img class="foretter-etter" src="<%= mediaUrl(pr.after, 'lg') %>" srcset="<%= srcset(pr.after) %>" sizes="(min-width: 1000px) 900px, 95vw" alt="<%= mediaAlt(pr.after) || 'Etter: ' + pr.title %>" />
+      <img class="foretter-for" src="<%= mediaUrl(pr.before, 'lg') %>" srcset="<%= srcset(pr.before) %>" sizes="(min-width: 1000px) 900px, 95vw" alt="<%= mediaAlt(pr.before) || 'Før: ' + pr.title %>" />
+      <div class="foretter-linje" aria-hidden="true"></div>
+      <span class="foretter-merke foretter-merke-for" aria-hidden="true">Før</span>
+      <span class="foretter-merke foretter-merke-etter" aria-hidden="true">Etter</span>
+      <label class="sr-only" for="foretter-slider">Samanlikn før- og etter-bilete</label>
+      <input id="foretter-slider" class="foretter-slider" type="range" min="0" max="100" value="50" step="1" />
+    </div>
+    <p class="foretter-hjelp">Dra i glidebrytaren for å samanlikne før og etter.</p>
+    <% } %>
+
+    <div class="delt">
+      <div class="brodtekst">
+        <% if (pr.description) { %>
+        <%- nl2p(pr.description) %>
+        <% } %>
+      </div>
+      <div class="infoboks">
+        <h2>Vil du ha noko liknande?</h2>
+        <p>Ta kontakt, så ser vi på prosjektet ditt i lag – frå idé og teikning til ferdig resultat.</p>
+        <p><a class="knapp knapp-primar" href="/kontakt#kontaktskjema">Be om tilbod</a></p>
+        <p><a href="<%= telHref(site.phone) %>">Eller ring <%= site.phone %></a></p>
+      </div>
+    </div>
+
+    <% const galleryImages = (pr.images || []).filter((id) => id !== pr.before && id !== pr.after); %>
+    <% if (galleryImages.length) { %>
+    <h2 class="prosjekt-galleri-tittel">Bilete frå prosjektet</h2>
+    <ul class="galleri-rutenett">
+      <% for (const id of galleryImages) { %>
+      <li>
+        <button type="button" class="galleri-knapp" data-lysbilete="<%= mediaUrl(id, 'lg') %>" data-alt="<%= mediaAlt(id) %>">
+          <img src="<%= mediaUrl(id, 'sm') %>" srcset="<%= srcset(id) %>" sizes="(min-width: 720px) 25vw, 50vw" alt="<%= mediaAlt(id) || 'Bilete frå prosjektet' %>" loading="lazy" width="400" height="400" />
+        </button>
+      </li>
+      <% } %>
+    </ul>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/cta-band') %>
+<%- include('../partials/bottom') %>

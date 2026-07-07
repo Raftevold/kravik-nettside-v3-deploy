@@ -1,0 +1,46 @@
+<%- include('../partials/top') %>
+<% const p = content.pages.omOss; %>
+<%- include('../partials/sidehovud', { title: p.title, lead: null, image: p.headerImage }) %>
+
+<section class="seksjon">
+  <div class="ramme delt">
+    <div class="brodtekst">
+      <%- nl2p(p.body) %>
+      <h2>Sertifiseringar og medlemskap</h2>
+      <ul class="hake-liste">
+        <li><%- include('../partials/icon', { name: 'sjekk' }) %> Sentralt godkjend verksemd</li>
+        <li><%- include('../partials/icon', { name: 'blad' }) %> Miljøfyrtårn-sertifisert (2022) – <a href="/miljo-og-berekraft">les meir</a></li>
+        <li><%- include('../partials/icon', { name: 'sjekk' }) %> Godkjend opplæringsbedrift – <a href="/opplaeringsbedrift">bli lærling</a></li>
+        <li><%- include('../partials/icon', { name: 'sjekk' }) %> Del av Comfort-kjeden</li>
+      </ul>
+    </div>
+    <dl class="tal-rekke tal-rekke-lodrett">
+      <div><dt>1933</dt><dd>grunnlagd</dd></div>
+      <div><dt>4.</dt><dd>generasjon i familien Vik</dd></div>
+      <div><dt>21</dt><dd>tilsette</dd></div>
+      <div><dt>2</dt><dd>avdelingar: Stryn og Nordfjordeid</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="seksjon seksjon-tona" aria-labelledby="folk-tittel">
+  <div class="ramme">
+    <div class="seksjon-hovud"><h2 id="folk-tittel">Folka du møter</h2></div>
+    <ul class="team-rutenett">
+      <% for (const t of content.team) { %>
+      <li class="team-kort">
+        <% if (t.image) { %>
+        <img src="<%= mediaUrl(t.image, 'sm') %>" alt="<%= t.name %>" loading="lazy" width="96" height="96" />
+        <% } %>
+        <h3><%= t.name %></h3>
+        <p class="team-rolle"><%= t.role %></p>
+        <p><a href="<%= telHref(t.phone) %>"><%= t.phone %></a><br />
+        <a href="mailto:<%= t.email %>"><%= t.email %></a></p>
+      </li>
+      <% } %>
+    </ul>
+  </div>
+</section>
+
+<%- include('../partials/cta-band') %>
+<%- include('../partials/bottom') %>

@@ -1,0 +1,895 @@
+/* ==========================================================================
+   Kr. A. Vik – rørslelag (v3)
+   Alt her er progressiv forbetring: utan JS (eller med prefers-reduced-motion)
+   er sida identisk med v2. Ingen inline-stilar (CSP styleSrc 'self') –
+   JS kommuniserer berre via klassar og CSS-variablar (CSSOM).
+   Temaspråk: vatn/flyt for rørleggardelen, varmt kveldslys for eigedom.
+   Éi easing-familie og éin varigheitsskala, så alt kjennest som éin designar.
+   ========================================================================== */
+
+:root {
+  --ease-ut: cubic-bezier(0.16, 1, 0.3, 1);        /* entré/avduking – mjuk utglid */
+  --ease-mikro: cubic-bezier(0.2, 0.8, 0.2, 1);    /* hover/fokus */
+  --ease-skvulp: cubic-bezier(0.34, 1.4, 0.64, 1); /* bitte små, leikne detaljar */
+  --t-blip: 150ms;
+  --t-mikro: 250ms;
+  --t-fyll: 450ms;
+  --t-reveal: 650ms;
+  --t-demo: 900ms;
+  --t-tal: 1500ms;
+}
+
+/* Kryssfading mellom sider der nettlesaren støttar det (Chromium). Gratis
+   premium-kjensle, degraderer stille alle andre stader. Gata på
+   reduced-motion – den globale kill-switchen når ikkje desse pseudoelementa. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.22s;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Avdukingssystem (scroll-reveal)
+   JS set data-avduk + --avduk-i (stagger-indeks) og klassa .vist når
+   elementet kjem inn i biletet. Skjult starttilstand gjeld BERRE når
+   html.har-js finst og brukaren ikkje har bede om redusert rørsle –
+   innhald kan aldri bli verande usynleg.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  html.har-js [data-avduk] {
+    opacity: 0;
+    transition:
+      opacity 550ms ease-out,
+      transform var(--t-reveal) var(--ease-ut);
+    transition-delay: calc(var(--avduk-i, 0) * 70ms);
+  }
+
+  html.har-js [data-avduk='opp'] { transform: translateY(24px); }
+  html.har-js [data-avduk='inn'] { transform: none; }
+  html.har-js [data-avduk='venstre'] { transform: translateX(-28px); }
+  html.har-js [data-avduk='hogre'] { transform: translateX(28px); }
+  html.har-js [data-avduk='zoom'] { transform: scale(0.95) translateY(14px); }
+
+  html.har-js [data-avduk].vist {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Bilete i galleri: mjuk klipp + zoom-avduking. Kortare enn resten og med
+     større stagger, så færre store bilete repaintar samstundes (clip-path
+     går på main thread). */
+  html.har-js [data-avduk='klipp'] {
+    clip-path: inset(9% 9% 9% 9% round 12px);
+    transform: scale(1.05);
+    transition:
+      opacity 450ms ease-out,
+      clip-path var(--t-reveal) var(--ease-ut),
+      transform var(--t-reveal) var(--ease-ut);
+    transition-delay: calc(var(--avduk-i, 0) * 90ms);
+  }
+
+  html.har-js [data-avduk='klipp'].vist {
+    clip-path: inset(0 0 0 0 round 0px);
+    transform: none;
+  }
+
+  html.har-js [data-avduk].ferdig {
+    transition-delay: 0s;
+  }
+
+  /* H2-maskereveal: teksten stig opp or si «lomme», så blir koppar-streken
+     lagd som eit røyr under. JS pakkar teksten i span.h-maske. */
+  html.har-js .seksjon-hovud h2 {
+    overflow: hidden;
+  }
+
+  html.har-js [data-avduk] .h-maske {
+    display: inline-block;
+    transform: translateY(110%);
+    transition: transform var(--t-reveal) var(--ease-ut) 80ms;
+  }
+
+  html.har-js [data-avduk].vist .h-maske {
+    transform: none;
+  }
+
+  /* Sjølve teikninga av streken (plassen er reservert lenger nede) */
+  html.har-js [data-avduk]:not(.vist) h2::after {
+    transform: scaleX(0);
+  }
+
+  html.har-js [data-avduk].vist h2::after {
+    transform: scaleX(1);
+  }
+}
+
+/* Koppar-streken under seksjonsoverskrifter. Ligg UTANFOR har-js/media-vakter
+   med vilje: plassen er reservert frå første paint (null CLS), og streken er
+   eit fint statisk designelement også utan JS / med redusert rørsle. */
+.seksjon-hovud h2::after {
+  content: '';
+  display: block;
+  width: 2.6rem;
+  height: 3px;
+  margin-top: 0.35em;
+  border-radius: 2px;
+  background: var(--koppar);
+  transform-origin: left center;
+  transition: transform 500ms ease-out 380ms;
+}
+
+/* --------------------------------------------------------------------------
+   Hero: innlastingskoreografi (rein CSS – treng ikkje JS)
+   fill-mode both ⇒ inga blinking før forseinka animasjonar startar.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes stig-opp {
+    from { opacity: 0; transform: translateY(26px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .hero-merke { animation: stig-opp 0.7s var(--ease-ut) 0.05s both; }
+  .hero h1 { animation: stig-opp 0.8s var(--ease-ut) 0.14s both; }
+  .hero-ingress { animation: stig-opp 0.8s var(--ease-ut) 0.28s both; }
+  .hero-knappar { animation: stig-opp 0.8s var(--ease-ut) 0.42s both; }
+  .hero-truverd li { animation: stig-opp 0.7s var(--ease-ut) both; }
+  .hero-truverd li:nth-child(1) { animation-delay: 0.58s; }
+  .hero-truverd li:nth-child(2) { animation-delay: 0.7s; }
+  .hero-truverd li:nth-child(3) { animation-delay: 0.82s; }
+  .hero-truverd li:nth-child(4) { animation-delay: 0.94s; }
+
+  /* Ord-for-ord-avduking av hero-tittelen (JS deler i ord). Kvart ord stig
+     opp or si eiga maskerings-lomme – signaturaugneblinken på framsida. */
+  .hero h1.h1-delt { animation: none; opacity: 1; }
+
+  .h1-delt .ord {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+
+  @keyframes ord-stig {
+    from { transform: translateY(108%); }
+    to { transform: none; }
+  }
+
+  .h1-delt .ord-inner {
+    display: inline-block;
+    animation: ord-stig 0.75s var(--ease-ut) both;
+    animation-delay: calc(0.12s + var(--ord-i, 0) * 70ms);
+  }
+
+  /* Sidehovud på undersider: same koreografi. H1 startar utan delay –
+     på tekst-sider er han gjerne LCP-elementet og skal aldri vente. */
+  .sidehovud h1 { animation: stig-opp 0.7s var(--ease-ut) both; }
+  .sidehovud-sti { animation: stig-opp 0.6s var(--ease-ut) 0.08s both; }
+  .sidehovud-ingress { animation: stig-opp 0.7s var(--ease-ut) 0.16s both; }
+
+  /* Hero-biletet: roleg innzooming ved lasting (LCP ventar aldri – delay 0) */
+  @keyframes hero-pust {
+    from { transform: scale(1.06); }
+    to { transform: scale(1); }
+  }
+
+  .hero-bilete { animation: hero-pust 2.4s var(--ease-ut) both; }
+}
+
+/* --------------------------------------------------------------------------
+   Ambient canvas (luftbobler i hero, varmt lysstøv på eigedom)
+   JS injiserer <canvas class="ambient-lerret"> – reint dekorativt.
+   -------------------------------------------------------------------------- */
+.ambient-lerret {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* over gradient-overlayen (seinare i målerekkjefølgda), under tekst */
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Bølgje nedst i heroen (JS injiserer SVG) – vatnet som møter innhaldet
+   -------------------------------------------------------------------------- */
+.bolgje {
+  position: absolute;
+  inset-inline: 0;
+  bottom: -1px;
+  height: clamp(34px, 6vw, 72px);
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.bolgje svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  display: block;
+}
+
+/* Gjer plass til bølgja så ho ikkje ligg over truverd-lista. Alltid reservert
+   (ikkje gata på har-bolgje) så JS-injeksjonen aldri skubbar layouten (CLS). */
+.hero .hero-truverd {
+  padding-bottom: calc(1.4rem + clamp(30px, 5vw, 60px));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes bolgje-driv {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .bolgje-lag-1 { animation: bolgje-driv 26s linear infinite; }
+  .bolgje-lag-2 { animation: bolgje-driv 17s linear infinite reverse; opacity: 0.45; }
+}
+
+/* --------------------------------------------------------------------------
+   Leseprogress: tynn koparlinje øvst – «kor langt har eg komme»
+   -------------------------------------------------------------------------- */
+.les-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 300;
+  background: linear-gradient(90deg, var(--koppar), var(--koppar-lys));
+  transform-origin: 0 50%;
+  transform: scaleX(var(--progress, 0));
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Topplinje/nav: skrollmedviten header + retningsstyrt understrek
+   -------------------------------------------------------------------------- */
+.topp {
+  transition: box-shadow 0.25s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.topp.skrolla {
+  box-shadow: 0 1px 0 var(--linje), 0 10px 30px -18px rgb(8 25 32 / 0.35);
+}
+
+/* Gøymer seg roleg på veg ned (etter 400px), kjem att ved første rørsle opp */
+html.har-js .topp.topp-skjult {
+  transform: translateY(-100%);
+}
+
+.hovudlinje {
+  transition: padding-block 0.25s ease;
+}
+
+@media (min-width: 900px) {
+  .topp.skrolla .hovudlinje { padding-block: 0.35rem; }
+}
+
+.logo img {
+  transition: transform 0.25s var(--ease-ut);
+}
+
+.logo:hover img { transform: scale(1.04); }
+
+/* Understrek som renn inn frå venstre – og vidare ut mot høgre når du slepp
+   (inn-venstre/ut-høgre = straumretninga i eit røyr) */
+@media (min-width: 900px) {
+  .nav-liste a:not(.knapp) {
+    position: relative;
+  }
+
+  .nav-liste a:not(.knapp)::after {
+    content: '';
+    position: absolute;
+    left: 0.8rem;
+    right: 0.8rem;
+    bottom: 0.3rem;
+    height: 2.5px;
+    border-radius: 2px;
+    background: var(--koppar);
+    transform: scaleX(0);
+    transform-origin: right center; /* kviletilstand: streken rann ut mot høgre */
+    transition: transform 320ms var(--ease-mikro);
+  }
+
+  .nav-liste a:not(.knapp):hover::after,
+  .nav-liste a:not(.knapp):focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left center; /* på veg inn: veks frå venstre */
+  }
+
+  .nav-liste a[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+}
+
+/* Varsellinja: eit stille lysstreif i ny og ne, så ho blir lagd merke til */
+@media (prefers-reduced-motion: no-preference) {
+  .varsellinje {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .varsellinje::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    left: -30%;
+    width: 22%;
+    /* Maks 10 % kvit: kvit tekst mot #9e4212 + 10 % held seg over 4,5:1 */
+    background: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.1), transparent);
+    animation: varsel-streif 7s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes varsel-streif {
+    0%, 72% { transform: translateX(0); }
+    92%, 100% { transform: translateX(620%); }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Knappar: løft, koppardråpe-fyll og vassring ved klikk
+   -------------------------------------------------------------------------- */
+.knapp {
+  position: relative;
+  overflow: hidden;
+  /* Eige stablingskontekst: då kan fyll-laget liggje mellom knappbakgrunnen
+     og teksten (negative z-index-barn målast etter bakgrunn, før innhald). */
+  isolation: isolate;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow var(--t-mikro) var(--ease-mikro),
+    transform var(--t-mikro) var(--ease-mikro);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .knapp:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px -10px rgb(22 38 46 / 0.45);
+  }
+
+  .knapp-primar:hover { box-shadow: 0 12px 26px -10px rgb(158 66 18 / 0.65); }
+}
+
+.knapp:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+/* Koppardråpen: mørkare koppar «fyller» knappen nedanfrå ved hover/fokus.
+   Skeiv border-radius + liten rotasjon gjev ei buktande væske-overkant. */
+@media (prefers-reduced-motion: no-preference) {
+  .knapp-primar {
+    background: var(--koppar);
+  }
+
+  .knapp-primar::before {
+    content: '';
+    position: absolute;
+    inset: -45% -12%;
+    z-index: -1;
+    background: var(--koppar-mork);
+    border-radius: 42% 46% 40% 44%;
+    transform: translateY(118%);
+    transition: transform var(--t-fyll) var(--ease-ut);
+    pointer-events: none;
+  }
+
+  .knapp-primar:hover::before,
+  .knapp-primar:focus-visible::before {
+    transform: translateY(26%) rotate(-4deg);
+  }
+}
+
+/* Vassring der ein klikkar (JS legg inn span.dryp med --x/--y) */
+@media (prefers-reduced-motion: no-preference) {
+  .dryp {
+    position: absolute;
+    left: var(--x, 50%);
+    top: var(--y, 50%);
+    width: 8px;
+    height: 8px;
+    margin: -4px 0 0 -4px;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.5);
+    pointer-events: none;
+    z-index: 2;
+    animation: dryp-ring 0.6s var(--ease-ut) forwards;
+  }
+
+  .knapp-sekundar .dryp,
+  .knapp-lys .dryp,
+  .galleri-knapp .dryp {
+    background: rgb(14 74 92 / 0.25);
+  }
+
+  @keyframes dryp-ring {
+    to {
+      transform: scale(24);
+      opacity: 0;
+    }
+  }
+}
+
+/* Pil-lenkjer: pila sym av garde ved hover */
+.pil-lenke::after {
+  display: inline-block;
+  transition: transform 0.3s var(--ease-skvulp);
+}
+
+.pil-lenke:hover::after,
+.pil-lenke:focus-visible::after {
+  transform: translateX(5px);
+}
+
+/* --------------------------------------------------------------------------
+   Kort: løft, koparglød som følgjer peikaren, ikon som «dryp»
+   JS set --mx/--my (prosent) på kort-elementa ved peikarrørsle.
+   -------------------------------------------------------------------------- */
+.kort,
+.referanse,
+.teneste,
+.avdeling,
+.team-kort,
+.eigedom-kort,
+.prosjekt-kort a {
+  position: relative;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kort,
+  .teneste,
+  .avdeling,
+  .team-kort,
+  .referanse {
+    transition: box-shadow 0.35s var(--ease-ut), transform var(--t-mikro) var(--ease-mikro), border-color 0.35s ease;
+  }
+
+  .kort:hover,
+  .teneste:hover,
+  .avdeling:hover,
+  .team-kort:hover,
+  .referanse:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--skugge);
+    border-color: #d8cfbe;
+  }
+
+  /* Koparglød etter peikaren – det vesle «wow-et» ein flyttar handa etter */
+  .kort::after,
+  .teneste::after,
+  .referanse::after,
+  .prosjekt-kort a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      340px circle at var(--mx, 50%) var(--my, 50%),
+      rgb(180 81 26 / 0.09),
+      transparent 65%
+    );
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+  }
+
+  .kort:hover::after,
+  .teneste:hover::after,
+  .referanse:hover::after,
+  .prosjekt-kort a:hover::after {
+    opacity: 1;
+  }
+}
+
+/* Ikonet «dryp» når du tek på kortet – vass-metaforen i miniatyr */
+@media (prefers-reduced-motion: no-preference) {
+  .kort-ikon {
+    transition: background-color 0.3s ease;
+  }
+
+  .kort:hover .kort-ikon,
+  .teneste:hover .kort-ikon {
+    background: #f3d9c4;
+  }
+
+  @keyframes ikon-drypp {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    45% { transform: translateY(3px) rotate(-4deg); }
+  }
+
+  .kort:hover .kort-ikon .ikon,
+  .teneste:hover .kort-ikon .ikon {
+    animation: ikon-drypp 0.45s var(--ease-skvulp) 1;
+  }
+
+  /* Dampen: skjult detalj – varme-ikonet dampar så lenge du held over.
+     JS legg klassa kort-ikon-varme på ikon-brikker med varme-ikon. */
+  .kort-ikon-varme::before,
+  .kort-ikon-varme::after {
+    content: '';
+    position: absolute;
+    bottom: 60%;
+    width: 5px;
+    height: 16px;
+    border-radius: 999px;
+    background: rgb(180 81 26 / 0.45);
+    filter: blur(3px);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .kort-ikon-varme::before { left: 34%; }
+  .kort-ikon-varme::after { left: 58%; }
+
+  .kort:hover .kort-ikon-varme::before,
+  .teneste:hover .kort-ikon-varme::before {
+    animation: damp 2.2s ease-in-out infinite;
+  }
+
+  .kort:hover .kort-ikon-varme::after,
+  .teneste:hover .kort-ikon-varme::after {
+    animation: damp 2.2s ease-in-out 0.4s infinite;
+  }
+
+  @keyframes damp {
+    0% { opacity: 0; transform: translateY(6px) scaleX(1); }
+    40% { opacity: 0.7; }
+    100% { opacity: 0; transform: translateY(-14px) translateX(3px) scaleX(0.6); }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Tal som tel seg opp (JS) – tabulære siffer hindrar hopping i breidda
+   -------------------------------------------------------------------------- */
+.tal-rekke dt {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   Galleri og bilete: roleg zoom ved hover, mjuk lysbilete-opning
+   -------------------------------------------------------------------------- */
+.galleri-knapp img {
+  transition: transform 0.7s var(--ease-ut), filter 0.5s ease;
+}
+
+.galleri-knapp:hover img,
+.galleri-knapp:focus-visible img {
+  transform: scale(1.06);
+  filter: saturate(1.1) brightness(1.03);
+}
+
+.prosjekt-kort img {
+  transition: transform 0.7s var(--ease-ut);
+}
+
+.prosjekt-kort a:hover img {
+  transform: scale(1.05);
+}
+
+/* Eigedom-hovudbiletet skal ikkje zoome (arva regel frå v2 held) */
+.eigedom-hovudknapp:hover img { transform: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .lysbilete[open] {
+    animation: lysbilete-inn 0.35s var(--ease-ut);
+  }
+
+  .lysbilete[open]::backdrop {
+    animation: bakteppe-inn 0.35s ease;
+  }
+
+  @keyframes lysbilete-inn {
+    from { opacity: 0; transform: scale(0.94); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes bakteppe-inn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Omtalar: stjernene glitrar til når kortet blir avduka
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  html.har-js [data-avduk] .stjerner {
+    transition: transform 0.5s var(--ease-skvulp) 0.25s, opacity 0.4s ease 0.25s;
+    transform: scale(0.7);
+    transform-origin: left center;
+    opacity: 0;
+  }
+
+  html.har-js [data-avduk].vist .stjerner {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Eigedom: gyllen time. Sakte «ken burns» som aldri blir ferdig, varmt
+   kveldslys over biletet, og eit Ledig-merke som pustar rolege ringar.
+   -------------------------------------------------------------------------- */
+.eigedom-kort img {
+  transition: transform 5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.eigedom-kort:hover img,
+.eigedom-kort:focus-within img {
+  transform: scale(1.045);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .eigedom-kort {
+    transition: box-shadow 0.35s var(--ease-ut), transform var(--t-mikro) var(--ease-mikro);
+  }
+
+  .eigedom-kort:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--skugge);
+  }
+
+  .eigedom-kort-bilete { overflow: hidden; }
+
+  /* Varmt kveldslys stig opp i biletet ved hover */
+  .eigedom-kort-bilete::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgb(232 155 99 / 0.24), transparent 55%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .eigedom-kort:hover .eigedom-kort-bilete::after,
+  .eigedom-kort:focus-within .eigedom-kort-bilete::after {
+    opacity: 1;
+  }
+}
+
+/* «Ledig»-merket sender rolege sonar-ringar (0,4 Hz – langt under 3 Hz) */
+@media (prefers-reduced-motion: no-preference) {
+  .status-merke-bilete.status-ledig::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: #2c7a4b;
+    z-index: -1;
+    animation: ledig-ring 2.8s var(--ease-ut) infinite;
+  }
+
+  @keyframes ledig-ring {
+    0% { transform: scale(1); opacity: 0.6; }
+    70%, 100% { transform: scale(1.45, 2); opacity: 0; }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   CTA-band: djup, sakte glidande gradient + vassringar som landar éin gong
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  .cta-band {
+    background:
+      radial-gradient(900px 420px at 12% 120%, rgb(180 81 26 / 0.22), transparent 60%),
+      var(--petrol-mork);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  /* Glidande gradientlag (JS injiserer span.cta-gradient). Overdimensjonert
+     og flytta med transform – kompositoren tek jobben, main thread søv. */
+  .cta-gradient {
+    position: absolute;
+    inset: -20% -30%;
+    z-index: -1;
+    background: linear-gradient(115deg, transparent 0%, #10495c 35%, transparent 60%, #0b3a4a 90%);
+    animation: gradient-glid 18s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+
+  @keyframes gradient-glid {
+    from { transform: translateX(-6%); }
+    to { transform: translateX(6%); }
+  }
+
+  /* To rolege ringar veks fram når bandet kjem til syne – og blir ståande */
+  .cta-band::before,
+  .cta-band::after {
+    content: '';
+    position: absolute;
+    border: 1px solid rgb(232 155 99 / 0.5);
+    border-radius: 50%;
+    right: -60px;
+    bottom: -100px;
+    width: 260px;
+    height: 260px;
+    opacity: 0;
+    transform: scale(0.6);
+    pointer-events: none;
+  }
+
+  .cta-band::after {
+    width: 420px;
+    height: 420px;
+    right: -140px;
+    bottom: -180px;
+  }
+
+  html.har-js .cta-band.vist::before {
+    animation: ring-ut 1.8s var(--ease-ut) 0.15s forwards;
+  }
+
+  html.har-js .cta-band.vist::after {
+    animation: ring-ut 1.8s var(--ease-ut) 0.35s forwards;
+  }
+
+  /* Utan JS: ringane står som statisk dekor */
+  html:not(.har-js) .cta-band::before,
+  html:not(.har-js) .cta-band::after {
+    opacity: 0.25;
+    transform: none;
+  }
+
+  @keyframes ring-ut {
+    to { opacity: 0.3; transform: scale(1); }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Før/etter-glidaren: handtaket reagerer, og JS «nudgar» klippet éin gong
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  .foretter-linje::after {
+    transition: transform var(--t-blip) var(--ease-skvulp);
+  }
+
+  .foretter:hover .foretter-linje::after {
+    transform: translate(-50%, -50%) scale(1.12);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Skjema: vasstanden stig – petrol-strek fyller feltet ved fokus
+   -------------------------------------------------------------------------- */
+.felt {
+  position: relative;
+}
+
+.felt::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  right: 10px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--koppar);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform var(--t-mikro) var(--ease-mikro);
+  pointer-events: none;
+}
+
+.felt:focus-within::after {
+  transform: scaleX(1);
+}
+
+.felt input,
+.felt textarea,
+.felt select {
+  transition: border-color 0.2s ease, box-shadow 0.3s var(--ease-ut);
+}
+
+.felt input:focus-visible,
+.felt textarea:focus-visible,
+.felt select:focus-visible {
+  box-shadow: 0 6px 18px -8px rgb(180 81 26 / 0.35);
+}
+
+/* Kvitteringa feirar litt – éin gong */
+@media (prefers-reduced-motion: no-preference) {
+  .skjema-kvittering {
+    animation: kvittering-inn 0.6s var(--ease-skvulp) both;
+  }
+
+  @keyframes kvittering-inn {
+    from { opacity: 0; transform: scale(0.96) translateY(10px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Footer-gardina: sida løftar seg og avdekkjer fundamentet under.
+   JS legg klassa på <html> berre når footeren får plass i viewporten.
+   -------------------------------------------------------------------------- */
+html.gardin main {
+  position: relative;
+  z-index: 1;
+  background: var(--kvit);
+  box-shadow: 0 24px 48px rgb(10 51 65 / 0.18);
+}
+
+html.gardin .botn {
+  position: sticky;
+  bottom: 0;
+  z-index: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Tryggingsnett
+   -------------------------------------------------------------------------- */
+/* Rørsle av (WCAG 2.2.2): brukarstyrt brytar i footeren. motion.js set
+   klassa på <html> før noko anna skjer og hoppar over all initialisering –
+   dette er beltet i tillegg til bukselene. */
+html.rorsle-av *,
+html.rorsle-av *::before,
+html.rorsle-av *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+html.rorsle-av [data-avduk],
+html.rorsle-av .h-maske,
+html.rorsle-av [data-avduk] .stjerner {
+  opacity: 1 !important;
+  transform: none !important;
+  clip-path: none !important;
+}
+
+html.rorsle-av .les-progress,
+html.rorsle-av .ambient-lerret,
+html.rorsle-av .bolgje,
+html.rorsle-av .cta-gradient {
+  display: none !important;
+}
+
+/* Redusert rørsle: site.css slår alt av globalt; her sikrar vi i tillegg at
+   avdukingselement aldri kan stå att skjulte. */
+@media (prefers-reduced-motion: reduce) {
+  html.har-js [data-avduk],
+  html.har-js .h-maske,
+  html.har-js [data-avduk] .stjerner {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+
+  .les-progress,
+  .ambient-lerret,
+  .bolgje,
+  .cta-gradient {
+    display: none !important;
+  }
+}
+
+@media print {
+  .les-progress,
+  .ambient-lerret,
+  .bolgje,
+  .cta-gradient {
+    display: none !important;
+  }
+
+  /* Uavdekte element skal aldri kunne skrivast ut usynlege */
+  html.har-js [data-avduk],
+  html.har-js .h-maske,
+  html.har-js [data-avduk] .stjerner {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+}

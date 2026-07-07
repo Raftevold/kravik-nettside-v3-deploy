@@ -1,0 +1,78 @@
+<%- include('partials/atop', { tittel: 'Kontaktinfo og generelt' }) %>
+
+<form method="post" action="/admin/generelt" class="admin-skjema">
+  <input type="hidden" name="_csrf" value="<%= csrf %>" />
+
+  <fieldset>
+    <legend>Bedrifta</legend>
+    <div class="felt"><label for="name">Namn</label>
+      <input id="name" name="name" value="<%= site.name %>" required /></div>
+    <div class="felt"><label for="tagline">Slagord (vist i footer)</label>
+      <input id="tagline" name="tagline" value="<%= site.tagline %>" /></div>
+    <div class="felt"><label for="orgnr">Org.nr</label>
+      <input id="orgnr" name="orgnr" value="<%= site.orgnr %>" /></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Kontakt</legend>
+    <div class="felt"><label for="phone">Telefon</label>
+      <input id="phone" name="phone" value="<%= site.phone %>" /></div>
+    <div class="felt"><label for="email">E-post</label>
+      <input id="email" name="email" type="email" value="<%= site.email %>" /></div>
+    <div class="felt-rad">
+      <div class="felt"><label for="street">Gateadresse</label>
+        <input id="street" name="street" value="<%= site.address.street %>" /></div>
+      <div class="felt"><label for="zip">Postnr.</label>
+        <input id="zip" name="zip" value="<%= site.address.zip %>" /></div>
+      <div class="felt"><label for="city">Stad</label>
+        <input id="city" name="city" value="<%= site.address.city %>" /></div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Avdelingar (inntil 4)</legend>
+    <% for (let i = 0; i < 4; i++) { const d = site.departments[i] || {}; %>
+    <div class="felt-rad">
+      <div class="felt"><label for="dep_name_<%= i %>">Namn</label>
+        <input id="dep_name_<%= i %>" name="dep_name_<%= i %>" value="<%= d.name || '' %>" /></div>
+      <div class="felt"><label for="dep_address_<%= i %>">Adresse</label>
+        <input id="dep_address_<%= i %>" name="dep_address_<%= i %>" value="<%= d.address || '' %>" /></div>
+      <div class="felt"><label for="dep_phone_<%= i %>">Telefon</label>
+        <input id="dep_phone_<%= i %>" name="dep_phone_<%= i %>" value="<%= d.phone || '' %>" /></div>
+      <div class="felt"><label for="dep_note_<%= i %>">Merknad</label>
+        <input id="dep_note_<%= i %>" name="dep_note_<%= i %>" value="<%= d.note || '' %>" /></div>
+    </div>
+    <% } %>
+  </fieldset>
+
+  <fieldset>
+    <legend>Opningstider</legend>
+    <div class="felt">
+      <label for="openingHours">Éi linje per oppføring, format: <code>Dagar|Tider</code> (t.d. <code>Måndag–fredag|07.30–15.30</code>)</label>
+      <textarea id="openingHours" name="openingHours" rows="4"><%= (site.openingHours || []).map(o => `${o.label}|${o.value}`).join('\n') %></textarea>
+    </div>
+    <div class="felt"><label for="openingHoursNote">Merknad (t.d. avvik i høgtider)</label>
+      <input id="openingHoursNote" name="openingHoursNote" value="<%= site.openingHoursNote || '' %>" /></div>
+    <p class="felt-hint">Opningstidene blir viste på framsida, kontakt- og butikksida når dei er fylte ut.</p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Sosiale medium</legend>
+    <div class="felt">
+      <label for="social">Éi linje per kanal, format: <code>namn|URL</code> (t.d. <code>facebook|https://www.facebook.com/…</code>)</label>
+      <textarea id="social" name="social" rows="3"><%= (site.social || []).map(s => `${s.type}|${s.url}`).join('\n') %></textarea>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Kart</legend>
+    <div class="felt">
+      <label for="mapEmbed">Google Maps innbyggings-URL (frå «Del» → «Bygg inn kart»)</label>
+      <textarea id="mapEmbed" name="mapEmbed" rows="3"><%= site.mapEmbed %></textarea>
+    </div>
+  </fieldset>
+
+  <button type="submit" class="knapp knapp-primar">Lagre</button>
+</form>
+
+<%- include('partials/abot') %>

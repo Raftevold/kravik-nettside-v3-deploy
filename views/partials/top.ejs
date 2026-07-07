@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="nn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= seoTitle %></title>
+  <meta name="description" content="<%= seoDescription %>" />
+  <% if (typeof canonical !== 'undefined' && canonical) { %>
+  <link rel="canonical" href="<%= canonical %>" />
+  <meta property="og:url" content="<%= canonical %>" />
+  <% } %>
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="<%= seoTitle %>" />
+  <meta property="og:description" content="<%= seoDescription %>" />
+  <meta property="og:locale" content="nn_NO" />
+  <% if (typeof canonical !== 'undefined' && canonical && content.pages.home.heroImage) {
+       const origin = canonical.replace(/^(https?:\/\/[^/]+).*$/, '$1'); %>
+  <meta property="og:image" content="<%= origin %><%= mediaUrl(content.pages.home.heroImage, 'lg') %>" />
+  <% } %>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="preload" href="/fonts/manrope.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/css/site.css?v=<%= assetV %>" />
+  <link rel="stylesheet" href="/css/motion.css?v=<%= assetV %>" />
+  <% if (typeof jsonLd !== 'undefined' && jsonLd) { %>
+  <script type="application/ld+json" nonce="<%= cspNonce %>"><%- JSON.stringify(jsonLd).replace(/</g, '\\u003c') %></script>
+  <% } %>
+  <% if (plausibleDomain) { %>
+  <script defer data-domain="<%= plausibleDomain %>" src="https://plausible.io/js/script.js"></script>
+  <% } %>
+</head>
+<body>
+  <a class="skip-link" href="#hovudinnhald">Hopp til hovudinnhaldet</a>
+
+  <% if (alertBar && alertBar.enabled && alertBar.text) { %>
+    <% if (alertBar.link) { %>
+  <a class="varsellinje" href="<%= alertBar.link %>"><span><%= alertBar.text %></span><span class="varsellinje-pil" aria-hidden="true">→</span></a>
+    <% } else { %>
+  <div class="varsellinje" role="status"><span><%= alertBar.text %></span></div>
+    <% } %>
+  <% } %>
+
+  <header class="topp">
+    <div class="topplinje">
+      <div class="ramme topplinje-inner">
+        <p class="topplinje-adresse"><%= site.address.street %>, <%= site.address.zip %> <%= site.address.city %></p>
+        <div class="topplinje-kontakt">
+          <a href="<%= telHref(site.phone) %>">Tlf: <%= site.phone %></a>
+          <a href="mailto:<%= site.email %>"><%= site.email %></a>
+        </div>
+      </div>
+    </div>
+    <div class="ramme hovudlinje">
+      <a class="logo" href="/" aria-label="<%= site.name %> – til framsida">
+        <img src="/img/logo-kravik.png" alt="<%= site.name %>" width="171" height="64" />
+      </a>
+      <nav class="hovudnav" aria-label="Hovudmeny">
+        <button class="nav-knapp" type="button" aria-expanded="false" aria-controls="hovudmeny">
+          <span class="nav-knapp-strek" aria-hidden="true"></span>
+          <span class="nav-knapp-tekst">Meny</span>
+        </button>
+        <ul id="hovudmeny" class="nav-liste">
+          <% const nav = [
+            ['/', 'Framsida'],
+            ['/tenester', 'Tenester'],
+            ['/prosjekt', 'Prosjekt'],
+            ['/butikk-og-landbruk', 'Butikk'],
+            ['/om-oss', 'Om oss'],
+            ['/eigedom', 'Eigedom'],
+            ['/kontakt', 'Kontakt'],
+          ]; %>
+          <% for (const [href, label] of nav) { %>
+          <li><a href="<%= href %>" <%- currentPath === href || (href !== '/' && currentPath.startsWith(href + '/')) ? 'aria-current="page"' : '' %>><%= label %></a></li>
+          <% } %>
+          <li class="nav-cta"><a class="knapp knapp-primar" href="/kontakt#kontaktskjema">Be om tilbod</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="hovudinnhald">

@@ -1,0 +1,18 @@
+<%- include('partials/atop', { tittel: 'Sider og SEO' }) %>
+
+<p class="admin-forklaring">Her endrar du tekstane og søkjemotor-felta (SEO) for kvar side.</p>
+
+<table class="admin-tabell">
+  <thead><tr><th>Side</th><th>SEO-tittel</th><th></th></tr></thead>
+  <tbody>
+    <% for (const [key, def] of Object.entries(PAGE_DEFS)) { %>
+    <tr>
+      <td><strong><%= def.label %></strong></td>
+      <td class="admin-dus"><%= (content.pages[key] && content.pages[key].seoTitle) || '(ikkje sett)' %></td>
+      <td><a class="knapp knapp-liten" href="/admin/sider/<%= key %>">Rediger</a></td>
+    </tr>
+    <% } %>
+  </tbody>
+</table>
+
+<%- include('partials/abot') %>

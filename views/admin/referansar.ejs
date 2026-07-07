@@ -1,0 +1,48 @@
+<%- include('partials/atop', { tittel: 'Referansar / omtalar' }) %>
+
+<p class="admin-forklaring">Kundeomtalar blir viste på framsida når det finst minst éin.
+Hugs å få løyve frå kunden før du publiserer namn.</p>
+
+<% (content.testimonials || []).forEach((t, i) => { %>
+<details class="admin-detalj">
+  <summary><strong><%= t.author %></strong> <span class="admin-dus">«<%= t.quote.slice(0, 60) %>…»</span></summary>
+  <form method="post" action="/admin/referansar/lagre" class="admin-skjema">
+    <input type="hidden" name="_csrf" value="<%= csrf %>" />
+    <input type="hidden" name="index" value="<%= i %>" />
+    <div class="felt"><label for="r-quote-<%= i %>">Sitat</label>
+      <textarea id="r-quote-<%= i %>" name="quote" rows="3" required><%= t.quote %></textarea></div>
+    <div class="felt-rad">
+      <div class="felt"><label for="r-author-<%= i %>">Namn</label><input id="r-author-<%= i %>" name="author" value="<%= t.author %>" required /></div>
+      <div class="felt"><label for="r-context-<%= i %>">Samanheng (t.d. «Baderom, Stryn 2026»)</label><input id="r-context-<%= i %>" name="context" value="<%= t.context %>" /></div>
+      <div class="felt"><label for="r-rating-<%= i %>">Stjerner</label>
+        <select id="r-rating-<%= i %>" name="rating">
+          <option value="" <%= !t.rating ? 'selected' : '' %>>(ingen)</option>
+          <% for (let s = 5; s >= 1; s--) { %><option value="<%= s %>" <%= t.rating === s ? 'selected' : '' %>><%= '★'.repeat(s) %> (<%= s %>)</option><% } %>
+        </select></div>
+    </div>
+    <button type="submit" class="knapp knapp-primar">Lagre</button>
+  </form>
+  <div class="admin-rad-handlingar">
+    <form method="post" action="/admin/referansar/slett" data-stadfest="Slette referansen?"><input type="hidden" name="_csrf" value="<%= csrf %>" /><input type="hidden" name="index" value="<%= i %>" /><button class="knapp knapp-liten knapp-fare">Slett</button></form>
+  </div>
+</details>
+<% }) %>
+
+<h2>Legg til referanse</h2>
+<form method="post" action="/admin/referansar/lagre" class="admin-skjema">
+  <input type="hidden" name="_csrf" value="<%= csrf %>" />
+  <input type="hidden" name="index" value="-1" />
+  <div class="felt"><label for="nr-quote">Sitat</label><textarea id="nr-quote" name="quote" rows="3" required></textarea></div>
+  <div class="felt-rad">
+    <div class="felt"><label for="nr-author">Namn</label><input id="nr-author" name="author" required /></div>
+    <div class="felt"><label for="nr-context">Samanheng</label><input id="nr-context" name="context" /></div>
+    <div class="felt"><label for="nr-rating">Stjerner</label>
+      <select id="nr-rating" name="rating">
+        <% for (let s = 5; s >= 1; s--) { %><option value="<%= s %>"><%= '★'.repeat(s) %> (<%= s %>)</option><% } %>
+        <option value="">(ingen)</option>
+      </select></div>
+  </div>
+  <button type="submit" class="knapp knapp-primar">Legg til</button>
+</form>
+
+<%- include('partials/abot') %>

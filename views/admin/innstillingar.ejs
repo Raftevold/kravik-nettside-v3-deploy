@@ -1,0 +1,36 @@
+<%- include('partials/atop', { tittel: 'Innstillingar' }) %>
+
+<h2>Byt passord</h2>
+<form method="post" action="/admin/innstillingar/passord" class="admin-skjema">
+  <input type="hidden" name="_csrf" value="<%= csrf %>" />
+  <div class="felt"><label for="gjeldande">Gjeldande passord</label>
+    <input type="password" id="gjeldande" name="gjeldande" required autocomplete="current-password" /></div>
+  <div class="felt-rad">
+    <div class="felt"><label for="nytt">Nytt passord (minst 10 teikn)</label>
+      <input type="password" id="nytt" name="nytt" required minlength="10" autocomplete="new-password" /></div>
+    <div class="felt"><label for="gjenta">Gjenta nytt passord</label>
+      <input type="password" id="gjenta" name="gjenta" required minlength="10" autocomplete="new-password" /></div>
+  </div>
+  <button type="submit" class="knapp knapp-primar">Byt passord</button>
+</form>
+
+<h2>Sikkerheitskopi</h2>
+<p class="admin-forklaring">Last ned alt tekstinnhald som JSON-fil, eller importer ein tidlegare kopi.
+(Bileta ligg trygt i GitHub-repoet.)</p>
+<p><a class="knapp knapp-sekundar" href="/admin/eksport">Last ned innhald (JSON)</a></p>
+<form method="post" action="/admin/import" enctype="multipart/form-data" class="admin-skjema" data-stadfest="Importere? Dette overskriv alt noverande innhald.">
+  <input type="hidden" name="_csrf" value="<%= csrf %>" />
+  <div class="felt"><label for="fil">Importer JSON-fil</label>
+    <input type="file" id="fil" name="fil" accept="application/json" required /></div>
+  <button type="submit" class="knapp knapp-fare">Importer (overskriv innhaldet)</button>
+</form>
+
+<h2>Teknisk status</h2>
+<table class="admin-tabell">
+  <tr><th scope="row">Varig lagring (GitHub)</th>
+    <td><%= sync.enabled ? `Aktiv mot ${sync.repo} (${sync.branch})` : 'Ikkje sett opp' %>
+    <% if (sync.lastError) { %><br />⚠️ <%= sync.lastError %><% } %></td></tr>
+  <tr><th scope="row">E-postvarsling</th><td><%= mailConfigured ? 'Aktiv' : 'Ikkje sett opp' %></td></tr>
+</table>
+
+<%- include('partials/abot') %>

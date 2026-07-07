@@ -1,0 +1,157 @@
+<%- include('../partials/top') %>
+<% const p = content.pages.home; %>
+
+<section class="hero">
+  <img class="hero-bilete" src="<%= mediaUrl(p.heroImage, 'lg') %>" srcset="<%= srcset(p.heroImage) %>" sizes="100vw" alt="<%= mediaAlt(p.heroImage) %>" fetchpriority="high" />
+  <div class="ramme hero-inner">
+    <p class="hero-merke">Familieeigd rørleggarbedrift · Stryn og Nordfjordeid</p>
+    <h1><%= p.heroTitle %></h1>
+    <p class="hero-ingress"><%= p.heroLead %></p>
+    <div class="hero-knappar">
+      <a class="knapp knapp-primar knapp-stor" href="/kontakt#kontaktskjema"><%= p.ctaPrimaryText || 'Be om tilbod' %></a>
+      <a class="knapp knapp-lys knapp-stor" href="<%= telHref(site.phone) %>"><%- include('../partials/icon', { name: 'telefon' }) %> <%= site.phone %></a>
+    </div>
+  </div>
+  <ul class="hero-truverd ramme" aria-label="Kvifor velje oss">
+    <li><%- include('../partials/icon', { name: 'sjekk' }) %> Sidan 1933 – fjerde generasjon</li>
+    <li><%- include('../partials/icon', { name: 'sjekk' }) %> Sentralt godkjend verksemd</li>
+    <li><%- include('../partials/icon', { name: 'blad' }) %> Miljøfyrtårn-sertifisert</li>
+    <li><%- include('../partials/icon', { name: 'sjekk' }) %> Del av Comfort-kjeden</li>
+  </ul>
+</section>
+
+<section class="seksjon" aria-labelledby="tenester-tittel">
+  <div class="ramme">
+    <div class="seksjon-hovud">
+      <h2 id="tenester-tittel">Kva kan vi hjelpe deg med?</h2>
+      <p>Frå små servicejobbar til komplette anlegg – med spesialkompetanse på sprinkler og VA.</p>
+    </div>
+    <ul class="kort-rutenett">
+      <% for (const s of content.services) { %>
+      <li class="kort">
+        <span class="kort-ikon"><%- include('../partials/icon', { name: s.icon }) %></span>
+        <h3><%= s.title %></h3>
+        <p><%= s.text %></p>
+      </li>
+      <% } %>
+    </ul>
+    <p class="seksjon-meir"><a class="pil-lenke" href="/tenester">Sjå alle tenestene våre</a></p>
+  </div>
+</section>
+
+<section class="seksjon seksjon-tona" aria-labelledby="om-tittel">
+  <div class="ramme delt">
+    <div>
+      <h2 id="om-tittel">Familiebedrift i fjerde generasjon</h2>
+      <p>Kr. A. Vik AS har vore i rørleggarbransjen sidan 1933. I dag driv fjerde generasjon
+      i familien Vik bedrifta, med hovudkontor og butikk i Stryn og avdeling på Nordfjordeid.</p>
+      <p><a class="pil-lenke" href="/om-oss">Meir om oss og folka våre</a></p>
+    </div>
+    <dl class="tal-rekke">
+      <div><dt>1933</dt><dd>grunnlagd</dd></div>
+      <div><dt>21</dt><dd>tilsette</dd></div>
+      <div><dt>2</dt><dd>avdelingar</dd></div>
+      <div><dt>1–2</dt><dd>lærlingar til ei kvar tid</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="seksjon" aria-labelledby="avd-tittel">
+  <div class="ramme">
+    <div class="seksjon-hovud">
+      <h2 id="avd-tittel">Her finn du oss</h2>
+    </div>
+    <ul class="avdelingar">
+      <% for (const d of site.departments) { %>
+      <li class="avdeling">
+        <h3><%- include('../partials/icon', { name: 'kart' }) %> <%= d.name %></h3>
+        <p><%= d.address %></p>
+        <% if (d.note) { %><p class="avdeling-note"><%= d.note %></p><% } %>
+        <p><a href="<%= telHref(d.phone) %>">Tlf: <%= d.phone %></a></p>
+      </li>
+      <% } %>
+    </ul>
+    <% if (site.openingHours && site.openingHours.length) { %>
+    <div class="opningstider">
+      <h3><%- include('../partials/icon', { name: 'klokke' }) %> Opningstider</h3>
+      <dl><% for (const o of site.openingHours) { %><div><dt><%= o.label %></dt><dd><%= o.value %></dd></div><% } %></dl>
+      <% if (site.openingHoursNote) { %><p><%= site.openingHoursNote %></p><% } %>
+    </div>
+    <% } %>
+  </div>
+</section>
+
+<section class="seksjon seksjon-tona" aria-labelledby="butikk-tittel">
+  <div class="ramme delt">
+    <div>
+      <h2 id="butikk-tittel">Butikk og landbruksavdeling i Stryn</h2>
+      <p><%= content.pages.butikk.intro %></p>
+      <p><a class="pil-lenke" href="/butikk-og-landbruk">Meir om butikken</a></p>
+      <% if (content.pages.butikk.image) { %>
+      <img class="butikk-bilete" src="<%= mediaUrl(content.pages.butikk.image, 'md') %>" srcset="<%= srcset(content.pages.butikk.image) %>" sizes="(min-width: 800px) 50vw, 95vw" alt="<%= mediaAlt(content.pages.butikk.image) || 'Butikken vår i Stryn' %>" loading="lazy" />
+      <% } %>
+    </div>
+    <ul class="partnar-liste">
+      <% for (const pa of content.partners) { %>
+      <li>
+        <a class="logo-brikke" href="<%= pa.url %>" rel="external noopener" aria-label="<%= pa.name %> (ekstern side)">
+          <img src="/img/<%= pa.logo %>.png" alt="<%= pa.name %>" loading="lazy" height="24" />
+        </a>
+        <p><%= pa.text %></p>
+      </li>
+      <% } %>
+    </ul>
+  </div>
+</section>
+
+<% if (galleryPreview && galleryPreview.length) { %>
+<section class="seksjon" aria-labelledby="galleri-tittel">
+  <div class="ramme">
+    <div class="seksjon-hovud">
+      <h2 id="galleri-tittel">Frå prosjekta våre</h2>
+    </div>
+    <ul class="galleri-rutenett galleri-forhand">
+      <% galleryPreview.forEach((g, i) => { %>
+      <li>
+        <button type="button" class="galleri-knapp" data-lysbilete="<%= mediaUrl(g.image, 'lg') %>" data-alt="<%= mediaAlt(g.image) %>">
+          <img src="<%= mediaUrl(g.image, 'sm') %>" srcset="<%= srcset(g.image) %>" sizes="(min-width: 720px) 25vw, 50vw" alt="<%= mediaAlt(g.image) || 'Bilete frå arbeidet vårt' %>" loading="lazy" width="400" height="400" />
+        </button>
+      </li>
+      <% }) %>
+    </ul>
+    <p class="seksjon-meir"><a class="pil-lenke" href="/prosjekt">Sjå prosjekt og galleri</a></p>
+  </div>
+</section>
+<% } %>
+
+<% if (content.testimonials && content.testimonials.length) { const karusell = content.testimonials.length >= 5; %>
+<section class="seksjon seksjon-tona" aria-labelledby="ref-tittel">
+  <div class="ramme">
+    <div class="seksjon-hovud"><h2 id="ref-tittel">Kva kundane seier</h2></div>
+    <ul class="referansar<%= karusell ? ' referansar-band' : '' %>" <%- karusell ? 'data-karusell tabindex="0" aria-label="Kundeomtalar – blar automatisk, held du peikaren over stoppar blainga"' : '' %>>
+      <% for (const t of content.testimonials) { %>
+      <li class="referanse">
+        <% if (t.rating) { %>
+        <p class="stjerner"><span aria-hidden="true"><%= '★'.repeat(t.rating) %><span class="stjerner-tomme"><%= '☆'.repeat(5 - t.rating) %></span></span><span class="sr-only"><%= t.rating %> av 5 stjerner</span></p>
+        <% } %>
+        <blockquote><p>«<%= t.quote %>»</p></blockquote>
+        <p class="referanse-kjelde"><%= t.author %><% if (t.context) { %> · <%= t.context %><% } %></p>
+      </li>
+      <% } %>
+    </ul>
+  </div>
+</section>
+<% } %>
+
+<section class="laerling-band" aria-labelledby="laerling-tittel">
+  <div class="ramme laerling-inner">
+    <div>
+      <h2 id="laerling-tittel">Vil du bli røyrleggar?</h2>
+      <p>Vi er godkjend opplæringsbedrift og har til ei kvar tid 1–2 lærlingar i arbeid.</p>
+    </div>
+    <a class="knapp knapp-sekundar" href="/opplaeringsbedrift">Bli lærling hos oss</a>
+  </div>
+</section>
+
+<%- include('../partials/cta-band') %>
+<%- include('../partials/bottom') %>

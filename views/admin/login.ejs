@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="nn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Logg inn – Admin | <%= site.name %></title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/css/admin.css?v=<%= assetV %>" />
+</head>
+<body class="admin-kropp admin-login-kropp">
+  <main class="admin-login">
+    <h1>Kr. A. Vik<br /><span>administrasjon</span></h1>
+    <% if (!hasPassword) { %>
+    <div class="admin-flash admin-flash-feil" role="alert">
+      Ingen administratorpassord er sett opp enno. Sett miljøvariabelen
+      <code>ADMIN_PASSWORD</code> (eller <code>ADMIN_PASSWORD_HASH</code>) og start tenesta på nytt.
+    </div>
+    <% } %>
+    <% if (error) { %>
+    <div class="admin-flash admin-flash-feil" role="alert"><%= error %></div>
+    <% } %>
+    <form method="post" action="/admin/logg-inn">
+      <div class="felt">
+        <label for="brukar">Brukarnamn</label>
+        <input type="text" id="brukar" name="brukar" required autocomplete="username" />
+      </div>
+      <div class="felt">
+        <label for="passord">Passord</label>
+        <input type="password" id="passord" name="passord" required autocomplete="current-password" />
+      </div>
+      <button type="submit" class="knapp knapp-primar">Logg inn</button>
+    </form>
+    <p class="admin-login-tilbake"><a href="/">← Tilbake til nettsida</a></p>
+  </main>
+</body>
+</html>

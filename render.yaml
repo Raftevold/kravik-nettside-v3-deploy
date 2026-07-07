@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: kravik-nettside-v3
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm ci
+    startCommand: node server.js
+    healthCheckPath: /
+    # Innhaldscommits frå admin (data/**) skal IKKJE utløyse ny deploy
+    buildFilter:
+      ignoredPaths:
+        - data/**
+        - docs/**
+        - "*.md"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SITE_URL
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
+      - key: ADMIN_USER
+        value: admin
+      - key: ADMIN_PASSWORD_HASH
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: GITHUB_REPO
+        sync: false
+      - key: GITHUB_BRANCH
+        value: main

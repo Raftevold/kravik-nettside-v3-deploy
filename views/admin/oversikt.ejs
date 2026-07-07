@@ -1,0 +1,119 @@
+<%- include('partials/atop', { tittel: 'Oversikt' }) %>
+
+<div class="admin-kort-rekke">
+  <a class="admin-kort" href="/admin/meldingar">
+    <strong><%= unread %></strong> ulesne meldingar
+    <span><%= total %> totalt i innboksen</span>
+  </a>
+  <a class="admin-kort" href="/admin/varsellinje">
+    <strong><%= alertBar.enabled ? 'PÅ' : 'AV' %></strong> varsellinje
+    <span><%= alertBar.enabled ? alertBar.text : 'Slå på ved ferie, kampanjar o.l.' %></span>
+  </a>
+  <a class="admin-kort" href="/admin/bilete">
+    <strong><%= (content.media || []).length %></strong> bilete
+    <span><%= (content.gallery || []).length %> i galleriet</span>
+  </a>
+</div>
+
+<h2>Ferie- og driftsmodus</h2>
+<div class="admin-skjema admin-hurtigvarsel">
+  <% if (alertBar.enabled && alertBar.text) { %>
+  <p>Varsellinja er <strong>PÅ</strong> og viser:</p>
+  <div class="varsellinje-forhand"><%= alertBar.text %></div>
+  <form method="post" action="/admin/varsellinje">
+    <input type="hidden" name="_csrf" value="<%= csrf %>" />
+    <input type="hidden" name="tilbake" value="oversikt" />
+    <input type="hidden" name="text" value="" />
+    <input type="hidden" name="link" value="" />
+    <button type="submit" class="knapp knapp-primar">Slå av varsellinja</button>
+  </form>
+  <p class="felt-hint">Vil du endre teksten? Gå til <a href="/admin/varsellinje">Varsellinje</a>.</p>
+  <% } else { %>
+  <p class="admin-forklaring">Slå på ei melding øvst på alle sider med eitt klikk – rediger teksten
+  først om du vil (t.d. sett inn datoar).</p>
+  <form method="post" action="/admin/varsellinje">
+    <input type="hidden" name="_csrf" value="<%= csrf %>" />
+    <input type="hidden" name="tilbake" value="oversikt" />
+    <input type="hidden" name="enabled" value="on" />
+    <div class="admin-malknappar">
+      <button type="button" class="knapp knapp-liten" data-mal="Ferieavvikling: butikken er stengd veke XX–XX. Ved akutte behov, ring 57 87 14 88.">Ferie-mal</button>
+      <button type="button" class="knapp knapp-liten" data-mal="Driftsmelding: vi har redusert opningstid i dag. Ring 57 87 14 88 om det hastar.">Driftsmelding-mal</button>
+      <button type="button" class="knapp knapp-liten" data-mal="Kampanje: sjå tilboda våre i butikken i Visnesvegen 7!">Kampanje-mal</button>
+    </div>
+    <div class="felt">
+      <label for="hurtig-text">Tekst på varsellinja</label>
+      <input id="hurtig-text" name="text" maxlength="300" required placeholder="Vel ein mal over, eller skriv eigen tekst" />
+    </div>
+    <div class="felt">
+      <label for="hurtig-link">Lenkje (valfri, t.d. /kontakt)</label>
+      <input id="hurtig-link" name="link" placeholder="/kontakt" />
+    </div>
+    <button type="submit" class="knapp knapp-primar">Slå på varsellinja</button>
+  </form>
+  <% } %>
+</div>
+
+<h2>Besøk på sida</h2>
+<div class="admin-skjema admin-stats">
+  <p class="admin-forklaring">Enkel, anonym teljing av sidevisingar – utan informasjonskapslar og
+  utan IP-adresser. <strong><%= statTotal30 %></strong> sidevisingar siste 30 dagar.
+  <% if (plausibleDomain) { %>(Plausible er òg aktiv for domenet <code><%= plausibleDomain %></code>.)<% } %></p>
+  <% const maks = Math.max(1, ...statDays.map(d => d.total)); %>
+  <div class="admin-stolpar" role="img" aria-label="Sidevisingar per dag siste 14 dagar">
+    <% for (const d of statDays) { %>
+    <div class="admin-stolpe-holdar" title="<%= d.day %>: <%= d.total %> visingar">
+      <span class="admin-stolpe" style="height: <%= Math.round((d.total / maks) * 100) %>%"></span>
+      <span class="admin-stolpe-dag"><%= d.day.slice(8) %></span>
+    </div>
+    <% } %>
+  </div>
+  <% if (statTop.length) { %>
+  <table class="admin-tabell admin-stats-tabell">
+    <thead><tr><th>Mest viste sider (30 dagar)</th><th>Visingar</th></tr></thead>
+    <tbody>
+      <% for (const t of statTop) { %>
+      <tr><td><code><%= t.path %></code></td><td><%= t.count %></td></tr>
+      <% } %>
+    </tbody>
+  </table>
+  <% } else { %>
+  <p class="admin-dus">Ingen registrerte visingar enno – tala byggjer seg opp etter kvart.</p>
+  <% } %>
+</div>
+
+<h2>Status</h2>
+<table class="admin-tabell">
+  <tr>
+    <th scope="row">Varig lagring (GitHub-sync)</th>
+    <td>
+      <% if (sync.enabled) { %>
+        ✅ Aktiv mot <code><%= sync.repo %></code>
+        <% if (sync.lastError) { %><br />⚠️ Siste feil: <%= sync.lastError %><% } %>
+        <% if (sync.lastSyncAt) { %><br />Sist synkronisert: <%= sync.lastSyncAt %><% } %>
+      <% } else { %>
+        ⚠️ Ikkje sett opp – endringar overlever ikkje omstart av tenaren.
+        Sett <code>GITHUB_TOKEN</code> og <code>GITHUB_REPO</code>.
+      <% } %>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">E-postvarsling for skjema</th>
+    <td><%= mailConfigured ? '✅ Aktiv' : 'Ikkje sett opp – meldingar finn du uansett under «Meldingar».' %></td>
+  </tr>
+  <tr>
+    <th scope="row">Sist endra innhald</th>
+    <td><%= content.updatedAt || '–' %></td>
+  </tr>
+</table>
+
+<h2>Snarvegar</h2>
+<ul class="admin-snarvegar">
+  <li><a href="/admin/prosjekt">Legg til eit prosjekt (med før/etter-bilete)</a></li>
+  <li><a href="/admin/sider/home">Rediger framsida</a></li>
+  <li><a href="/admin/generelt">Endre kontaktinfo/opningstider</a></li>
+  <li><a href="/admin/bilete">Last opp bilete</a></li>
+  <li><a href="/admin/eksport">Last ned sikkerheitskopi av innhaldet</a></li>
+  <li><a href="/admin/handbok">Lurer du på noko? Sjå handboka</a></li>
+</ul>
+
+<%- include('partials/abot') %>

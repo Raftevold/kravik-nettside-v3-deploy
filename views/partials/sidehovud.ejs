@@ -1,0 +1,10 @@
+<%# Toppseksjon for undersider: tittel, ingress og valfritt bakgrunnsbilete %>
+<div class="sidehovud<%= typeof image !== 'undefined' && image ? '' : ' sidehovud-utan-bilete' %>">
+  <% if (typeof image !== 'undefined' && image) { %>
+  <img class="sidehovud-bilete" src="<%= mediaUrl(image, 'lg') %>" srcset="<%= srcset(image) %>" sizes="100vw" alt="<%= mediaAlt(image) %>" fetchpriority="high" />
+  <% } %>
+  <div class="ramme sidehovud-inner">
+    <h1><%= title %></h1>
+    <% if (typeof lead !== 'undefined' && lead) { %><p class="sidehovud-ingress"><%= lead %></p><% } %>
+  </div>
+</div>

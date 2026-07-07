@@ -1,0 +1,183 @@
+<%- include('partials/atop', { tittel: 'Handbok' }) %>
+
+<p class="admin-forklaring">Kort forklaring på alt i administrasjonen. Klikk på eit emne for å lese.
+Hugs: alt du lagrar blir vist på nettsida med ein gong, og blir lagra varig – du kan trygt prøve deg fram.</p>
+
+<h2>Menyen, punkt for punkt</h2>
+
+<details class="admin-detalj">
+  <summary><strong>Oversikt</strong> <span class="admin-dus">– dashbordet</span></summary>
+  <div class="admin-skjema">
+    <p>Startsida i admin. Her ser du ulesne meldingar, om varsellinja er på, og besøkstal.</p>
+    <p><strong>Ferie- og driftsmodus:</strong> slå på ei melding øvst på alle sider med eitt klikk.
+    Vel ein ferdig mal (ferie/drift/kampanje), juster teksten (t.d. datoar) og trykk «Slå på».
+    Slå av att med éin knapp når du er tilbake.</p>
+    <p><strong>Besøk på sida:</strong> enkel, anonym teljing av sidevisingar – utan informasjonskapslar
+    og utan å spore enkeltpersonar. Søylene viser siste 14 dagar, tabellen dei mest viste sidene.</p>
+  </div>
+</details>
+
+<details class="admin-detalj">
+  <summary><strong>Meldingar</strong> <span class="admin-dus">– innboksen din</span></summary>
+  <div class="admin-skjema">
+    <p>Alt som blir sendt inn frå nettsida hamnar her:</p>
+    <p>• Vanlege meldingar frå kontaktskjemaet<br />
+    • <span class="admin-merke admin-merke-tilbod">Tilbod</span> – førespurnadar med jobbtype og adresse<br />
+    • <span class="admin-merke admin-merke-laerling">Lærling</span> – søknadar frå opplæringssida</p>
+    <p>Nye meldingar er merkte «Ny». Merk som lesen når du har handtert dei, og slett gjerne
+    gamle meldingar når saka er avslutta (dei inneheld persondata).</p>
+  </div>
+</details>
+
+<details class="admin-detalj">
+  <summary><strong>Sider og SEO</strong> <span class="admin-dus">– tekstane på nettsida + Google</span></summary>
+  <div class="admin-skjema">
+    <p>Her endrar du tekst og bilete på kvar enkelt side (framsida, om oss, butikk osb.).
+    <strong>Tips:</strong> tom linje i eit tekstfelt gir nytt avsnitt på sida.</p>
+    <p><strong>Kva er SEO?</strong> Søkjemotoroptimalisering – det som avgjer korleis de ser ut i Google:</p>
+    <p>• <strong>SEO-tittel</strong> = den blå, klikkbare linja i Google-treffet.
+    Ta med teneste + stad, t.d. «Røyrleggar i Stryn | Kr. A. Vik AS».<br />
+    • <strong>Meta-beskriving</strong> = den grå teksten under. Ein kort «reklametekst»
+    som får folk til å klikke. Ta gjerne med telefonnummeret.</p>
+    <p>Sitemap, deling på Facebook og resten av det tekniske går heilt automatisk.</p>
+  </div>
+</details>
+
+<details class="admin-detalj">
+  <summary><strong>Tenester</strong> <span class="admin-dus">– kva de tilbyr</span></summary>
+  <div class="admin-skjema">
+    <p>Tenestene blir viste som kort på framsida og på tenestesida. Du kan endre tekst,
+    velje ikon, leggje til nye, slette, og flytte dei opp/ned (rekkjefølgja styrer visinga).</p>
+    <p>Nedtrekkslista «Kva gjeld det?» i kontaktskjemaet blir automatisk bygd frå denne lista.</p>
+  </div>
+</details>
+
+<details class="admin-detalj">
+  <summary><strong>Prosjekt</strong> <span class="admin-dus">– vis fram jobbar de er stolte av</span></summary>
+  <div class="admin-skjema">
+    <p>Kvart prosjekt får si eiga side med bilete og tekst. Slik gjer du:</p>
+    <p>1. Opprett prosjektet (tittel, kategori, stad, år, kort tekst)<br />
+    2. Last opp bilete til prosjektet<br />
+    3. Vel framsidebilete – og gjerne eit «før»- og «etter»-bilete</p>
+    <p><strong>Før/etter:</strong> vel du både før- og etter-bilete, får sida ein glidebrytar
+    der kunden kan dra fram og tilbake mellom dei. Vel bilete med om lag same utsnitt.</p>
+  </div>
+</details>
+
+<details class="admin-detalj">
+  <summary><strong>Kontaktpersonar</strong> <span class="admin-dus">– folka dykkar</span></summary>
+  <div class="admin-skjema">
+    <p>Namn, rolle, telefon og e-post. Blir vist på «Om oss» og på kontaktsida.
+    Legg til, endre eller slett ved behov.</p>
+  </div>
+</details>
+
+<details class="admin-detalj">
+  <summary><strong>Bilete og galleri</strong> <span class="admin-dus">– biletbiblioteket</span></summary>
+  <div class="admin-skjema">
+    <p>Alle bilete på nettsida ligg her. Last opp JPG/PNG – dei blir automatisk komprimerte
+    og laga i fleire storleikar, så du treng ikkje tenkje på filstorleik.</p>
+    <p><strong>Alt-tekst:</strong> ei kort setning om kva biletet viser (t.d. «Nytt bad med dusjhjørne»).
+    Blir lesen opp for blinde og lesen av Google – bra for både tilgjenge og søk.</p>
+    <p><strong>«I galleriet»:</strong> styrer om biletet blir vist på Prosjekt og galleri-sida.
+    Sletting fjernar biletet overalt på sida – sjekk at det ikkje er i bruk først.</p>
+  </div>
+</details>
+
+<details class="admin-detalj">
+  <summary><strong>Referansar</strong> <span class="admin-dus">– kundeomtalar med stjerner</span></summary>
+  <div class="admin-skjema">
+    <p>Omtalar blir viste på framsida når det finst minst éin. Kvar omtale kan få 1–5 stjerner.
+    Med 5 eller fleire omtalar blir visinga ein karusell som blar automatisk.</p>
+    <p><strong>Hugs:</strong> spør kunden om lov før du publiserer fullt namn – eller kort namnet
+    til t.d. «Kari N.».</p>
+  </div>
+</details>
+
+<details class="admin-detalj">
+  <summary><strong>Leilegheiter</strong> <span class="admin-dus">– eigedomssidene</span></summary>
+  <div class="admin-skjema">
+    <p>Kvar leilegheit får si eiga side. Dei viktigaste felta:</p>
+    <p>• <strong>Adresse:</strong> byrja å skrive og vel frå forslaga (frå Kartverket) –
+    då kjem kartet automatisk på sida.<br />
+    • <strong>Bilete:</strong> last opp fleire, og vel kva som skal vere framside med eitt klikk.<br />
+    • <strong>Status:</strong> «Ledig» (grønt merke) eller «Utleigd» (raudt merke) – vist oppe
+    i hjørnet av biletet. La stå tom om du ikkje vil vise status.<br />
+    • <strong>Nøkkelinfo:</strong> vel frå nedtrekk og avkryssing – soverom, areal, månadsleige,
+    møblert, dyrehald, ledig frå og fasilitetar. Alt er valfritt, og berre det du fyller ut
+    blir vist på sida.<br />
+    • <strong>Anna info:</strong> treng du eit felt som ikkje finst, bruk fritekstlinja
+    (format <code>Namn|Verdi</code>, t.d. <code>Etasje|2.</code>).</p>
+    <p>Teksten og kontaktpersonen for sjølve eigedomssida endrar du under Sider → Eigedom.</p>
+  </div>
+</details>
+
+<details class="admin-detalj">
+  <summary><strong>Varsellinje</strong> <span class="admin-dus">– beskjed øvst på alle sider</span></summary>
+  <div class="admin-skjema">
+    <p>Ei smal melding øvst på heile nettsida – perfekt til feriestenging, kampanjar eller
+    driftsmeldingar. Skriv tekst, huk av «Vis varsellinja», lagre. Fyller du ut lenkje
+    (t.d. <code>/kontakt</code>) blir heile linja klikkbar.</p>
+    <p>Snarveg med ferdige malar finst òg på Oversikt-sida.</p>
+  </div>
+</details>
+
+<details class="admin-detalj">
+  <summary><strong>Kontaktinfo m.m.</strong> <span class="admin-dus">– grunnopplysningane</span></summary>
+  <div class="admin-skjema">
+    <p>Adresse, telefon, e-post, org.nr, avdelingar, opningstider, sosiale medium og kartet.
+    Blir brukt overalt på sida (topp, footer, kontaktside) – og i Google sitt firmakort.</p>
+    <p><strong>Opningstider:</strong> éi linje per oppføring, format <code>Dagar|Tider</code>,
+    t.d. <code>Måndag–fredag|07.30–15.30</code>. Dei viser automatisk på framsida, kontakt-
+    og butikksida så snart dei er fylte ut.</p>
+    <p><strong>Sosiale medium:</strong> éi linje per kanal, t.d.
+    <code>facebook|https://www.facebook.com/…</code></p>
+  </div>
+</details>
+
+<details class="admin-detalj">
+  <summary><strong>Innstillingar</strong> <span class="admin-dus">– passord og sikkerheitskopi</span></summary>
+  <div class="admin-skjema">
+    <p><strong>Byt passord:</strong> minst 10 teikn. Byt gjerne med jamne mellomrom.</p>
+    <p><strong>Sikkerheitskopi:</strong> «Last ned innhald (JSON)» gir deg ei fil med alt
+    tekstinnhald. I tillegg blir kvar einaste lagring automatisk sikra i skya, så det er
+    vanskeleg å miste noko.</p>
+  </div>
+</details>
+
+<h2>Godt å vite</h2>
+
+<details class="admin-detalj">
+  <summary><strong>Korleis lagring fungerer</strong></summary>
+  <div class="admin-skjema">
+    <p>Alt du lagrar blir synleg på nettsida med ein gong, og blir automatisk sikra varig.
+    Etter lagring blir du sett tilbake nøyaktig der du var på sida, og ei lita «Lagra!»-melding
+    dukkar opp nede til høgre.</p>
+    <p>Gjer du ein feil: det meste kan berre rettast og lagrast på nytt. Sletting av bilete
+    og meldingar er derimot endeleg – difor spør systemet «er du sikker?» først.</p>
+  </div>
+</details>
+
+<details class="admin-detalj">
+  <summary><strong>Hugseliste for godt innhald</strong></summary>
+  <div class="admin-skjema">
+    <p>✅ Tom linje i tekstfelt = nytt avsnitt på sida<br />
+    ✅ Skriv alt-tekst på bilete du lastar opp<br />
+    ✅ SEO-tittel med teneste + stad («Bad i Stryn …»)<br />
+    ✅ Sjekk resultatet med «Sjå nettsida →» nede i menyen<br />
+    ✅ Slett meldingar med persondata når saka er ferdig<br />
+    ✅ Be nøgde kundar om Google-omtale – og legg dei beste inn under Referansar</p>
+  </div>
+</details>
+
+<details class="admin-detalj">
+  <summary><strong>Om noko ser gale ut</strong></summary>
+  <div class="admin-skjema">
+    <p>• Ser du ikkje endringa på nettsida? Last sida på nytt (Ctrl+R / dra ned på mobil).<br />
+    • Raud feilmelding om «synk til GitHub feila»? Endringa er lagra lokalt, men kan gå tapt
+    ved omstart – prøv å lagre på nytt litt seinare. Held det fram, sjå Innstillingar → Teknisk status.<br />
+    • Første besøk etter ei stille stund kan ta 30–60 sekund (gratisplanen «søv») – det er normalt.</p>
+  </div>
+</details>
+
+<%- include('partials/abot') %>

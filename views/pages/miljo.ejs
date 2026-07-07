@@ -1,0 +1,22 @@
+<%- include('../partials/top') %>
+<% const p = content.pages.miljo; %>
+<%- include('../partials/sidehovud', { title: p.title, lead: null, image: p.headerImage }) %>
+
+<section class="seksjon">
+  <div class="ramme delt">
+    <div class="brodtekst">
+      <%- nl2p(p.body) %>
+    </div>
+    <div class="infoboks">
+      <h2>Dokument</h2>
+      <ul class="dokument-liste">
+        <% for (const d of (p.docs || [])) { %>
+        <li><a href="<%= d.url %>" rel="external noopener"><%= d.title %></a> <span class="dokument-merk">(opnar hos Google Drive)</span></li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/cta-band') %>
+<%- include('../partials/bottom') %>

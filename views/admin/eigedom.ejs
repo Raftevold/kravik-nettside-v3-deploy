@@ -1,0 +1,152 @@
+<%- include('partials/atop', { tittel: 'Leilegheiter (Eigedom)' }) %>
+
+<p class="admin-forklaring">Kvar leilegheit får si eiga side under <code>/eigedom/…</code>.
+Skriv inn adressa og vel frå forslaga (frå Kartverket) – då blir kartet automatisk
+vist på sida. Last opp så mange bilete du vil, og vel kva som skal vere framsidebiletet.
+Tekst og kontaktinfo for hovudsida endrar du under <a href="/admin/sider/eigedom">Sider → Eigedom</a>.</p>
+
+<% content.properties.forEach((e, i) => { const framside = e.cover || e.image; %>
+<details class="admin-detalj">
+  <summary><strong><%= e.title %></strong> <span class="admin-dus"><%= e.status || 'utan status' %> · <%= ((e.images || []).length || (e.image ? 1 : 0)) %> bilete<%= (e.lat && e.lng) || e.mapEmbed ? ' · kart ✓' : '' %></span></summary>
+
+  <form method="post" action="/admin/eigedom/lagre" class="admin-skjema">
+    <input type="hidden" name="_csrf" value="<%= csrf %>" />
+    <input type="hidden" name="index" value="<%= i %>" />
+    <div class="felt">
+      <label for="e-title-<%= i %>">Adresse (tittel på nettsida)</label>
+      <input id="e-title-<%= i %>" name="title" value="<%= e.title %>" required
+        list="adresse-liste-<%= i %>" autocomplete="off"
+        data-adresse-sok data-lat="e-lat-<%= i %>" data-lng="e-lng-<%= i %>" data-status="e-adrstatus-<%= i %>"
+        placeholder="Byrja å skrive, t.d. «Visnesvegen 7» – og vel frå forslaga" />
+      <datalist id="adresse-liste-<%= i %>"></datalist>
+      <input type="hidden" id="e-lat-<%= i %>" name="lat" value="<%= e.lat ?? '' %>" />
+      <input type="hidden" id="e-lng-<%= i %>" name="lng" value="<%= e.lng ?? '' %>" />
+      <span class="felt-hint" id="e-adrstatus-<%= i %>"><%= e.lat && e.lng ? '✓ Kartposisjon lagra – kartet blir vist automatisk på sida' : (e.mapEmbed ? 'Manuelt kart er sett (sjå nedst)' : 'Vel ei adresse frå forslaga for å få kart automatisk') %></span>
+    </div>
+    <div class="felt">
+      <label for="e-status-<%= i %>">Status</label>
+      <select id="e-status-<%= i %>" name="status">
+        <option value="" <%= !e.status ? 'selected' : '' %>>(ikkje vis status)</option>
+        <option value="ledig" <%= e.status === 'ledig' ? 'selected' : '' %>>Ledig</option>
+        <option value="utleigd" <%= e.status === 'utleigd' ? 'selected' : '' %>>Utleigd</option>
+      </select>
+    </div>
+    <div class="felt"><label for="e-description-<%= i %>">Beskriving (tom linje = nytt avsnitt)</label>
+      <textarea id="e-description-<%= i %>" name="description" rows="4"><%= e.description || '' %></textarea></div>
+
+    <fieldset>
+      <legend>Nøkkelinfo <span class="felt-hint-inline">(alt er valfritt – berre det du fyller ut blir vist)</span></legend>
+      <div class="felt-rad">
+        <div class="felt"><label for="e-soverom-<%= i %>">Soverom</label>
+          <select id="e-soverom-<%= i %>" name="soverom">
+            <option value="" <%= !e.soverom ? 'selected' : '' %>>–</option>
+            <% for (const s of ['1','2','3','4','5','6','7+']) { %><option value="<%= s %>" <%= e.soverom === s ? 'selected' : '' %>><%= s %></option><% } %>
+          </select></div>
+        <div class="felt"><label for="e-areal-<%= i %>">Areal (m²)</label>
+          <input type="number" id="e-areal-<%= i %>" name="areal" min="1" value="<%= e.areal ?? '' %>" placeholder="t.d. 60" /></div>
+        <div class="felt"><label for="e-leige-<%= i %>">Månadsleige (kr)</label>
+          <input type="number" id="e-leige-<%= i %>" name="leige" min="1" value="<%= e.leige ?? '' %>" placeholder="t.d. 12000" /></div>
+      </div>
+      <div class="felt-rad">
+        <div class="felt"><label for="e-moblert-<%= i %>">Møblert</label>
+          <select id="e-moblert-<%= i %>" name="moblert">
+            <option value="" <%= !e.moblert ? 'selected' : '' %>>–</option>
+            <option value="moblert" <%= e.moblert === 'moblert' ? 'selected' : '' %>>Møblert</option>
+            <option value="delvis" <%= e.moblert === 'delvis' ? 'selected' : '' %>>Delvis møblert</option>
+            <option value="umoblert" <%= e.moblert === 'umoblert' ? 'selected' : '' %>>Umøblert</option>
+          </select></div>
+        <div class="felt"><label for="e-dyrehold-<%= i %>">Dyrehald</label>
+          <select id="e-dyrehold-<%= i %>" name="dyrehold">
+            <option value="" <%= !e.dyrehold ? 'selected' : '' %>>–</option>
+            <option value="ja" <%= e.dyrehold === 'ja' ? 'selected' : '' %>>Tillate</option>
+            <option value="nei" <%= e.dyrehold === 'nei' ? 'selected' : '' %>>Ikkje tillate</option>
+          </select></div>
+        <div class="felt"><label for="e-ledigfra-<%= i %>">Ledig frå</label>
+          <input id="e-ledigfra-<%= i %>" name="ledigFra" value="<%= e.ledigFra || '' %>" placeholder="t.d. 1. august 2026 / etter avtale" /></div>
+      </div>
+      <div class="felt">
+        <span class="felt-hint" style="font-weight:650">Fasilitetar</span>
+        <div class="admin-fasilitetar">
+          <% for (const f of FASILITETAR) { %>
+          <label class="admin-fasilitet"><input type="checkbox" name="fasilitetar" value="<%= f %>" <%= (e.fasilitetar || []).includes(f) ? 'checked' : '' %> /> <%= f %></label>
+          <% } %>
+        </div>
+      </div>
+      <div class="felt"><label for="e-facts-<%= i %>">Anna info (valfritt – éi linje per punkt: <code>Namn|Verdi</code>, t.d. <code>Etasje|2.</code>)</label>
+        <textarea id="e-facts-<%= i %>" name="facts" rows="2"><%= (e.facts || []).map(f => `${f.label}|${f.value}`).join('\n') %></textarea></div>
+    </fieldset>
+    <div class="felt"><label for="e-map-<%= i %>">Overstyr kartet manuelt (valfritt – Google Maps innbyggings-URL)</label>
+      <textarea id="e-map-<%= i %>" name="mapEmbed" rows="2"><%= e.mapEmbed || '' %></textarea></div>
+    <button type="submit" class="knapp knapp-primar">Lagre</button>
+    <% if (e.slug) { %><a class="knapp knapp-liten" href="/eigedom/<%= e.slug %>">Sjå sida →</a><% } %>
+  </form>
+
+  <div class="admin-skjema">
+    <h3>Bilete</h3>
+    <% const alleBilete = [...new Set([...(e.images || []), ...(e.image ? [e.image] : [])])]; %>
+    <% if (alleBilete.length) { %>
+    <ul class="admin-bilete-rutenett">
+      <% for (const id of alleBilete) { %>
+      <li class="admin-bilete-kort">
+        <img src="/media/<%= id %>-sm.webp" alt="" loading="lazy" width="160" height="120" />
+        <p class="admin-bilete-namn"><code><%= id %></code>
+          <% if (framside === id) { %><span class="admin-merke">framside</span><% } %>
+        </p>
+        <div class="admin-rad-handlingar">
+          <% if (framside !== id) { %>
+          <form method="post" action="/admin/eigedom/framside">
+            <input type="hidden" name="_csrf" value="<%= csrf %>" />
+            <input type="hidden" name="index" value="<%= i %>" />
+            <input type="hidden" name="id" value="<%= id %>" />
+            <button class="knapp knapp-liten">Bruk som framside</button>
+          </form>
+          <% } %>
+          <form method="post" action="/admin/eigedom/fjern-bilete">
+            <input type="hidden" name="_csrf" value="<%= csrf %>" />
+            <input type="hidden" name="index" value="<%= i %>" />
+            <input type="hidden" name="id" value="<%= id %>" />
+            <button class="knapp knapp-liten knapp-fare">Ta ut</button>
+          </form>
+        </div>
+      </li>
+      <% } %>
+    </ul>
+    <% } else { %>
+    <p class="admin-dus">Ingen bilete enno.</p>
+    <% } %>
+    <form method="post" action="/admin/eigedom/last-opp" enctype="multipart/form-data">
+      <input type="hidden" name="_csrf" value="<%= csrf %>" />
+      <input type="hidden" name="index" value="<%= i %>" />
+      <div class="felt">
+        <label for="e-last-opp-<%= i %>">Last opp bilete (JPG/PNG/WebP, inntil 20 om gongen)</label>
+        <input type="file" id="e-last-opp-<%= i %>" name="bilete" accept="image/jpeg,image/png,image/webp,image/avif" multiple required />
+      </div>
+      <button type="submit" class="knapp knapp-sekundar">Last opp</button>
+    </form>
+  </div>
+
+  <div class="admin-rad-handlingar">
+    <form method="post" action="/admin/eigedom/slett" data-stadfest="Slette «<%= e.title %>»? Bileta blir liggande i biblioteket."><input type="hidden" name="_csrf" value="<%= csrf %>" /><input type="hidden" name="index" value="<%= i %>" /><button class="knapp knapp-liten knapp-fare">Slett</button></form>
+  </div>
+</details>
+<% }) %>
+
+<h2>Legg til leilegheit</h2>
+<form method="post" action="/admin/eigedom/lagre" class="admin-skjema">
+  <input type="hidden" name="_csrf" value="<%= csrf %>" />
+  <input type="hidden" name="index" value="-1" />
+  <div class="felt">
+    <label for="ne-title">Adresse (tittel på nettsida)</label>
+    <input id="ne-title" name="title" required list="adresse-liste-ny" autocomplete="off"
+      data-adresse-sok data-lat="ne-lat" data-lng="ne-lng" data-status="ne-adrstatus"
+      placeholder="Byrja å skrive, t.d. «Visnesvegen 7» – og vel frå forslaga" />
+    <datalist id="adresse-liste-ny"></datalist>
+    <input type="hidden" id="ne-lat" name="lat" value="" />
+    <input type="hidden" id="ne-lng" name="lng" value="" />
+    <span class="felt-hint" id="ne-adrstatus">Vel ei adresse frå forslaga for å få kart automatisk</span>
+  </div>
+  <button type="submit" class="knapp knapp-primar">Legg til</button>
+  <p class="felt-hint">Etter oppretting kan du laste opp bilete og fylle inn resten.</p>
+</form>
+
+<%- include('partials/abot') %>

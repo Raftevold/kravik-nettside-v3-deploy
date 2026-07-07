@@ -1,0 +1,54 @@
+<%- include('../partials/top') %>
+<% const p = content.pages.prosjekt; const projects = content.projects || []; %>
+<%- include('../partials/sidehovud', { title: p.title, lead: p.intro, image: p.headerImage }) %>
+
+<% if (projects.length) { %>
+<section class="seksjon" aria-labelledby="prosjekt-tittel">
+  <div class="ramme">
+    <div class="seksjon-hovud"><h2 id="prosjekt-tittel">Utvalde prosjekt</h2></div>
+    <ul class="prosjekt-rutenett">
+      <% for (const pr of projects) { %>
+      <li class="prosjekt-kort">
+        <a href="/prosjekt/<%= pr.id %>">
+          <% if (pr.cover) { %>
+          <img src="<%= mediaUrl(pr.cover, 'md') %>" srcset="<%= srcset(pr.cover) %>" sizes="(min-width: 720px) 33vw, 90vw" alt="<%= mediaAlt(pr.cover) || pr.title %>" loading="lazy" width="800" height="600" />
+          <% } %>
+          <div class="prosjekt-kort-tekst">
+            <% if (pr.category || pr.place || pr.year) { %>
+            <p class="prosjekt-meta"><%= [pr.category, pr.place, pr.year].filter(Boolean).join(' · ') %></p>
+            <% } %>
+            <h3><%= pr.title %></h3>
+            <% if (pr.before && pr.after) { %><p class="prosjekt-merke">Med før/etter-bilete</p><% } %>
+          </div>
+        </a>
+      </li>
+      <% } %>
+    </ul>
+  </div>
+</section>
+<% } %>
+
+<section class="seksjon<%= projects.length ? ' seksjon-tona' : '' %>" aria-labelledby="galleri-tittel" id="galleri">
+  <div class="ramme">
+    <div class="seksjon-hovud">
+      <h2 id="galleri-tittel">Galleri</h2>
+      <p>Glimt frå arbeidskvardagen vår.</p>
+    </div>
+    <% if (content.gallery && content.gallery.length) { %>
+    <ul class="galleri-rutenett">
+      <% for (const g of content.gallery) { %>
+      <li>
+        <button type="button" class="galleri-knapp" data-lysbilete="<%= mediaUrl(g.image, 'lg') %>" data-alt="<%= mediaAlt(g.image) %>">
+          <img src="<%= mediaUrl(g.image, 'sm') %>" srcset="<%= srcset(g.image) %>" sizes="(min-width: 720px) 25vw, 50vw" alt="<%= mediaAlt(g.image) || 'Bilete frå arbeidet vårt' %>" loading="lazy" width="400" height="400" />
+        </button>
+      </li>
+      <% } %>
+    </ul>
+    <% } else { %>
+    <p>Galleriet er tomt for augneblinken.</p>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/cta-band') %>
+<%- include('../partials/bottom') %>

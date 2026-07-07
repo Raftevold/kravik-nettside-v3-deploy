@@ -1,0 +1,53 @@
+<%- include('../partials/top') %>
+<% const p = content.pages.butikk; %>
+<%- include('../partials/sidehovud', { title: p.title, lead: p.intro, image: p.headerImage }) %>
+
+<section class="seksjon">
+  <div class="ramme">
+    <div class="kort-rutenett kort-rutenett-2">
+    <div class="kort kort-stor">
+      <span class="logo-brikke"><img src="/img/logo-comfort.png" alt="Comfort" height="26" loading="lazy" /></span>
+      <h2>Comfort-butikken</h2>
+      <p><%= p.comfortText %></p>
+      <p><a class="pil-lenke" href="https://www.comfort.no/inspirasjon-og-rad/" rel="external noopener">Inspirasjon og råd hos Comfort</a></p>
+    </div>
+    <div class="kort kort-stor">
+      <span class="logo-brikke">
+        <img src="/img/logo-husqvarna.png" alt="Husqvarna" height="22" loading="lazy" />
+        <img src="/img/logo-kellfri.png" alt="Kellfri" height="22" loading="lazy" />
+      </span>
+      <h2>Landbruksavdelinga</h2>
+      <p><%= p.landbrukText %></p>
+      <p><a class="pil-lenke" href="/kontakt">Spør oss om utvalet</a></p>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section class="seksjon seksjon-tona">
+  <div class="ramme delt">
+    <div>
+      <h2>Besøk oss i Stryn</h2>
+      <% if (p.image) { %>
+      <img class="butikk-bilete" src="<%= mediaUrl(p.image, 'md') %>" srcset="<%= srcset(p.image) %>" sizes="(min-width: 800px) 50vw, 95vw" alt="<%= mediaAlt(p.image) || 'Butikken vår i Stryn' %>" loading="lazy" />
+      <% } %>
+      <address class="brodtekst">
+        <p><strong><%= site.name %></strong><br /><%= site.address.street %>, <%= site.address.zip %> <%= site.address.city %></p>
+      </address>
+      <p><a href="<%= telHref(site.phone) %>">Tlf: <%= site.phone %></a> · <a href="mailto:<%= site.email %>"><%= site.email %></a></p>
+      <% if (site.openingHours && site.openingHours.length) { %>
+      <h3>Opningstider</h3>
+      <dl class="opningstider-liste"><% for (const o of site.openingHours) { %><div><dt><%= o.label %></dt><dd><%= o.value %></dd></div><% } %></dl>
+      <% } %>
+    </div>
+    <div class="kart-holdar" data-kart-src="<%= site.mapEmbed %>">
+      <div class="kart-plasshaldar">
+        <p>Kartet blir levert av Google Maps og blir først lasta når du samtykkjer til eksternt innhald.</p>
+        <button type="button" class="knapp knapp-sekundar" data-last-kart>Vis kart</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/cta-band') %>
+<%- include('../partials/bottom') %>

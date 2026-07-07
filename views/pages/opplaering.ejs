@@ -1,0 +1,57 @@
+<%- include('../partials/top') %>
+<% const p = content.pages.opplaering; %>
+<%- include('../partials/sidehovud', { title: p.title, lead: null, image: p.headerImage }) %>
+
+<section class="seksjon">
+  <div class="ramme delt">
+    <div class="brodtekst">
+      <%- nl2p(p.body) %>
+    </div>
+    <div class="infoboks skjema-holdar" id="soknad">
+      <h2>Vil du bli lærling hos oss?</h2>
+      <p>Send oss ein kort presentasjon av deg sjølv, så tek vi kontakt.</p>
+      <% if (typeof sent !== 'undefined' && sent) { %>
+      <div class="skjema-kvittering" role="status">
+        <h3><%- include('../partials/icon', { name: 'sjekk' }) %> Takk for søknaden!</h3>
+        <p>Vi har motteke han og tek kontakt. Lurer du på noko? Ring oss på
+        <a href="<%= telHref(site.phone) %>"><%= site.phone %></a>.</p>
+      </div>
+      <% } %>
+      <% if (typeof formError !== 'undefined' && formError) { %>
+      <div class="skjema-feil" role="alert"><p><%= formError %></p></div>
+      <% } %>
+      <% const fv = typeof formValues !== 'undefined' ? formValues : {}; %>
+      <form method="post" action="/opplaeringsbedrift" novalidate>
+        <div class="felt">
+          <label for="s-navn">Namn <span aria-hidden="true">*</span></label>
+          <input type="text" id="s-navn" name="navn" required autocomplete="name" value="<%= fv.navn || '' %>" />
+        </div>
+        <div class="felt-rad">
+          <div class="felt">
+            <label for="s-epost">E-post</label>
+            <input type="email" id="s-epost" name="epost" autocomplete="email" value="<%= fv.epost || '' %>" aria-describedby="s-hint" />
+          </div>
+          <div class="felt">
+            <label for="s-telefon">Telefon</label>
+            <input type="tel" id="s-telefon" name="telefon" autocomplete="tel" value="<%= fv.telefon || '' %>" aria-describedby="s-hint" />
+          </div>
+        </div>
+        <p class="felt-hint" id="s-hint">Fyll ut e-post eller telefon, slik at vi får svart deg.</p>
+        <div class="felt">
+          <label for="s-melding">Fortel kort om deg sjølv <span aria-hidden="true">*</span></label>
+          <textarea id="s-melding" name="melding" rows="5" required placeholder="Kven er du, kva utdanning/erfaring har du, og kvifor vil du bli røyrleggar?"><%= fv.melding || '' %></textarea>
+        </div>
+        <div class="felt felt-skjult" aria-hidden="true">
+          <label for="s-nettstad">La dette feltet stå tomt</label>
+          <input type="text" id="s-nettstad" name="nettstad" tabindex="-1" autocomplete="off" />
+        </div>
+        <p class="felt-hint">Vi brukar opplysningane berre til å behandle søknaden din.
+        Les meir i <a href="/personvern">personvernerklæringa</a>.</p>
+        <button type="submit" class="knapp knapp-primar">Send søknad</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/cta-band') %>
+<%- include('../partials/bottom') %>

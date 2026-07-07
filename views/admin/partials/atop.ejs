@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="nn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title><%= tittel %> – Admin | <%= site.name %></title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/css/admin.css?v=<%= assetV %>" />
+</head>
+<body class="admin-kropp">
+  <a class="skip-link" href="#admin-innhald">Hopp til innhaldet</a>
+  <div class="admin-oppsett">
+    <aside class="admin-side">
+      <p class="admin-logo">Kr. A. Vik<br /><span>administrasjon</span></p>
+      <nav aria-label="Adminmeny">
+        <ul>
+          <% const meny = [
+            ['/admin/oversikt', 'Oversikt'],
+            ['/admin/meldingar', 'Meldingar'],
+            ['/admin/sider', 'Sider og SEO'],
+            ['/admin/tenester', 'Tenester'],
+            ['/admin/prosjekt', 'Prosjekt'],
+            ['/admin/team', 'Kontaktpersonar'],
+            ['/admin/bilete', 'Bilete og galleri'],
+            ['/admin/referansar', 'Referansar'],
+            ['/admin/eigedom', 'Leilegheiter'],
+            ['/admin/varsellinje', 'Varsellinje'],
+            ['/admin/generelt', 'Kontaktinfo m.m.'],
+            ['/admin/innstillingar', 'Innstillingar'],
+            ['/admin/handbok', '❓ Handbok'],
+          ]; %>
+          <% for (const [href, label] of meny) { %>
+          <li><a href="<%= href %>" <%- currentPath.startsWith(href) ? 'aria-current="page"' : '' %>><%= label %></a></li>
+          <% } %>
+        </ul>
+      </nav>
+      <div class="admin-side-botn">
+        <a href="/" rel="noopener">Sjå nettsida →</a>
+        <form method="post" action="/admin/logg-ut">
+          <input type="hidden" name="_csrf" value="<%= csrf %>" />
+          <button type="submit" class="lenkeknapp">Logg ut</button>
+        </form>
+      </div>
+    </aside>
+    <main id="admin-innhald" class="admin-hovud">
+      <% if (syncStatus && syncStatus.enabled && syncStatus.lastError) { %>
+      <div class="admin-flash admin-flash-feil" role="alert">
+        ⚠️ Synk til GitHub feilar: <%= syncStatus.lastError %> – siste endringar kan gå tapt ved omstart.
+      </div>
+      <% } else if (syncStatus && !syncStatus.enabled) { %>
+      <div class="admin-flash admin-flash-feil" role="alert">
+        ⚠️ Varig lagring er ikkje sett opp (GITHUB_TOKEN/GITHUB_REPO manglar) – endringar du gjer her
+        overlever ikkje omstart av tenaren. Sjå docs/DRIFT.md.
+      </div>
+      <% } %>
+      <h1><%= tittel %></h1>
+      <% if (flash) { %>
+      <div class="admin-flash admin-flash-<%= flash.type %> admin-flash-toast" role="status"><%= flash.text %></div>
+      <% } %>

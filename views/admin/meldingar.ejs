@@ -1,0 +1,50 @@
+<%- include('partials/atop', { tittel: 'Meldingar frå kontaktskjemaet' }) %>
+
+<% if (!mailConfigured) { %>
+<p class="admin-forklaring">💡 E-postvarsling er ikkje sett opp – nye meldingar dukkar opp her.
+Vil du ha dei på e-post òg? Sett SMTP-miljøvariablane (sjå docs/DRIFT.md).</p>
+<% } %>
+
+<% if (!messages.length) { %>
+<p>Innboksen er tom.</p>
+<% } %>
+
+<% for (const m of messages) { %>
+<article class="admin-melding <%= m.read ? '' : 'admin-melding-ulesen' %>">
+  <header>
+    <h2><%= m.name %>
+      <% if (m.type === 'tilbod') { %><span class="admin-merke admin-merke-tilbod">Tilbod</span><% } %>
+      <% if (m.type === 'laerling') { %><span class="admin-merke admin-merke-laerling">Lærling</span><% } %>
+      <% if (!m.read) { %><span class="admin-merke">Ny</span><% } %></h2>
+    <p class="admin-dus"><%= new Date(m.sentAt).toLocaleString('no-NO', { dateStyle: 'medium', timeStyle: 'short' }) %></p>
+  </header>
+  <p class="admin-melding-kontakt">
+    <% if (m.email) { %><a href="mailto:<%= m.email %>"><%= m.email %></a><% } %>
+    <% if (m.email && m.phone) { %> · <% } %>
+    <% if (m.phone) { %><a href="tel:<%= m.phone.replace(/\s/g, '') %>"><%= m.phone %></a><% } %>
+  </p>
+  <% if (m.jobtype || m.address) { %>
+  <p class="admin-melding-kontakt">
+    <% if (m.jobtype) { %><strong>Type jobb:</strong> <%= m.jobtype %><% } %>
+    <% if (m.jobtype && m.address) { %> · <% } %>
+    <% if (m.address) { %><strong>Adresse:</strong> <%= m.address %><% } %>
+  </p>
+  <% } %>
+  <blockquote><%- escapeHtml(m.message).replace(/\n/g, '<br />') %></blockquote>
+  <div class="admin-rad-handlingar">
+    <form method="post" action="/admin/meldingar/lest">
+      <input type="hidden" name="_csrf" value="<%= csrf %>" />
+      <input type="hidden" name="id" value="<%= m.id %>" />
+      <input type="hidden" name="lest" value="<%= m.read ? '0' : '1' %>" />
+      <button class="knapp knapp-liten"><%= m.read ? 'Merk som ulesen' : 'Merk som lesen' %></button>
+    </form>
+    <form method="post" action="/admin/meldingar/slett" data-stadfest="Slette meldinga frå «<%= m.name %>»?">
+      <input type="hidden" name="_csrf" value="<%= csrf %>" />
+      <input type="hidden" name="id" value="<%= m.id %>" />
+      <button class="knapp knapp-liten knapp-fare">Slett</button>
+    </form>
+  </div>
+</article>
+<% } %>
+
+<%- include('partials/abot') %>

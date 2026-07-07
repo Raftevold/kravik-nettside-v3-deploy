@@ -1,0 +1,28 @@
+<%- include('../partials/top') %>
+<% const p = content.pages.tenester; %>
+<%- include('../partials/sidehovud', { title: p.title, lead: p.intro, image: p.headerImage }) %>
+
+<section class="seksjon">
+  <div class="ramme">
+    <ul class="teneste-liste">
+      <% for (const s of content.services) { %>
+      <li class="teneste" id="<%= s.id %>">
+        <span class="kort-ikon"><%- include('../partials/icon', { name: s.icon }) %></span>
+        <div>
+          <h2><%= s.title %></h2>
+          <p><%= s.text %></p>
+          <p class="teneste-cta"><a class="pil-lenke" href="/kontakt?jobbtype=<%= encodeURIComponent(s.title) %>#kontaktskjema">Be om tilbod på <%= s.title.toLowerCase() %></a></p>
+        </div>
+      </li>
+      <% } %>
+    </ul>
+    <div class="infoboks">
+      <h2>Usikker på kva du treng?</h2>
+      <p>Ta kontakt, så finn vi rett løysing i lag. Vi hjelper deg heile vegen – frå planlegging og teikning til ferdig montert anlegg.</p>
+      <p><a class="knapp knapp-primar" href="/kontakt#kontaktskjema">Be om tilbod</a></p>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/cta-band') %>
+<%- include('../partials/bottom') %>

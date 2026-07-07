@@ -1,0 +1,55 @@
+<%- include('partials/atop', { tittel: 'Rediger: ' + def.label }) %>
+
+<p><a href="/admin/sider">← Alle sider</a></p>
+
+<form method="post" action="/admin/sider/<%= key %>" class="admin-skjema">
+  <input type="hidden" name="_csrf" value="<%= csrf %>" />
+
+  <fieldset>
+    <legend>SEO (søkjemotorar)</legend>
+    <div class="felt">
+      <label for="seoTitle">Sidetittel (blir vist i Google og i nettlesarfana, maks ca. 60 teikn)</label>
+      <input id="seoTitle" name="seoTitle" value="<%= pageData.seoTitle || '' %>" maxlength="70" />
+    </div>
+    <div class="felt">
+      <label for="seoDescription">Meta-beskriving (kort tekst under tittelen i Google, maks ca. 160 teikn)</label>
+      <textarea id="seoDescription" name="seoDescription" rows="2" maxlength="170"><%= pageData.seoDescription || '' %></textarea>
+    </div>
+  </fieldset>
+
+  <% if (def.fields.length) { %>
+  <fieldset>
+    <legend>Innhald</legend>
+    <% for (const [name, label, type] of def.fields) { %>
+      <% if (type === 'textarea') { %>
+      <div class="felt">
+        <label for="f-<%= name %>"><%= label %> <span class="felt-hint-inline">(tom linje = nytt avsnitt)</span></label>
+        <textarea id="f-<%= name %>" name="<%= name %>" rows="8"><%= pageData[name] || '' %></textarea>
+      </div>
+      <% } else if (type === 'image') { %>
+      <div class="felt">
+        <label for="f-<%= name %>"><%= label %></label>
+        <select id="f-<%= name %>" name="<%= name %>" class="admin-biletveljar">
+          <option value="">(ikkje noko bilete)</option>
+          <% for (const m of (content.media || [])) { %>
+          <option value="<%= m.id %>" <%= pageData[name] === m.id ? 'selected' : '' %>><%= m.id %></option>
+          <% } %>
+        </select>
+        <% if (pageData[name]) { %>
+        <img class="admin-miniatyr" src="/media/<%= pageData[name] %>-sm.webp" alt="" width="120" />
+        <% } %>
+      </div>
+      <% } else { %>
+      <div class="felt">
+        <label for="f-<%= name %>"><%= label %></label>
+        <input id="f-<%= name %>" name="<%= name %>" value="<%= pageData[name] || '' %>" />
+      </div>
+      <% } %>
+    <% } %>
+  </fieldset>
+  <% } %>
+
+  <button type="submit" class="knapp knapp-primar">Lagre</button>
+</form>
+
+<%- include('partials/abot') %>

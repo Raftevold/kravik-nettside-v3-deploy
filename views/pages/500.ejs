@@ -1,0 +1,9 @@
+<%- include('../partials/top') %>
+<%- include('../partials/sidehovud', { title: 'Noko gjekk gale', lead: 'Ein teknisk feil oppstod. Prøv igjen om litt.', image: null }) %>
+<section class="seksjon">
+  <div class="ramme brodtekst brodtekst-smal">
+    <p>Om feilen held fram, ring oss gjerne på <a href="<%= telHref(site.phone) %>"><%= site.phone %></a>.</p>
+    <p><a class="pil-lenke" href="/">Gå til framsida</a></p>
+  </div>
+</section>
+<%- include('../partials/bottom') %>

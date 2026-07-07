@@ -1,0 +1,39 @@
+<%- include('partials/atop', { tittel: 'Tenester' }) %>
+
+<p class="admin-forklaring">Tenestene blir viste på framsida og på tenestesida, i denne rekkjefølgja.</p>
+
+<% content.services.forEach((s, i) => { %>
+<details class="admin-detalj">
+  <summary><strong><%= s.title %></strong> <span class="admin-dus">(<%= s.icon %>)</span></summary>
+  <form method="post" action="/admin/tenester/lagre" class="admin-skjema">
+    <input type="hidden" name="_csrf" value="<%= csrf %>" />
+    <input type="hidden" name="index" value="<%= i %>" />
+    <input type="hidden" name="id" value="<%= s.id %>" />
+    <div class="felt"><label for="t-title-<%= i %>">Tittel</label>
+      <input id="t-title-<%= i %>" name="title" value="<%= s.title %>" required /></div>
+    <div class="felt"><label for="t-icon-<%= i %>">Ikon</label>
+      <select id="t-icon-<%= i %>" name="icon"><% for (const ic of ICONS) { %><option value="<%= ic %>" <%= s.icon === ic ? 'selected' : '' %>><%= ic %></option><% } %></select></div>
+    <div class="felt"><label for="t-text-<%= i %>">Tekst</label>
+      <textarea id="t-text-<%= i %>" name="text" rows="3"><%= s.text %></textarea></div>
+    <button type="submit" class="knapp knapp-primar">Lagre</button>
+  </form>
+  <div class="admin-rad-handlingar">
+    <form method="post" action="/admin/tenester/flytt"><input type="hidden" name="_csrf" value="<%= csrf %>" /><input type="hidden" name="index" value="<%= i %>" /><input type="hidden" name="dir" value="opp" /><button class="knapp knapp-liten" <%= i === 0 ? 'disabled' : '' %>>▲ Flytt opp</button></form>
+    <form method="post" action="/admin/tenester/flytt"><input type="hidden" name="_csrf" value="<%= csrf %>" /><input type="hidden" name="index" value="<%= i %>" /><input type="hidden" name="dir" value="ned" /><button class="knapp knapp-liten" <%= i === content.services.length - 1 ? 'disabled' : '' %>>▼ Flytt ned</button></form>
+    <form method="post" action="/admin/tenester/slett" data-stadfest="Slette tenesta «<%= s.title %>»?"><input type="hidden" name="_csrf" value="<%= csrf %>" /><input type="hidden" name="index" value="<%= i %>" /><button class="knapp knapp-liten knapp-fare">Slett</button></form>
+  </div>
+</details>
+<% }) %>
+
+<h2>Legg til ny teneste</h2>
+<form method="post" action="/admin/tenester/lagre" class="admin-skjema">
+  <input type="hidden" name="_csrf" value="<%= csrf %>" />
+  <input type="hidden" name="index" value="-1" />
+  <div class="felt"><label for="ny-title">Tittel</label><input id="ny-title" name="title" required /></div>
+  <div class="felt"><label for="ny-icon">Ikon</label>
+    <select id="ny-icon" name="icon"><% for (const ic of ICONS) { %><option value="<%= ic %>"><%= ic %></option><% } %></select></div>
+  <div class="felt"><label for="ny-text">Tekst</label><textarea id="ny-text" name="text" rows="3"></textarea></div>
+  <button type="submit" class="knapp knapp-primar">Legg til</button>
+</form>
+
+<%- include('partials/abot') %>

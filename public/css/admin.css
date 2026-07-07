@@ -1,0 +1,255 @@
+/* Kr. A. Vik – administrasjon */
+@font-face {
+  font-family: 'Manrope';
+  src: url('/fonts/manrope.woff2') format('woff2-variations');
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+:root {
+  --petrol: #0e4a5c;
+  --petrol-mork: #0a3341;
+  --petrol-lys: #eaf1f3;
+  --koppar: #b4511a;
+  --koppar-mork: #9e4212;
+  --blekk: #16262e;
+  --dus: #51626a;
+  --papir: #f6f4ef;
+  --linje: #e4e0d6;
+  --fare: #b3261e;
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; }
+
+body.admin-kropp {
+  margin: 0;
+  font-family: 'Manrope', system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--blekk);
+  background: var(--papir);
+}
+
+a { color: var(--petrol); }
+h1, h2 { color: var(--petrol-mork); letter-spacing: -0.01em; }
+h1 { font-size: 1.7rem; margin-top: 0; }
+h2 { font-size: 1.2rem; margin-top: 2.2rem; }
+code { background: #eee9de; padding: 0.1em 0.35em; border-radius: 5px; font-size: 0.92em; }
+
+:focus-visible { outline: 3px solid var(--koppar); outline-offset: 2px; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); }
+.skip-link { position: absolute; top: -4rem; left: 0.5rem; background: var(--petrol-mork); color: #fff; padding: 0.6rem 1rem; z-index: 10; }
+.skip-link:focus { top: 0; }
+
+.admin-oppsett { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+
+.admin-side {
+  background: var(--petrol-mork);
+  color: #c3d4d9;
+  padding: 1.4rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.admin-logo { font-weight: 800; font-size: 1.15rem; color: #fff; margin: 0 0 0 0.6rem; line-height: 1.2; }
+.admin-logo span { font-weight: 500; font-size: 0.85rem; color: #9db7bf; }
+
+.admin-side nav ul { list-style: none; margin: 0; padding: 0; }
+.admin-side nav a {
+  display: block;
+  color: #d7e3e7;
+  text-decoration: none;
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+.admin-side nav a:hover { background: rgb(255 255 255 / 0.1); color: #fff; }
+.admin-side nav a[aria-current='page'] { background: var(--koppar); color: #fff; }
+
+.admin-side-botn { margin-top: auto; display: grid; gap: 0.6rem; padding: 0 0.7rem; }
+.admin-side-botn a { color: #fff; }
+.admin-side-botn .lenkeknapp { background: none; border: 0; color: #c3d4d9; text-decoration: underline; cursor: pointer; font: inherit; padding: 0; }
+
+.admin-hovud { padding: 2rem clamp(1.2rem, 4vw, 3rem); max-width: 60rem; }
+
+@media (max-width: 799px) {
+  .admin-oppsett { grid-template-columns: 1fr; }
+  .admin-side { flex-direction: column; }
+  .admin-side nav ul { display: flex; flex-wrap: wrap; gap: 0.2rem; }
+}
+
+.admin-flash { padding: 0.8rem 1.1rem; border-radius: 10px; margin-bottom: 1.4rem; font-weight: 600; }
+.admin-flash-ok { background: #e8f3ec; border: 1.5px solid #2c7a4b; color: #1d5b37; }
+.admin-flash-feil { background: #fbeaea; border: 1.5px solid var(--fare); color: #8c1d17; }
+
+/* Lagra-meldinga som flytande toast, slik at ho er synleg same kvar du står på sida */
+.admin-flash-toast {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 300;
+  max-width: min(440px, calc(100vw - 2rem));
+  box-shadow: 0 10px 36px rgb(10 51 65 / 0.28);
+  animation: toast-inn 0.25s ease;
+}
+
+@keyframes toast-inn {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-flash-toast { animation: none; }
+}
+
+.admin-forklaring { color: var(--dus); max-width: 60ch; }
+
+.admin-kort-rekke { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+.admin-kort {
+  background: #fff;
+  border: 1px solid var(--linje);
+  border-radius: var(--radius);
+  padding: 1.2rem;
+  text-decoration: none;
+  color: var(--blekk);
+  display: grid;
+  gap: 0.2rem;
+}
+.admin-kort strong { font-size: 1.6rem; color: var(--koppar-mork); }
+.admin-kort span { color: var(--dus); font-size: 0.9rem; }
+.admin-kort:hover { border-color: var(--petrol); }
+
+.admin-tabell { width: 100%; border-collapse: collapse; background: #fff; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--linje); }
+.admin-tabell th, .admin-tabell td { text-align: left; padding: 0.7rem 1rem; border-bottom: 1px solid var(--linje); vertical-align: top; }
+.admin-tabell tr:last-child th, .admin-tabell tr:last-child td { border-bottom: 0; }
+.admin-tabell thead th { background: var(--petrol-lys); }
+
+.admin-dus { color: var(--dus); font-weight: 400; font-size: 0.92rem; }
+.admin-snarvegar { padding-left: 1.2rem; }
+.admin-snarvegar li { padding-block: 0.15rem; }
+
+.admin-skjema { background: #fff; border: 1px solid var(--linje); border-radius: var(--radius); padding: 1.4rem; margin-block: 1rem; max-width: 46rem; }
+.admin-skjema fieldset { border: 0; padding: 0; margin: 0 0 1.6rem; }
+.admin-skjema legend { font-weight: 800; color: var(--petrol-mork); margin-bottom: 0.6rem; font-size: 1.05rem; }
+
+.felt { margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.felt-rad { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0 1rem; }
+.felt label { font-weight: 650; font-size: 0.94rem; }
+.felt input, .felt textarea, .felt select {
+  font: inherit;
+  padding: 0.55rem 0.8rem;
+  border: 1.5px solid #5f7178;
+  border-radius: 8px;
+  width: 100%;
+  background: #fff;
+}
+.felt-brytar { flex-direction: row; align-items: center; gap: 0.6rem; }
+.felt-brytar input { width: 1.3rem; height: 1.3rem; accent-color: var(--koppar); }
+.felt-hint, .felt-hint-inline { color: var(--dus); font-size: 0.88rem; font-weight: 400; }
+
+.knapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.2rem;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+.knapp-primar { background: var(--koppar); color: #fff; }
+.knapp-primar:hover { background: var(--koppar-mork); }
+.knapp-sekundar { background: #fff; border-color: var(--petrol); color: var(--petrol); }
+.knapp-sekundar:hover { background: var(--petrol-lys); }
+.knapp-liten { padding: 0.3rem 0.8rem; font-size: 0.88rem; background: #fff; border-color: #b5bfc2; color: var(--blekk); }
+.knapp-liten:hover { border-color: var(--petrol); color: var(--petrol); }
+.knapp-fare { background: #fff; border-color: var(--fare); color: var(--fare); }
+.knapp-fare:hover { background: #fbeaea; }
+.knapp[disabled] { opacity: 0.4; cursor: not-allowed; }
+
+.admin-detalj { background: #fff; border: 1px solid var(--linje); border-radius: var(--radius); margin-bottom: 0.7rem; padding: 0; }
+.admin-detalj summary { padding: 0.9rem 1.2rem; cursor: pointer; }
+.admin-detalj .admin-skjema { border: 0; border-top: 1px solid var(--linje); border-radius: 0; margin: 0; }
+.admin-rad-handlingar { display: flex; gap: 0.6rem; padding: 0 1.2rem 1rem; flex-wrap: wrap; }
+.admin-rad-handlingar form { margin: 0; }
+
+.admin-bilete-rutenett { list-style: none; margin: 1rem 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+.admin-bilete-kort { background: #fff; border: 1px solid var(--linje); border-radius: var(--radius); padding: 0.8rem; }
+.admin-bilete-kort img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; }
+.admin-bilete-namn { margin: 0.5rem 0 0.4rem; font-size: 0.85rem; word-break: break-all; }
+.admin-altform { display: flex; gap: 0.4rem; margin-bottom: 0.6rem; }
+.admin-altform input { flex: 1; font-size: 0.88rem; padding: 0.35rem 0.6rem; border: 1.5px solid #b5bfc2; border-radius: 7px; min-width: 0; }
+.admin-bilete-kort .admin-rad-handlingar { padding: 0; }
+
+.admin-miniatyr { margin-top: 0.5rem; border-radius: 8px; border: 1px solid var(--linje); }
+
+/* Fasilitetar-avkryssing (leilegheiter) */
+.admin-fasilitetar {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.35rem 1rem;
+  margin-top: 0.3rem;
+}
+
+.admin-fasilitet { display: flex; align-items: center; gap: 0.5rem; font-weight: 500; font-size: 0.95rem; }
+.admin-fasilitet input { width: 1.1rem; height: 1.1rem; accent-color: var(--koppar); }
+
+.admin-melding { background: #fff; border: 1px solid var(--linje); border-radius: var(--radius); padding: 1.2rem 1.4rem; margin-bottom: 0.9rem; }
+.admin-melding-ulesen { border-left: 5px solid var(--koppar); }
+.admin-melding header { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; flex-wrap: wrap; }
+.admin-melding h2 { margin: 0; font-size: 1.1rem; }
+.admin-melding blockquote { margin: 0.8rem 0; padding: 0.8rem 1rem; background: var(--papir); border-radius: 8px; }
+.admin-melding .admin-rad-handlingar { padding: 0; }
+.admin-merke { background: var(--koppar); color: #fff; font-size: 0.75rem; padding: 0.1rem 0.6rem; border-radius: 999px; vertical-align: middle; }
+.admin-melding-kontakt { margin: 0.3rem 0 0; }
+
+.varsellinje-forhand { background: var(--koppar-mork); color: #fff; text-align: center; padding: 0.55rem 1rem; border-radius: 8px; font-weight: 600; max-width: 46rem; margin-bottom: 1rem; }
+
+.admin-merke-tilbod { background: var(--petrol); }
+.admin-merke-laerling { background: #2c7a4b; }
+
+/* Ferie-/driftsmodus + statistikk på dashbordet */
+.admin-malknappar { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+
+.admin-stolpar {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 120px;
+  margin: 1rem 0 1.4rem;
+}
+
+.admin-stolpe-holdar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  min-width: 0;
+}
+
+.admin-stolpe {
+  display: block;
+  width: 100%;
+  max-width: 34px;
+  min-height: 2px;
+  background: var(--petrol);
+  border-radius: 4px 4px 0 0;
+}
+
+.admin-stolpe-dag { font-size: 0.7rem; color: var(--dus); margin-top: 0.25rem; }
+.admin-stats-tabell { max-width: 32rem; }
+
+/* Innlogging */
+.admin-login-kropp { display: grid; place-items: center; min-height: 100vh; padding: 1rem; }
+.admin-login { background: #fff; border: 1px solid var(--linje); border-radius: 16px; padding: 2.2rem; width: min(420px, 92vw); box-shadow: 0 10px 40px rgb(10 51 65 / 0.12); }
+.admin-login h1 { font-size: 1.5rem; line-height: 1.2; margin-bottom: 1.4rem; }
+.admin-login h1 span { font-weight: 500; font-size: 0.95rem; color: var(--dus); }
+.admin-login .knapp { width: 100%; justify-content: center; margin-top: 0.4rem; }
+.admin-login-tilbake { margin: 1.2rem 0 0; font-size: 0.92rem; }
