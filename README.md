@@ -38,6 +38,15 @@ varme for rørleggardelen, varmt kveldslys for eigedomsdelen. Sjå
 - **Tryggleik** – helmet (CSP med nonce), bcrypt, rate-limiting, CSRF-vern,
   signerte sesjonscookies
 
+## Adresser (v3)
+
+- **Live:** https://kravik-nettside-v3.onrender.com
+- **Utviklingsrepo (privat):** https://github.com/Raftevold/kravik-nettside-v3
+- **Deploy-repo (offentleg, det Render køyrer):** https://github.com/Raftevold/kravik-nettside-v3-deploy
+- Ny kode ut i produksjon: merge `main` inn i `deploy`-greina og push til
+  `deploy`-remoten (`git push deploy deploy:main`), og trykk «Manual Deploy»
+  i Render-dashbordet.
+
 ## Kom i gang lokalt
 
 ```bash
