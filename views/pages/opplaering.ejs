@@ -18,28 +18,29 @@
       </div>
       <% } %>
       <% if (typeof formError !== 'undefined' && formError) { %>
-      <div class="skjema-feil" role="alert"><p><%= formError %></p></div>
+      <div class="skjema-feil" role="alert" tabindex="-1"><p><%= formError %></p></div>
       <% } %>
-      <% const fv = typeof formValues !== 'undefined' ? formValues : {}; %>
+      <% const fv = typeof formValues !== 'undefined' ? formValues : {};
+         const fe = typeof formFieldErrors !== 'undefined' && formFieldErrors ? formFieldErrors : {}; %>
       <form method="post" action="/opplaeringsbedrift" novalidate>
         <div class="felt">
           <label for="s-navn">Namn <span aria-hidden="true">*</span></label>
-          <input type="text" id="s-navn" name="navn" required autocomplete="name" value="<%= fv.navn || '' %>" />
+          <input type="text" id="s-navn" name="navn" required autocomplete="name" value="<%= fv.navn || '' %>" <%- fe.navn ? 'aria-invalid="true"' : '' %> />
         </div>
         <div class="felt-rad">
           <div class="felt">
             <label for="s-epost">E-post</label>
-            <input type="email" id="s-epost" name="epost" autocomplete="email" value="<%= fv.epost || '' %>" aria-describedby="s-hint" />
+            <input type="email" id="s-epost" name="epost" autocomplete="email" value="<%= fv.epost || '' %>" aria-describedby="s-hint" <%- fe.epost ? 'aria-invalid="true"' : '' %> />
           </div>
           <div class="felt">
             <label for="s-telefon">Telefon</label>
-            <input type="tel" id="s-telefon" name="telefon" autocomplete="tel" value="<%= fv.telefon || '' %>" aria-describedby="s-hint" />
+            <input type="tel" id="s-telefon" name="telefon" autocomplete="tel" value="<%= fv.telefon || '' %>" aria-describedby="s-hint" <%- fe.telefon ? 'aria-invalid="true"' : '' %> />
           </div>
         </div>
         <p class="felt-hint" id="s-hint">Fyll ut e-post eller telefon, slik at vi får svart deg.</p>
         <div class="felt">
           <label for="s-melding">Fortel kort om deg sjølv <span aria-hidden="true">*</span></label>
-          <textarea id="s-melding" name="melding" rows="5" required placeholder="Kven er du, kva utdanning/erfaring har du, og kvifor vil du bli rørleggar?"><%= fv.melding || '' %></textarea>
+          <textarea id="s-melding" name="melding" rows="5" required placeholder="Kven er du, kva utdanning/erfaring har du, og kvifor vil du bli rørleggar?" <%- fe.melding ? 'aria-invalid="true"' : '' %>><%= fv.melding || '' %></textarea>
         </div>
         <div class="felt felt-skjult" aria-hidden="true">
           <label for="s-nettstad">La dette feltet stå tomt</label>

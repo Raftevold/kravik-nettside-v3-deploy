@@ -206,15 +206,29 @@ router.get(
 // Felles validering for skjema som skal til meldingsinnboksen
 function validateSubmission(body) {
   const errors = [];
+  const fieldErrors = {}; // felt → true, for aria-invalid i malane
   const name = String(body.navn || '').trim().slice(0, 200);
   const email = String(body.epost || '').trim().slice(0, 200);
   const phone = String(body.telefon || '').trim().slice(0, 50);
   const message = String(body.melding || '').trim().slice(0, 5000);
-  if (!name) errors.push('Skriv inn namnet ditt.');
-  if (!email && !phone) errors.push('Oppgi e-post eller telefon, slik at vi kan svare deg.');
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push('E-postadressa ser ikkje gyldig ut.');
-  if (!message) errors.push('Skriv ei melding.');
-  return { errors, name, email, phone, message };
+  if (!name) {
+    errors.push('Skriv inn namnet ditt.');
+    fieldErrors.navn = true;
+  }
+  if (!email && !phone) {
+    errors.push('Oppgi e-post eller telefon, slik at vi kan svare deg.');
+    fieldErrors.epost = true;
+    fieldErrors.telefon = true;
+  }
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errors.push('E-postadressa ser ikkje gyldig ut.');
+    fieldErrors.epost = true;
+  }
+  if (!message) {
+    errors.push('Skriv ei melding.');
+    fieldErrors.melding = true;
+  }
+  return { errors, fieldErrors, name, email, phone, message };
 }
 
 router.post('/kontakt', formLimiter, (req, res, next) => {
@@ -225,7 +239,7 @@ router.post('/kontakt', formLimiter, (req, res, next) => {
     // Honningkrukke: robotar fyller ut det skjulte feltet
     if (req.body.nettstad) return res.redirect('/kontakt?sendt=1#kontaktskjema');
 
-    const { errors, name, email, phone, message } = validateSubmission(req.body);
+    const { errors, fieldErrors, name, email, phone, message } = validateSubmission(req.body);
     const jobtype = String(req.body.jobbtype || '').trim().slice(0, 80);
     const address = String(req.body.adresse || '').trim().slice(0, 200);
 
@@ -237,6 +251,7 @@ router.post('/kontakt', formLimiter, (req, res, next) => {
         jsonLd: seo.plumberJsonLd(content, url),
         sent: false,
         formError: errors.join(' '),
+        formFieldErrors: fieldErrors,
         formValues: { navn: name, epost: email, telefon: phone, melding: message, jobbtype: jobtype, adresse: address },
       });
     }
@@ -275,7 +290,7 @@ router.post('/opplaeringsbedrift', formLimiter, (req, res, next) => {
 
     if (req.body.nettstad) return res.redirect('/opplaeringsbedrift?sendt=1#soknad');
 
-    const { errors, name, email, phone, message } = validateSubmission(req.body);
+    const { errors, fieldErrors, name, email, phone, message } = validateSubmission(req.body);
 
     if (errors.length) {
       return res.status(422).render('pages/opplaering', {
@@ -285,6 +300,7 @@ router.post('/opplaeringsbedrift', formLimiter, (req, res, next) => {
         jsonLd: seo.plumberJsonLd(content, url),
         sent: false,
         formError: errors.join(' '),
+        formFieldErrors: fieldErrors,
         formValues: { navn: name, epost: email, telefon: phone, melding: message },
       });
     }

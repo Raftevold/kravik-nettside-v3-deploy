@@ -14,12 +14,13 @@
       </div>
       <% } %>
       <% if (formError) { %>
-      <div class="skjema-feil" role="alert"><p><%= formError %></p></div>
+      <div class="skjema-feil" role="alert" tabindex="-1"><p><%= formError %></p></div>
       <% } %>
+      <% const fe = typeof formFieldErrors !== 'undefined' && formFieldErrors ? formFieldErrors : {}; %>
       <form method="post" action="/kontakt" novalidate>
         <div class="felt">
           <label for="navn">Namn <span aria-hidden="true">*</span></label>
-          <input type="text" id="navn" name="navn" required autocomplete="name" value="<%= formValues.navn || '' %>" />
+          <input type="text" id="navn" name="navn" required autocomplete="name" value="<%= formValues.navn || '' %>" <%- fe.navn ? 'aria-invalid="true"' : '' %> />
         </div>
         <div class="felt-rad">
           <div class="felt">
@@ -40,17 +41,17 @@
         <div class="felt-rad">
           <div class="felt">
             <label for="epost">E-post</label>
-            <input type="email" id="epost" name="epost" autocomplete="email" value="<%= formValues.epost || '' %>" aria-describedby="kontaktinfo-hint" />
+            <input type="email" id="epost" name="epost" autocomplete="email" value="<%= formValues.epost || '' %>" aria-describedby="kontaktinfo-hint" <%- fe.epost ? 'aria-invalid="true"' : '' %> />
           </div>
           <div class="felt">
             <label for="telefon">Telefon</label>
-            <input type="tel" id="telefon" name="telefon" autocomplete="tel" value="<%= formValues.telefon || '' %>" aria-describedby="kontaktinfo-hint" />
+            <input type="tel" id="telefon" name="telefon" autocomplete="tel" value="<%= formValues.telefon || '' %>" aria-describedby="kontaktinfo-hint" <%- fe.telefon ? 'aria-invalid="true"' : '' %> />
           </div>
         </div>
         <p class="felt-hint" id="kontaktinfo-hint">Fyll ut e-post eller telefon, slik at vi får svart deg.</p>
         <div class="felt">
           <label for="melding">Kva kan vi hjelpe deg med? <span aria-hidden="true">*</span></label>
-          <textarea id="melding" name="melding" rows="6" required><%= formValues.melding || '' %></textarea>
+          <textarea id="melding" name="melding" rows="6" required <%- fe.melding ? 'aria-invalid="true"' : '' %>><%= formValues.melding || '' %></textarea>
         </div>
         <div class="felt felt-skjult" aria-hidden="true">
           <label for="nettstad">La dette feltet stå tomt</label>

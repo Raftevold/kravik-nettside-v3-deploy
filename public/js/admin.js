@@ -67,6 +67,7 @@
     if (!datalist || !latFelt || !lngFelt) return;
     var forslag = {};
     var timer;
+    var sekvens = 0; // vern mot at eit TREGT svar overskriv forslaga frå eit nyare søk
 
     input.addEventListener('input', function () {
       var verdi = input.value;
@@ -83,9 +84,11 @@
       var q = verdi.trim();
       if (q.length < 4) return;
       timer = setTimeout(function () {
+        var minSekvens = ++sekvens;
         fetch('https://ws.geonorge.no/adresser/v1/sok?treffPerSide=8&sok=' + encodeURIComponent(q))
           .then(function (r) { return r.json(); })
           .then(function (json) {
+            if (minSekvens !== sekvens) return; // eit nyare søk er alt sendt – forkast dette svaret
             datalist.textContent = '';
             forslag = {};
             (json.adresser || []).forEach(function (a) {

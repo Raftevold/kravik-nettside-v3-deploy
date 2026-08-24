@@ -27,9 +27,12 @@ router.use(
   })
 );
 
+// files: 10 – med memoryStorage ligg heile settet i minnet samstundes, og
+// instansen på gratisplanen har berre 512 MB (10 × 12 MB + sharp-arbeid er
+// innanfor; 20 filer var det ikkje nødvendigvis).
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 12 * 1024 * 1024, files: 20 },
+  limits: { fileSize: 12 * 1024 * 1024, files: 10 },
 });
 
 // Multer-feil (for stor fil o.l.) skal gi ei forståeleg flash-melding og
@@ -489,7 +492,7 @@ router.post('/prosjekt/slett', async (req, res) => {
   res.redirect('/admin/prosjekt');
 });
 
-router.post('/prosjekt/last-opp', uploadMedFeilmelding(upload.array('bilete', 20), '/admin/prosjekt'), auth.verifyCsrf, async (req, res) => {
+router.post('/prosjekt/last-opp', uploadMedFeilmelding(upload.array('bilete', 10), '/admin/prosjekt'), auth.verifyCsrf, async (req, res) => {
   const c = store.getContent();
   c.projects = c.projects || [];
   c.media = c.media || [];
@@ -606,7 +609,7 @@ router.post('/eigedom/slett', async (req, res) => {
   res.redirect('/admin/eigedom');
 });
 
-router.post('/eigedom/last-opp', uploadMedFeilmelding(upload.array('bilete', 20), '/admin/eigedom'), auth.verifyCsrf, async (req, res) => {
+router.post('/eigedom/last-opp', uploadMedFeilmelding(upload.array('bilete', 10), '/admin/eigedom'), auth.verifyCsrf, async (req, res) => {
   const c = store.getContent();
   c.properties = c.properties || [];
   c.media = c.media || [];
@@ -664,7 +667,7 @@ router.post('/eigedom/fjern-bilete', async (req, res) => {
 // ---------- Bilete (mediebibliotek + galleri) ----------
 router.get('/bilete', (req, res) => res.render('admin/bilete', {}));
 
-router.post('/bilete/last-opp', uploadMedFeilmelding(upload.array('bilete', 20), '/admin/bilete'), auth.verifyCsrf, async (req, res) => {
+router.post('/bilete/last-opp', uploadMedFeilmelding(upload.array('bilete', 10), '/admin/bilete'), auth.verifyCsrf, async (req, res) => {
   const c = store.getContent();
   c.media = c.media || [];
   c.gallery = c.gallery || [];

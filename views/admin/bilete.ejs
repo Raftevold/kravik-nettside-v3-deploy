@@ -4,7 +4,7 @@
 <form method="post" action="/admin/bilete/last-opp" enctype="multipart/form-data" class="admin-skjema">
   <input type="hidden" name="_csrf" value="<%= csrf %>" />
   <div class="felt">
-    <label for="bilete">Vel bilete (JPG/PNG/WebP, inntil 20 om gongen). Dei blir automatisk
+    <label for="bilete">Vel bilete (JPG/PNG/WebP, inntil 10 om gongen). Dei blir automatisk
     komprimerte og laga i fleire storleikar.</label>
     <input type="file" id="bilete" name="bilete" accept="image/jpeg,image/png,image/webp,image/avif" multiple required />
   </div>

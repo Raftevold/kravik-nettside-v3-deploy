@@ -2,6 +2,13 @@
 (function () {
   'use strict';
 
+  /* ---------- Skjemafeil: flytt fokus til feilmeldinga ----------
+     Boksen finst berre etter ei mislukka innsending (422-rerender), og
+     role="alert" som ligg i HTML frå start blir ikkje påliteleg annonsert
+     av skjermlesarar – fokus dit gjer feilen tydeleg for alle. */
+  var skjemaFeil = document.querySelector('.skjema-feil');
+  if (skjemaFeil) skjemaFeil.focus();
+
   /* ---------- Mobilmeny ---------- */
   var nav = document.querySelector('.hovudnav');
   var navKnapp = document.querySelector('.nav-knapp');
