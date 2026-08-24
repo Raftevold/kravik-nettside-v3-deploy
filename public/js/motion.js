@@ -86,7 +86,11 @@
           e.target.classList.add('vist');
           observator.unobserve(e.target);
           setTimeout(function () {
+            // Ta òg bort data-avduk: avdukings-transition har høgare
+            // spesifisitet enn hover-reglane til korta, og ville elles
+            // overstyre mikrointeraksjonane deira for alltid.
             e.target.classList.add('ferdig');
+            e.target.removeAttribute('data-avduk');
           }, 1700);
         });
       },
@@ -236,7 +240,13 @@
   });
   sjekkGardin();
 
-  /* ---------- Tal som tel seg opp (1933, 21, 2 …) ---------- */
+  /* ---------- Tal som tel seg opp (1933, 21, 2 …) ----------
+     Malane server-rendrar det FERDIGE talet – teljinga er rein pynt og må
+     aldri kunne etterlate feil tal («0 avdelingar»). Difor: same terskel som
+     avdukinga (talet blir sett til startverdi medan elementet enno er
+     usynleg, så ingen ser hoppet 2→0), hopp over når fana er i bakgrunnen
+     (m.a. headless-rendrering/Googlebot), og eit tryggingsnett som alltid
+     skriv sluttverdien inn att. */
   var telObs =
     'IntersectionObserver' in window &&
     new IntersectionObserver(
@@ -247,26 +257,44 @@
           telOpp(e.target);
         });
       },
-      { threshold: 0.6 }
+      { rootMargin: '0px 0px -9% 0px', threshold: 0.05 }
     );
 
   function telOpp(dt) {
-    var m = dt.textContent.trim().match(/^(\d+)([\s\S]*)$/);
+    var ferdigTekst = dt.textContent;
+    var m = ferdigTekst.trim().match(/^(\d+)([\s\S]*)$/);
     if (!m) return;
+    if (document.hidden) return; // la det ferdige talet stå urørt
     var mal = parseInt(m[1], 10);
     var suffiks = m[2] || '';
     // Årstal tel frå like under (1900 → 1933); små tal tel frå null
     var fra = mal >= 1000 ? mal - 33 : 0;
     var start = null;
     var TID = 1500;
+    var ferdig = false;
     function steg(ts) {
+      if (ferdig) return;
+      if (document.hidden) {
+        // Fana vart lagd i bakgrunnen midt i teljinga – skriv fasiten
+        ferdig = true;
+        dt.textContent = ferdigTekst;
+        return;
+      }
       if (start === null) start = ts;
       var t = Math.min((ts - start) / TID, 1);
       var eased = t >= 1 ? 1 : 1 - Math.pow(2, -10 * t); // easeOutExpo
       dt.textContent = String(Math.round(fra + (mal - fra) * eased)) + suffiks;
       if (t < 1) requestAnimationFrame(steg);
+      else ferdig = true;
     }
     requestAnimationFrame(steg);
+    // Tryggingsnett: uansett kva som skjer med rAF-kjeda står rett tal att
+    setTimeout(function () {
+      if (!ferdig) {
+        ferdig = true;
+        dt.textContent = ferdigTekst;
+      }
+    }, TID + 300);
   }
 
   if (telObs) {

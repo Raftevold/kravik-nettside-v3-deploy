@@ -84,6 +84,29 @@ function createApp() {
 
   app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
+  // Helsesjekkar. VIKTIG skilje:
+  //  - /health      (Render): 200 så lenge sida kan servere innhald – òg i
+  //    degradert modus, elles ville Render restarta instansen i loop.
+  //  - /health/synk (ekstern opptidsmonitor, t.d. UptimeRobot): 500 når
+  //    GitHub-synken er nede eller tokenet snart utløper – DET er signalet
+  //    som skal nå eigaren på e-post via monitoren.
+  app.get('/health', (req, res) => {
+    res.status(store.getContent() ? 200 : 500).type('text/plain').send(store.getContent() ? 'ok' : 'ingen innhaldsdata');
+  });
+  app.get('/health/synk', (req, res) => {
+    const s = store.syncStatus();
+    const problem = [];
+    if (s.enabled) {
+      if (!s.pulledOk) problem.push('oppstartshenting frå GitHub har ikkje lukkast (degradert modus)');
+      if (s.lastError) problem.push(`siste synk-feil: ${s.lastError}`);
+      if (s.tokenExpiresAt) {
+        const dagarAtt = (new Date(s.tokenExpiresAt).getTime() - Date.now()) / 86400000;
+        if (dagarAtt < 14) problem.push(`GITHUB_TOKEN utløper ${s.tokenExpiresAt.slice(0, 10)} (${Math.max(0, Math.floor(dagarAtt))} dagar att)`);
+      }
+    }
+    res.status(problem.length ? 500 : 200).type('text/plain').send(problem.length ? problem.join('\n') : 'ok');
+  });
+
   // Anonym sideteljing (ingen cookies, ingen IP – sjå src/lib/stats.js)
   app.use(stats.middleware);
 

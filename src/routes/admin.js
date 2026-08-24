@@ -32,6 +32,22 @@ const upload = multer({
   limits: { fileSize: 12 * 1024 * 1024, files: 20 },
 });
 
+// Multer-feil (for stor fil o.l.) skal gi ei forståeleg flash-melding og
+// redirect tilbake – ikkje den generiske 500-sida.
+function uploadMedFeilmelding(mw, tilbake) {
+  return (req, res, next) => {
+    mw(req, res, (err) => {
+      if (!err) return next();
+      const tekst =
+        err.code === 'LIMIT_FILE_SIZE'
+          ? 'Éi eller fleire filer er for store (maks 12 MB per fil). Forminsk bileta og prøv på nytt.'
+          : `Opplastinga feila: ${err.message}`;
+      flash(req, tekst, 'feil');
+      res.redirect(tilbake);
+    });
+  };
+}
+
 // Ikkje indekser admin
 router.use((req, res, next) => {
   res.set('X-Robots-Tag', 'noindex, nofollow');
@@ -94,9 +110,15 @@ router.get('/', (req, res) => res.redirect('/admin/oversikt'));
 
 // Alle POST krev gyldig CSRF-token. Multipart-skjema blir parsa av multer
 // inne i sjølve ruta – req.body finst ikkje før det – så der skjer
-// CSRF-sjekken ETTER multer (sjå /bilete/last-opp, /import, /prosjekt/last-opp).
+// CSRF-sjekken ETTER multer. Unntaket gjeld BERRE dei faktiske
+// opplastingsrutene: elles kunne ein forfalska multipart-Content-Type
+// sleppe forbi tokensjekken på alle andre ruter.
+const MULTIPART_RUTER = new Set(['/bilete/last-opp', '/prosjekt/last-opp', '/eigedom/last-opp', '/import']);
 router.post('*', (req, res, next) => {
-  if (req.is('multipart/form-data')) return next();
+  if (req.is('multipart/form-data')) {
+    if (MULTIPART_RUTER.has(req.path)) return next();
+    return res.status(403).send('Ugyldig førespurnad.');
+  }
   return auth.verifyCsrf(req, res, next);
 });
 
@@ -354,7 +376,7 @@ router.post('/tenester/flytt', async (req, res) => {
   const j = idx + dir;
   if (idx >= 0 && idx < c.services.length && j >= 0 && j < c.services.length) {
     [c.services[idx], c.services[j]] = [c.services[j], c.services[idx]];
-    await store.saveContent(c, 'tenester (rekkjefølgje)').catch(() => {});
+    await persist(req, store.saveContent(c, 'tenester (rekkjefølgje)'), 'Rekkjefølgja er lagra.');
   }
   res.redirect('/admin/tenester');
 });
@@ -467,7 +489,7 @@ router.post('/prosjekt/slett', async (req, res) => {
   res.redirect('/admin/prosjekt');
 });
 
-router.post('/prosjekt/last-opp', upload.array('bilete', 20), auth.verifyCsrf, async (req, res) => {
+router.post('/prosjekt/last-opp', uploadMedFeilmelding(upload.array('bilete', 20), '/admin/prosjekt'), auth.verifyCsrf, async (req, res) => {
   const c = store.getContent();
   c.projects = c.projects || [];
   c.media = c.media || [];
@@ -527,6 +549,7 @@ router.get('/eigedom', (req, res) => res.render('admin/eigedom', { FASILITETAR }
 
 router.post('/eigedom/lagre', async (req, res) => {
   const c = store.getContent();
+  c.properties = c.properties || [];
   const idx = Number(req.body.index);
   const existing = Number.isInteger(idx) && idx >= 0 && idx < c.properties.length ? c.properties[idx] : {};
   const lat = Number.parseFloat(String(req.body.lat || '').replace(',', '.'));
@@ -576,14 +599,16 @@ router.post('/eigedom/lagre', async (req, res) => {
 
 router.post('/eigedom/slett', async (req, res) => {
   const c = store.getContent();
+  c.properties = c.properties || [];
   const idx = Number(req.body.index);
   if (Number.isInteger(idx) && idx >= 0 && idx < c.properties.length) c.properties.splice(idx, 1);
   await persist(req, store.saveContent(c, 'leilegheiter'), 'Sletta.');
   res.redirect('/admin/eigedom');
 });
 
-router.post('/eigedom/last-opp', upload.array('bilete', 20), auth.verifyCsrf, async (req, res) => {
+router.post('/eigedom/last-opp', uploadMedFeilmelding(upload.array('bilete', 20), '/admin/eigedom'), auth.verifyCsrf, async (req, res) => {
   const c = store.getContent();
+  c.properties = c.properties || [];
   c.media = c.media || [];
   const idx = Number(req.body.index);
   if (!Number.isInteger(idx) || idx < 0 || idx >= c.properties.length) return res.redirect('/admin/eigedom');
@@ -608,6 +633,7 @@ router.post('/eigedom/last-opp', upload.array('bilete', 20), auth.verifyCsrf, as
 
 router.post('/eigedom/framside', async (req, res) => {
   const c = store.getContent();
+  c.properties = c.properties || [];
   const idx = Number(req.body.index);
   const id = str(req.body.id, 60);
   if (Number.isInteger(idx) && idx >= 0 && idx < c.properties.length) {
@@ -622,6 +648,7 @@ router.post('/eigedom/framside', async (req, res) => {
 
 router.post('/eigedom/fjern-bilete', async (req, res) => {
   const c = store.getContent();
+  c.properties = c.properties || [];
   const idx = Number(req.body.index);
   const id = str(req.body.id, 60);
   if (Number.isInteger(idx) && idx >= 0 && idx < c.properties.length) {
@@ -637,7 +664,7 @@ router.post('/eigedom/fjern-bilete', async (req, res) => {
 // ---------- Bilete (mediebibliotek + galleri) ----------
 router.get('/bilete', (req, res) => res.render('admin/bilete', {}));
 
-router.post('/bilete/last-opp', upload.array('bilete', 20), auth.verifyCsrf, async (req, res) => {
+router.post('/bilete/last-opp', uploadMedFeilmelding(upload.array('bilete', 20), '/admin/bilete'), auth.verifyCsrf, async (req, res) => {
   const c = store.getContent();
   c.media = c.media || [];
   c.gallery = c.gallery || [];
@@ -675,6 +702,11 @@ router.post('/bilete/alt', async (req, res) => {
 router.post('/bilete/slett', async (req, res) => {
   const c = store.getContent();
   const id = str(req.body.id, 60);
+  // Same teiknsett som opplastinga lagar – hindrar path traversal i slettevegen
+  if (!/^[a-z0-9-]+$/.test(id)) {
+    flash(req, 'Ugyldig bilet-id.', 'feil');
+    return res.redirect('/admin/bilete');
+  }
   c.media = (c.media || []).filter((m) => m.id !== id);
   c.gallery = (c.gallery || []).filter((g) => g.image !== id);
   for (const p of c.projects || []) {
@@ -700,7 +732,7 @@ router.post('/galleri/toggle', async (req, res) => {
   const idx = c.gallery.findIndex((g) => g.image === id);
   if (idx >= 0) c.gallery.splice(idx, 1);
   else c.gallery.push({ image: id });
-  await store.saveContent(c, 'galleri').catch(() => {});
+  await persist(req, store.saveContent(c, 'galleri'), idx >= 0 ? 'Biletet er teke ut av galleriet.' : 'Biletet er lagt i galleriet.');
   res.redirect('/admin/bilete');
 });
 
@@ -710,7 +742,8 @@ router.get('/meldingar', (req, res) => {
 });
 
 router.post('/meldingar/lest', async (req, res) => {
-  await store.markMessageRead(str(req.body.id, 40), req.body.lest !== '0').catch(() => {});
+  const lesen = req.body.lest !== '0';
+  await persist(req, store.markMessageRead(str(req.body.id, 40), lesen), lesen ? 'Merkt som lesen.' : 'Merkt som ulesen.');
   res.redirect('/admin/meldingar');
 });
 
@@ -735,12 +768,13 @@ router.post('/innstillingar/passord', async (req, res) => {
   } else if (process.env.ADMIN_PASSWORD_HASH) {
     flash(req, 'Passordet er styrt av miljøvariabelen ADMIN_PASSWORD_HASH og kan ikkje endrast her.', 'feil');
   } else {
-    try {
-      await auth.setPassword(String(nytt));
-      flash(req, 'Passordet er endra.');
-    } catch (err) {
-      flash(req, `Passordet er endra lokalt, men synk FEILA (${err.message}).`, 'feil');
-    }
+    // Hashen blir MEDVITE ikkje synka til GitHub (deploy-repoet er offentleg).
+    // Skal endringa overleve omstart på Render, må hashen inn i miljøvariabelen.
+    const hash = auth.setPassword(String(nytt));
+    flash(
+      req,
+      `Passordet er endra. VIKTIG på Render: endringa overlever ikkje omstart før du set miljøvariabelen ADMIN_PASSWORD_HASH til: ${hash}`
+    );
   }
   res.redirect('/admin/innstillingar');
 });
@@ -750,10 +784,30 @@ router.get('/eksport', (req, res) => {
   res.type('application/json').send(JSON.stringify(store.getContent(), null, 2));
 });
 
-router.post('/import', upload.single('fil'), auth.verifyCsrf, async (req, res) => {
+router.post('/import', uploadMedFeilmelding(upload.single('fil'), '/admin/innstillingar'), auth.verifyCsrf, async (req, res) => {
   try {
+    if (!req.file) throw new Error('Ingen fil vald.');
     const json = JSON.parse(req.file.buffer.toString('utf8'));
-    if (!json.site || !json.pages) throw new Error('Fila manglar «site»/«pages».');
+
+    // Grundig validering: ein gammal/ufullstendig backup skal aldri kunne
+    // knekkje sida (rutene les t.d. pages.X.seoTitle og properties.length
+    // direkte). Manglande lister blir fylte med tomme fallbacks.
+    if (!json || typeof json !== 'object' || !json.site || typeof json.site !== 'object' || !json.pages || typeof json.pages !== 'object') {
+      throw new Error('Fila manglar «site»/«pages».');
+    }
+    const manglandeSider = Object.keys(PAGE_DEFS).filter((k) => !json.pages[k] || typeof json.pages[k] !== 'object');
+    if (manglandeSider.length) {
+      throw new Error(`Fila manglar sidene: ${manglandeSider.join(', ')}. Er dette ein eksport frå ein eldre versjon?`);
+    }
+    for (const nokkel of ['services', 'team', 'testimonials', 'projects', 'properties', 'media', 'gallery', 'partners']) {
+      json[nokkel] = Array.isArray(json[nokkel]) ? json[nokkel] : [];
+    }
+    json.alert = json.alert && typeof json.alert === 'object' ? json.alert : { enabled: false, text: '', link: '' };
+    json.site.address = json.site.address && typeof json.site.address === 'object' ? json.site.address : { street: '', zip: '', city: '' };
+    for (const nokkel of ['departments', 'openingHours', 'social']) {
+      json.site[nokkel] = Array.isArray(json.site[nokkel]) ? json.site[nokkel] : [];
+    }
+
     await persist(req, store.saveContent(json, 'import av innhald'), 'Innhald importert.');
   } catch (err) {
     flash(req, `Import feila: ${err.message}`, 'feil');

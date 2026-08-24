@@ -113,8 +113,15 @@
      Blar automatisk til neste kort kvart 4,5 sekund. Stoppar når brukaren
      held peikaren over, tek på skjermen eller fokuserer – og heilt av ved
      prefers-reduced-motion. */
+  // Respekter både OS-innstillinga OG sida sin eigen «Slå av animasjonar»-
+  // brytar (same localStorage-nøkkel som motion.js) – WCAG 2.2.2.
+  var rorsleAv = false;
+  try {
+    rorsleAv = localStorage.getItem('kravik_rorsle_v1') === 'av';
+  } catch (e) { /* privat modus o.l. */ }
+
   var band = document.querySelector('[data-karusell]');
-  if (band && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (band && !rorsleAv && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     var pause = false;
     ['pointerenter', 'touchstart', 'focusin'].forEach(function (ev) {
       band.addEventListener(ev, function () { pause = true; }, { passive: true });
@@ -195,6 +202,9 @@
       if (Math.abs(dx) > 48 && knappar.length > 1) {
         sveipte = true;
         vis(index + (dx < 0 ? 1 : -1));
+        // På touch kjem det ikkje noko click-event etter eit drag – utan
+        // denne nullstillinga ville neste trykk på bakteppet bli svelgt.
+        setTimeout(function () { sveipte = false; }, 150);
       }
     });
 

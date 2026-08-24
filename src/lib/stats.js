@@ -38,8 +38,13 @@ function prune() {
   }
 }
 
+/** Dagsnøkkel ÅÅÅÅ-MM-DD i norsk tid (sv-SE gjev ISO-format). */
+function dagsnokkel(date = new Date()) {
+  return date.toLocaleDateString('sv-SE', { timeZone: 'Europe/Oslo' });
+}
+
 function hit(p) {
-  const day = new Date().toISOString().slice(0, 10);
+  const day = dagsnokkel();
   if (!data[day]) {
     data[day] = {};
     prune();
@@ -75,7 +80,7 @@ function lastDays(n = 14) {
   for (let i = n - 1; i >= 0; i--) {
     const d = new Date(today);
     d.setDate(d.getDate() - i);
-    const key = d.toISOString().slice(0, 10);
+    const key = dagsnokkel(d);
     out.push({ day: key, total: (data[key] && data[key]._total) || 0 });
   }
   return out;
@@ -85,7 +90,7 @@ function lastDays(n = 14) {
 function topPages(days = 30, limit = 6) {
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - days);
-  const cutoffKey = cutoff.toISOString().slice(0, 10);
+  const cutoffKey = dagsnokkel(cutoff);
   const sums = {};
   for (const [day, entries] of Object.entries(data)) {
     if (day < cutoffKey) continue;
@@ -104,7 +109,7 @@ function totals(days = 30) {
   return lastDays(days).reduce((sum, d) => sum + d.total, 0);
 }
 
-const BOT_RE = /bot|crawl|spider|slurp|curl|wget|monitor|pingdom|lighthouse|headless/i;
+const BOT_RE = /bot|crawl|spider|slurp|curl|wget|monitor|pingdom|lighthouse|headless|render|go-http-client/i;
 
 /** Express-middleware: tel vellukka HTML-sidevisingar frå vanlege nettlesarar. */
 function middleware(req, res, next) {

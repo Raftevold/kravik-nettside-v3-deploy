@@ -95,7 +95,9 @@
       <% for (const pa of content.partners) { %>
       <li>
         <a class="logo-brikke" href="<%= pa.url %>" rel="external noopener" aria-label="<%= pa.name %> (ekstern side)">
-          <img src="/img/<%= pa.logo %>.png" alt="<%= pa.name %>" loading="lazy" height="24" />
+          <% // width/height frå faktiske PNG-dimensjonar (alle er ×37 px høge) – hindrar layout-hopp
+             const logoBreidd = { 'logo-comfort': 195, 'logo-husqvarna': 196, 'logo-kellfri': 153 }[pa.logo]; %>
+          <img src="/img/<%= pa.logo %>.png" alt="<%= pa.name %>" loading="lazy" height="24" <%- logoBreidd ? `width="${Math.round((logoBreidd / 37) * 24)}"` : '' %> />
         </a>
         <p><%= pa.text %></p>
       </li>
@@ -113,7 +115,7 @@
     <ul class="galleri-rutenett galleri-forhand">
       <% galleryPreview.forEach((g, i) => { %>
       <li>
-        <button type="button" class="galleri-knapp" data-lysbilete="<%= mediaUrl(g.image, 'lg') %>" data-alt="<%= mediaAlt(g.image) %>">
+        <button type="button" class="galleri-knapp" data-lysbilete="<%= mediaUrl(g.image, 'lg') %>" data-alt="<%= mediaAlt(g.image) || 'Bilete frå arbeidet vårt' %>">
           <img src="<%= mediaUrl(g.image, 'sm') %>" srcset="<%= srcset(g.image) %>" sizes="(min-width: 720px) 25vw, 50vw" alt="<%= mediaAlt(g.image) || 'Bilete frå arbeidet vårt' %>" loading="lazy" width="400" height="400" />
         </button>
       </li>
@@ -146,7 +148,7 @@
 <section class="laerling-band" aria-labelledby="laerling-tittel">
   <div class="ramme laerling-inner">
     <div>
-      <h2 id="laerling-tittel">Vil du bli røyrleggar?</h2>
+      <h2 id="laerling-tittel">Vil du bli rørleggar?</h2>
       <p>Vi er godkjend opplæringsbedrift og har til ei kvar tid 1–2 lærlingar i arbeid.</p>
     </div>
     <a class="knapp knapp-sekundar" href="/opplaeringsbedrift">Bli lærling hos oss</a>

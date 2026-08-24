@@ -842,6 +842,15 @@ html.rorsle-av *::after {
   transition: none !important;
 }
 
+/* Brytaren skal dekkje ALT, som lova i RORSLE.md: også ankerlenkje-glidinga
+   og kryssfadinga ved sidebyte (pseudoelementa blir ikkje trefte av *) */
+html.rorsle-av { scroll-behavior: auto !important; }
+
+html.rorsle-av::view-transition-old(root),
+html.rorsle-av::view-transition-new(root) {
+  animation: none !important;
+}
+
 html.rorsle-av [data-avduk],
 html.rorsle-av .h-maske,
 html.rorsle-av [data-avduk] .stjerner {
