@@ -36,8 +36,12 @@ function reinsHeader(s) {
   return String(s ?? '').replace(/[\r\n]+/g, ' ').trim();
 }
 
-/** Felles sending – vel transport ut frå oppsettet. */
-async function send({ fromName, to, replyTo, subject, text }) {
+/**
+ * Felles sending – vel transport ut frå oppsettet.
+ * attachments: [{ filename, content: Buffer }] (t.d. kundebilete frå
+ * tilbodsskjemaet – e-posten er det varige arkivet for dei).
+ */
+async function send({ fromName, to, replyTo, subject, text, attachments }) {
   if (viaResendApi) {
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -51,8 +55,12 @@ async function send({ fromName, to, replyTo, subject, text }) {
         reply_to: replyTo || undefined,
         subject,
         text,
+        attachments: (attachments || []).map((a) => ({
+          filename: a.filename,
+          content: a.content.toString('base64'),
+        })),
       }),
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(30000),
     });
     if (!res.ok) {
       const feil = await res.text().catch(() => '');
@@ -66,12 +74,13 @@ async function send({ fromName, to, replyTo, subject, text }) {
     replyTo: replyTo || undefined,
     subject,
     text,
+    attachments: (attachments || []).map((a) => ({ filename: a.filename, content: a.content })),
   });
 }
 
 const TYPE_LABELS = { tilbod: 'Førespurnad om tilbod', laerling: 'Lærling-søknad', kontakt: 'Melding frå kontaktskjemaet' };
 
-async function notifyNewMessage(msg, siteName) {
+async function notifyNewMessage(msg, siteName, attachments) {
   if (!configured) return false;
   const to = process.env.CONTACT_EMAIL || process.env.SMTP_USER;
   const label = TYPE_LABELS[msg.type] || TYPE_LABELS.kontakt;
@@ -87,11 +96,13 @@ async function notifyNewMessage(msg, siteName) {
         `Telefon: ${msg.phone || '(ikkje oppgitt)'}`,
         ...(msg.jobtype ? [`Type jobb: ${msg.jobtype}`] : []),
         ...(msg.address ? [`Adresse/stad: ${msg.address}`] : []),
+        ...(attachments && attachments.length ? [`Vedlagde bilete: ${attachments.length}`] : []),
         '',
         msg.message,
         '',
         `Sendt: ${msg.sentAt}`,
       ].join('\n'),
+      attachments,
     });
     return true;
   } catch (err) {

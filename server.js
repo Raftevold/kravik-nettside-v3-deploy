@@ -3,6 +3,7 @@ const store = require('./src/lib/store');
 const github = require('./src/lib/github');
 const stats = require('./src/lib/stats');
 const mail = require('./src/lib/mail');
+const googleReviews = require('./src/lib/googleReviews');
 
 const PORT = process.env.PORT || 3000;
 
@@ -10,6 +11,7 @@ const PORT = process.env.PORT || 3000;
   try {
     await store.init();
     stats.init();
+    googleReviews.init(); // valfri, hentar i bakgrunnen
   } catch (err) {
     // Berre når det verken finst fersk ELLER lokal data å servere skal
     // prosessen døy (Render beheld då førre fungerande instans). Feila

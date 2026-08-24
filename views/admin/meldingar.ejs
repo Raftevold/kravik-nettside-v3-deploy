@@ -33,6 +33,14 @@ Sett SMTP-miljøvariablane (sjå docs/DRIFT.md).</p>
   </p>
   <% } %>
   <blockquote><%- escapeHtml(m.message).replace(/\n/g, '<br />') %></blockquote>
+  <% if (m.images && m.images.length) { %>
+  <p class="admin-melding-kontakt"><strong>Vedlagde bilete:</strong>
+    <% for (const b of m.images) { %>
+    <a href="/admin/melding-bilete/<%= b %>" target="_blank" rel="noopener"><img class="admin-melding-bilete" src="/admin/melding-bilete/<%= b %>" alt="Vedlagt bilete frå <%= m.name %>" loading="lazy" /></a>
+    <% } %>
+  </p>
+  <p class="admin-dus">Bileta ligg òg som vedlegg i e-postvarselet – der er dei varige (her kan dei forsvinne ved omstart).</p>
+  <% } %>
   <div class="admin-rad-handlingar">
     <form method="post" action="/admin/meldingar/lest">
       <input type="hidden" name="_csrf" value="<%= csrf %>" />

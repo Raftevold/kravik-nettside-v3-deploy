@@ -75,4 +75,21 @@ function deleteMedia(id) {
   }
 }
 
-module.exports = { processUpload, deleteMedia, SIZES };
+/**
+ * Kundebilete frå tilbodsskjemaet: valider at det faktisk er eit bilete og
+ * krymp til fornuftig storleik (maks 1600 px, JPEG). Blir lagt ved e-posten
+ * (det varige arkivet) og lagra flyktig lokalt for admin-innboksen –
+ * ALDRI til GitHub (persondata, jf. same regel som meldingane).
+ */
+async function prepareInboxImage(buffer) {
+  const image = sharp(buffer, { failOn: 'none' }).rotate();
+  const meta = await image.metadata();
+  if (!meta.width || !meta.height) throw new Error('Fila ser ikkje ut til å vere eit gyldig bilete.');
+  return sharp(buffer, { failOn: 'none' })
+    .rotate()
+    .resize({ width: 1600, height: 1600, fit: 'inside', withoutEnlargement: true })
+    .jpeg({ quality: 80 })
+    .toBuffer();
+}
+
+module.exports = { processUpload, deleteMedia, prepareInboxImage, SIZES };

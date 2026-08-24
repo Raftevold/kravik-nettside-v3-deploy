@@ -744,6 +744,15 @@ router.get('/meldingar', (req, res) => {
   res.render('admin/meldingar', { messages: store.getMessages(), mailConfigured: mail.configured, sync: store.syncStatus() });
 });
 
+// Kundebilete frå kontaktskjemaet – berre for innlogga admin, aldri offentleg.
+// Filnamna er strengt kvitlista i store.inboxImagePath (hex-id + .jpg).
+router.get('/melding-bilete/:fil', (req, res) => {
+  const p = store.inboxImagePath(String(req.params.fil || ''));
+  if (!p) return res.status(404).send('Biletet finst ikkje (kan ha gått tapt ved omstart – sjå e-posten).');
+  res.set('Cache-Control', 'private, max-age=300');
+  res.type('image/jpeg').sendFile(p);
+});
+
 router.post('/meldingar/lest', async (req, res) => {
   const lesen = req.body.lest !== '0';
   await persist(req, store.markMessageRead(str(req.body.id, 40), lesen), lesen ? 'Merkt som lesen.' : 'Merkt som ulesen.');

@@ -48,3 +48,8 @@ services:
         sync: false
       - key: CONTACT_EMAIL
         sync: false
+      # Ekte Google-omtalar på framsida (valfritt – sjå DRIFT.md)
+      - key: GOOGLE_PLACES_API_KEY
+        sync: false
+      - key: GOOGLE_PLACE_ID
+        sync: false

@@ -12,6 +12,9 @@ const github = require('./github');
 const ROOT = path.join(__dirname, '..', '..');
 const DATA_DIR = path.join(ROOT, 'data');
 const UPLOADS_DIR = path.join(DATA_DIR, 'uploads');
+// Kundebilete frå kontaktskjemaet: BERRE lokalt (persondata – aldri til
+// GitHub; e-postvedlegget er det varige arkivet, jf. DRIFT.md).
+const INNBOKS_DIR = path.join(DATA_DIR, 'innboks');
 
 let content = null;
 let messages = null;
@@ -34,6 +37,7 @@ let degradert = false; // true = boot-pull feila, sida køyrer på lokalt innhal
 
 async function init() {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+  fs.mkdirSync(INNBOKS_DIR, { recursive: true });
   if (github.enabled) {
     console.log('[boot] Hentar siste innhald frå GitHub …');
     // Utan ein vellukka pull kan første lagring overskrive nyare data i
@@ -103,9 +107,37 @@ function saveMessages(what = 'meldingar') {
 function addMessage(msg) {
   const record = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ...msg };
   messages.unshift(record);
-  if (messages.length > 500) messages = messages.slice(0, 500);
+  if (messages.length > 500) {
+    for (const gamal of messages.slice(500)) deleteInboxImages(gamal.images);
+    messages = messages.slice(0, 500);
+  }
   saveMessages('ny melding frå kontaktskjema').catch(() => {});
   return record; // kallaren kan m.a. notere om e-postvarslinga lukkast
+}
+
+// --- Kundebilete i innboksen (berre lokal disk) ---
+function saveInboxImage(fileName, buffer) {
+  fs.writeFileSync(path.join(INNBOKS_DIR, fileName), buffer);
+}
+
+function inboxImagePath(fileName) {
+  // Streng kvitliste: filnamna er genererte hex-id-ar + .jpg
+  if (!/^[a-f0-9]{16}\.jpg$/.test(fileName)) return null;
+  const p = path.join(INNBOKS_DIR, fileName);
+  return fs.existsSync(p) ? p : null;
+}
+
+function deleteInboxImages(fileNames) {
+  for (const f of fileNames || []) {
+    const p = inboxImagePath(f);
+    if (p) {
+      try {
+        fs.unlinkSync(p);
+      } catch {
+        /* alt borte – heilt ok */
+      }
+    }
+  }
 }
 
 /** Skriv meldingane til disk att (t.d. etter at mailSent-status er sett). */
@@ -114,7 +146,9 @@ function touchMessages() {
 }
 
 function deleteMessage(id) {
-  messages = messages.filter((m) => m.id !== id);
+  const m = messages.find((x) => x.id === id);
+  if (m) deleteInboxImages(m.images);
+  messages = messages.filter((x) => x.id !== id);
   return saveMessages('sletta melding');
 }
 
@@ -167,6 +201,9 @@ module.exports = {
   touchMessages,
   deleteMessage,
   markMessageRead,
+  saveInboxImage,
+  inboxImagePath,
+  deleteInboxImages,
   getAuth,
   saveAuth,
   saveUpload,

@@ -1,10 +1,44 @@
+const crypto = require('crypto');
 const express = require('express');
+const multer = require('multer');
 const store = require('../lib/store');
 const seo = require('../lib/seo');
 const mail = require('../lib/mail');
+const images = require('../lib/images');
 const { formLimiter } = require('../lib/auth');
 
 const router = express.Router();
+
+// Kundebilete i tilbodsskjemaet: maks 4 filer à 8 MB. Kvar fil blir
+// validert og re-koda gjennom sharp før ho blir brukt til noko som helst.
+const kontaktUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 8 * 1024 * 1024, files: 4 },
+});
+
+function kontaktUploadMedFeil(req, res, next) {
+  kontaktUpload.array('bilete', 4)(req, res, (err) => {
+    if (!err) return next();
+    const content = store.getContent();
+    const url = seo.baseUrl(req);
+    const tekst =
+      err.code === 'LIMIT_FILE_SIZE'
+        ? 'Eitt av bileta er for stort (maks 8 MB per bilete). Prøv med færre eller mindre bilete.'
+        : err.code === 'LIMIT_FILE_COUNT' || err.code === 'LIMIT_UNEXPECTED_FILE'
+          ? 'Du kan leggje ved inntil 4 bilete.'
+          : 'Opplastinga av bileta feila. Prøv gjerne utan vedlegg.';
+    return res.status(422).render('pages/kontakt', {
+      seoTitle: content.pages.kontakt.seoTitle,
+      seoDescription: content.pages.kontakt.seoDescription,
+      canonical: `${url}/kontakt`,
+      jsonLd: seo.plumberJsonLd(content, url),
+      sent: false,
+      formError: tekst,
+      formFieldErrors: {},
+      formValues: {},
+    });
+  });
+}
 
 function page(view, build) {
   return (req, res, next) => {
@@ -231,7 +265,7 @@ function validateSubmission(body) {
   return { errors, fieldErrors, name, email, phone, message };
 }
 
-router.post('/kontakt', formLimiter, (req, res, next) => {
+router.post('/kontakt', formLimiter, kontaktUploadMedFeil, async (req, res, next) => {
   try {
     const content = store.getContent();
     const url = seo.baseUrl(req);
@@ -250,10 +284,28 @@ router.post('/kontakt', formLimiter, (req, res, next) => {
         canonical: `${url}/kontakt`,
         jsonLd: seo.plumberJsonLd(content, url),
         sent: false,
-        formError: errors.join(' '),
+        formError: errors.join(' ') + ((req.files || []).length ? ' (Hugs å velje bileta på nytt.)' : ''),
         formFieldErrors: fieldErrors,
         formValues: { navn: name, epost: email, telefon: phone, melding: message, jobbtype: jobtype, adresse: address },
       });
+    }
+
+    // Kundebilete: valider + krymp via sharp, lagra flyktig for innboksen,
+    // og legg ved e-posten (det varige arkivet). Ei øydelagd fil skal aldri
+    // velte innsendinga – ho blir berre hoppa over.
+    const vedlegg = [];
+    const bileteFiler = [];
+    for (const fil of (req.files || []).slice(0, 4)) {
+      if (!/^image\/(jpeg|png|webp|avif|gif|heic|heif)$/.test(fil.mimetype)) continue;
+      try {
+        const jpeg = await images.prepareInboxImage(fil.buffer);
+        const filnamn = `${crypto.randomBytes(8).toString('hex')}.jpg`;
+        store.saveInboxImage(filnamn, jpeg);
+        bileteFiler.push(filnamn);
+        vedlegg.push({ filename: `bilete-${vedlegg.length + 1}.jpg`, content: jpeg });
+      } catch (err) {
+        console.error('[kontakt] Hoppa over ugyldig biletfil:', err.message);
+      }
     }
 
     const msg = {
@@ -264,6 +316,7 @@ router.post('/kontakt', formLimiter, (req, res, next) => {
       jobtype,
       address,
       message,
+      images: bileteFiler,
       sentAt: new Date().toISOString(),
       read: false,
     };
@@ -271,7 +324,7 @@ router.post('/kontakt', formLimiter, (req, res, next) => {
     // Asynkron, valfri – utfallet blir notert på meldinga så admin ser om
     // e-postvarslinga faktisk gjekk ut (viktig på gratisplanen, der
     // innboksen kan bli tømd ved omstart).
-    mail.notifyNewMessage(msg, content.site.name).then((ok) => {
+    mail.notifyNewMessage(msg, content.site.name, vedlegg).then((ok) => {
       rec.mailSent = ok;
       store.touchMessages().catch(() => {});
     });
