@@ -1179,3 +1179,14 @@ body:has(.lysbilete[open]) { overflow: hidden; }
 @media print {
   .topp, .botn, .mobil-cta, .samtykke, .cta-band, .varsellinje { display: none !important; }
 }
+
+/* Samla Google-vurdering over referansane */
+.google-vurdering {
+  margin: 0.4rem 0 0;
+  color: var(--dus);
+}
+
+.google-vurdering .stjerner {
+  color: #f4b400;
+  letter-spacing: 0.06em;
+}

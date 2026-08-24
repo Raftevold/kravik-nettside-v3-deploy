@@ -96,6 +96,22 @@ Ved domenebytet: verifiser kravik.no i Resend (DNS: SPF/DKIM-postar, rører
 ikkje MX/e-posten elles), og byt MAIL_FROM til t.d. `nettside@kravik.no`
 og CONTACT_EMAIL til `post@kravik.no`.
 
+## Google-omtalar på framsida (valfritt)
+
+Framsida kan vise ekte Google-vurdering («4,8 av 5 · 27 omtalar») og dei
+beste omtalane (4–5 stjerner) automatisk. Slå på med:
+
+1. Google Cloud Console → nytt prosjekt → aktiver **Places API (New)** →
+   lag ein API-nøkkel (avgrens han til Places API). Krev at fakturering er
+   aktivert, men bruken her ligg langt innanfor gratiskvoten.
+2. Finn Place ID for bedrifta: søk «Place ID Finder» hos Google Maps
+   Platform og slå opp «Kr. A. Vik» i Stryn.
+3. Sett `GOOGLE_PLACES_API_KEY` og `GOOGLE_PLACE_ID` i Render.
+
+Omtalane blir henta server-side ved oppstart og kvar 12. time – ingen
+Google-skript i nettlesaren, og feilar hentinga viser sida berre dei
+manuelle referansane som før.
+
 ## Personvern i drift
 
 - Meldingar frå kontaktskjemaet inneheld persondata. Som standard blir dei

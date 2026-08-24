@@ -253,3 +253,11 @@ code { background: #eee9de; padding: 0.1em 0.35em; border-radius: 5px; font-size
 .admin-login h1 span { font-weight: 500; font-size: 0.95rem; color: var(--dus); }
 .admin-login .knapp { width: 100%; justify-content: center; margin-top: 0.4rem; }
 .admin-login-tilbake { margin: 1.2rem 0 0; font-size: 0.92rem; }
+
+/* Kundebilete i innboksen (tilbodsskjemaet) */
+.admin-melding-bilete {
+  height: 90px;
+  border-radius: 6px;
+  margin: 0.3rem 0.3rem 0 0;
+  vertical-align: top;
+}

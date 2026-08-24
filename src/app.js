@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const compression = require('compression');
 const store = require('./lib/store');
 const stats = require('./lib/stats');
+const googleReviews = require('./lib/googleReviews');
 const publicRoutes = require('./routes/public');
 const adminRoutes = require('./routes/admin');
 
@@ -142,6 +143,7 @@ function createApp() {
         .map((p) => `<p>${escapeHtml(p.trim()).replace(/\n/g, '<br />')}</p>`)
         .join('\n');
     res.locals.telHref = (phone) => `tel:+47${String(phone || '').replace(/\D/g, '')}`;
+    res.locals.googleOmtalar = googleReviews.get();
     next();
   });
 

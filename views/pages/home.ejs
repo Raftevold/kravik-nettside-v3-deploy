@@ -126,18 +126,36 @@
 </section>
 <% } %>
 
-<% if (content.testimonials && content.testimonials.length) { const karusell = content.testimonials.length >= 5; %>
+<% const gOmtalar = (typeof googleOmtalar !== 'undefined' && googleOmtalar) ? googleOmtalar : null;
+   const gKort = gOmtalar ? gOmtalar.reviews : [];
+   const talPaKort = (content.testimonials || []).length + gKort.length; %>
+<% if (talPaKort) { const karusell = talPaKort >= 5; %>
 <section class="seksjon seksjon-tona" aria-labelledby="ref-tittel">
   <div class="ramme">
-    <div class="seksjon-hovud"><h2 id="ref-tittel">Kva kundane seier</h2></div>
+    <div class="seksjon-hovud">
+      <h2 id="ref-tittel">Kva kundane seier</h2>
+      <% if (gOmtalar && gOmtalar.rating) { %>
+      <p class="google-vurdering"><span class="stjerner" aria-hidden="true"><%= '★'.repeat(Math.round(gOmtalar.rating)) %></span>
+        <strong><%= String(gOmtalar.rating).replace('.', ',') %></strong> av 5 på Google
+        <% if (gOmtalar.count) { %>· <%= gOmtalar.count %> omtalar<% } %>
+        <% if (gOmtalar.mapsUri) { %>· <a href="<%= gOmtalar.mapsUri %>" rel="external noopener">sjå alle</a><% } %></p>
+      <% } %>
+    </div>
     <ul class="referansar<%= karusell ? ' referansar-band' : '' %>" <%- karusell ? 'data-karusell tabindex="0" aria-label="Kundeomtalar – blar automatisk, held du peikaren over stoppar blainga"' : '' %>>
-      <% for (const t of content.testimonials) { %>
+      <% for (const t of (content.testimonials || [])) { %>
       <li class="referanse">
         <% if (t.rating) { %>
         <p class="stjerner"><span aria-hidden="true"><%= '★'.repeat(t.rating) %><span class="stjerner-tomme"><%= '☆'.repeat(5 - t.rating) %></span></span><span class="sr-only"><%= t.rating %> av 5 stjerner</span></p>
         <% } %>
         <blockquote><p>«<%= t.quote %>»</p></blockquote>
         <p class="referanse-kjelde"><%= t.author %><% if (t.context) { %> · <%= t.context %><% } %></p>
+      </li>
+      <% } %>
+      <% for (const g of gKort) { %>
+      <li class="referanse">
+        <p class="stjerner"><span aria-hidden="true"><%= '★'.repeat(g.rating) %><span class="stjerner-tomme"><%= '☆'.repeat(5 - g.rating) %></span></span><span class="sr-only"><%= g.rating %> av 5 stjerner</span></p>
+        <blockquote><p>«<%= g.text %>»</p></blockquote>
+        <p class="referanse-kjelde"><%= g.author %> · Google<% if (g.when) { %> · <%= g.when %><% } %></p>
       </li>
       <% } %>
     </ul>

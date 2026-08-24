@@ -1,1 +1,19 @@
-[]
+[
+  {
+    "id": "mt77nh5km5rm",
+    "type": "kontakt",
+    "name": "Bilete-test",
+    "email": "test@example.com",
+    "phone": "",
+    "jobtype": "",
+    "address": "",
+    "message": "Test med vedlagt bilete",
+    "images": [
+      "fa18bf23ebe19948.jpg",
+      "147b1d8e70c6c28e.jpg"
+    ],
+    "sentAt": "2026-08-24T12:26:53.720Z",
+    "read": false,
+    "mailSent": false
+  }
+]
