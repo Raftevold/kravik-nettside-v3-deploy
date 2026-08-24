@@ -118,7 +118,7 @@ Tekst og kontaktinfo for hovudsida endrar du under <a href="/admin/sider/eigedom
       <input type="hidden" name="_csrf" value="<%= csrf %>" />
       <input type="hidden" name="index" value="<%= i %>" />
       <div class="felt">
-        <label for="e-last-opp-<%= i %>">Last opp bilete (JPG/PNG/WebP, inntil 20 om gongen)</label>
+        <label for="e-last-opp-<%= i %>">Last opp bilete (JPG/PNG/WebP, inntil 10 om gongen)</label>
         <input type="file" id="e-last-opp-<%= i %>" name="bilete" accept="image/jpeg,image/png,image/webp,image/avif" multiple required />
       </div>
       <button type="submit" class="knapp knapp-sekundar">Last opp</button>

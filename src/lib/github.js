@@ -223,6 +223,19 @@ async function pullAll(dataDir) {
         await downloadTo(`${API}/repos/${REPO}/git/blobs/${e.sha}`, local, true);
       }
     }
+    // Repoet er fasit òg for sletting: filer som er fjerna i admin etter
+    // siste deploy ligg elles att i deploy-imaget og «gjenoppstår» ved kvar
+    // oppvakning. (Berre når trelistinga faktisk gav treff – ei tom liste
+    // skal aldri kunne tømme lokale bilete ved eit uventa API-svar.)
+    if (uploads.length) {
+      const kjende = new Set(uploads.map((e) => e.path.slice('data/uploads/'.length)));
+      const uploadsDir = path.join(dataDir, 'uploads');
+      for (const fil of fs.readdirSync(uploadsDir)) {
+        if (!kjende.has(fil) && fs.statSync(path.join(uploadsDir, fil)).isFile()) {
+          fs.unlinkSync(path.join(uploadsDir, fil));
+        }
+      }
+    }
     lastSyncAt = new Date().toISOString();
     lastError = null;
     pulledOk = true;
