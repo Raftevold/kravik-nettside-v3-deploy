@@ -38,7 +38,7 @@
     <ul class="galleri-rutenett">
       <% for (const g of content.gallery) { %>
       <li>
-        <button type="button" class="galleri-knapp" data-lysbilete="<%= mediaUrl(g.image, 'lg') %>" data-alt="<%= mediaAlt(g.image) %>">
+        <button type="button" class="galleri-knapp" data-lysbilete="<%= mediaUrl(g.image, 'lg') %>" data-alt="<%= mediaAlt(g.image) || 'Bilete frå arbeidet vårt' %>">
           <img src="<%= mediaUrl(g.image, 'sm') %>" srcset="<%= srcset(g.image) %>" sizes="(min-width: 720px) 25vw, 50vw" alt="<%= mediaAlt(g.image) || 'Bilete frå arbeidet vårt' %>" loading="lazy" width="400" height="400" />
         </button>
       </li>

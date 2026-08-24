@@ -30,6 +30,8 @@ function readJson(file, fallback) {
   }
 }
 
+let degradert = false; // true = boot-pull feila, sida køyrer på lokalt innhald (lesemodus)
+
 async function init() {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
   if (github.enabled) {
@@ -45,7 +47,21 @@ async function init() {
       ok = await github.pullAll(DATA_DIR);
     }
     if (!ok) {
-      throw new Error('Fekk ikkje henta siste data frå GitHub – nektar å starte med potensielt forelda data.');
+      // Degradert modus i staden for krasj: innhaldet frå deploy-imaget
+      // (git-klonen) finst lokalt og er godt nok til å servere sida.
+      // Push er uansett sperra (pulledOk=false), så ingenting kan
+      // overskrive repoet med forelda data. Utan dette ville eit utgått
+      // GITHUB_TOKEN teke heile den offentlege sida ned ved neste
+      // oppvakning – det var nøyaktig det som skjedde sommaren 2026.
+      const harLokalt = Boolean(readJson(path.join(DATA_DIR, 'content.json'), null));
+      if (!harLokalt) {
+        throw new Error('Fekk ikkje henta data frå GitHub, og det finst ikkje lokalt innhald å falle tilbake på.');
+      }
+      degradert = true;
+      console.error(
+        '[boot] ⚠️ DEGRADERT MODUS: Fekk ikkje henta siste data frå GitHub – serverer lokalt innhald (frå siste deploy). ' +
+          'Admin-lagringar blir IKKJE synka før problemet er løyst (typisk utgått GITHUB_TOKEN).'
+      );
     }
   } else {
     console.warn(
@@ -85,9 +101,16 @@ function saveMessages(what = 'meldingar') {
 }
 
 function addMessage(msg) {
-  messages.unshift({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ...msg });
+  const record = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ...msg };
+  messages.unshift(record);
   if (messages.length > 500) messages = messages.slice(0, 500);
-  return saveMessages('ny melding frå kontaktskjema');
+  saveMessages('ny melding frå kontaktskjema').catch(() => {});
+  return record; // kallaren kan m.a. notere om e-postvarslinga lukkast
+}
+
+/** Skriv meldingane til disk att (t.d. etter at mailSent-status er sett). */
+function touchMessages() {
+  return saveMessages('varslingsstatus');
 }
 
 function deleteMessage(id) {
@@ -107,9 +130,12 @@ function getAuth() {
 }
 
 function saveAuth(auth) {
+  // Medvite BERRE lokalt: deploy-repoet er offentleg, og passordhashen skal
+  // aldri dit. Varig passord set ein via ADMIN_PASSWORD_HASH-miljøvariabelen
+  // (admin-ruta viser hashen ved passordbyte).
   const file = path.join(DATA_DIR, 'auth.json');
   atomicWrite(file, JSON.stringify(auth, null, 2));
-  return github.pushFile(file, 'data/auth.json', 'admin: oppdaterte innlogging');
+  return Promise.resolve(false);
 }
 
 // --- Opplasta filer ---
@@ -138,6 +164,7 @@ module.exports = {
   saveContent,
   getMessages,
   addMessage,
+  touchMessages,
   deleteMessage,
   markMessageRead,
   getAuth,
@@ -145,5 +172,6 @@ module.exports = {
   saveUpload,
   deleteUpload,
   uploadExists,
-  syncStatus: () => github.status(),
+  syncStatus: () => ({ ...github.status(), degradert }),
+  isDegradert: () => degradert,
 };

@@ -6,7 +6,9 @@ services:
     region: frankfurt
     buildCommand: npm ci
     startCommand: node server.js
-    healthCheckPath: /
+    # /health svarer 200 så lenge sida kan servere innhald (òg i degradert
+    # modus). Synk-helsa overvakast eksternt via /health/synk (UptimeRobot e.l.)
+    healthCheckPath: /health
     # Innhaldscommits frå admin (data/**) skal IKKJE utløyse ny deploy
     buildFilter:
       ignoredPaths:
@@ -30,3 +32,15 @@ services:
         sync: false
       - key: GITHUB_BRANCH
         value: main
+      # E-postvarsling for kontaktskjema OG driftsvarsel (synk-feil,
+      # token-utløp). Utan desse kan meldingar gå tapt på gratisplanen.
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: CONTACT_EMAIL
+        sync: false

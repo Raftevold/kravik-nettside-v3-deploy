@@ -17,15 +17,21 @@ function getPasswordHash() {
   return null;
 }
 
+// Dummy-hash slik at bcrypt alltid blir køyrd – lik svartid anten
+// brukarnamnet finst eller ikkje (ingen enumerasjon via timing).
+const DUMMY_HASH = bcrypt.hashSync(crypto.randomBytes(16).toString('hex'), 12);
+
 function verifyLogin(user, password) {
   const hash = getPasswordHash();
-  if (!hash || user !== ADMIN_USER) return false;
-  return bcrypt.compareSync(password, hash);
+  const gyldigKonto = Boolean(hash) && user === ADMIN_USER;
+  const passordOk = bcrypt.compareSync(password, gyldigKonto ? hash : DUMMY_HASH);
+  return gyldigKonto && passordOk;
 }
 
 function setPassword(newPassword) {
   const hash = bcrypt.hashSync(newPassword, 12);
-  return store.saveAuth({ passwordHash: hash, updatedAt: new Date().toISOString() });
+  store.saveAuth({ passwordHash: hash, updatedAt: new Date().toISOString() });
+  return hash; // vis hashen til admin, så han kan leggjast i ADMIN_PASSWORD_HASH
 }
 
 function requireAuth(req, res, next) {

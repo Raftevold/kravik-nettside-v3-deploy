@@ -1,5 +1,25 @@
 # Drift
 
+## Helsesjekk og overvaking
+
+- `GET /health` – 200 så lenge sida kan servere innhald. Dette er Render sin
+  helsesjekk (`healthCheckPath` i render.yaml): han skal IKKJE feile berre
+  fordi GitHub-synken er nede, elles restartar Render den fungerande instansen.
+- `GET /health/synk` – 500 når GitHub-synken er nede, oppstartshentinga feila
+  (degradert modus) eller GITHUB_TOKEN utløper om mindre enn 14 dagar.
+  **Tilråding:** registrer denne adressa hos ein gratis opptidsmonitor
+  (t.d. UptimeRobot) med e-postvarsling – då får de beskjed FØR sida får
+  problem. (Bonus: monitor-trafikken held òg tenesta vaken.)
+
+## Degradert modus (utgått GITHUB_TOKEN)
+
+Feilar oppstartshentinga frå GitHub (typisk 401 = utgått token), startar sida
+likevel – med innhaldet frå siste deploy. Push til GitHub er sperra, admin
+viser raudt varsel, og det går driftsvarsel på e-post (om SMTP er sett opp).
+Fiks: lag nytt fine-grained token (Contents read/write på deploy-repoet),
+oppdater `GITHUB_TOKEN` i Render, og restart tenesta. Admin varslar òg når
+tokenet har mindre enn 14 dagar att.
+
 ## Miljøvariablar (Render → Environment)
 
 | Variabel | Påkravd | Forklaring |
@@ -20,6 +40,11 @@
 \* Utan GitHub-variablane køyrer sida fint, men admin-endringar forsvinn når
 tenesta startar på nytt (Render gratisplan har flyktig filsystem). Med dei blir
 kvar lagring committa til repoet og henta ned att ved oppstart.
+
+**Om admin-passordet:** `data/auth.json` blir MEDVITE ikkje synka til GitHub
+(deploy-repoet er offentleg – passordhashen skal aldri dit). Byter du passord i
+admin, viser flash-meldinga den nye bcrypt-hashen: legg han inn i
+`ADMIN_PASSWORD_HASH` i Render, elles gjeld ikkje endringa etter neste omstart.
 
 **Tilråding:** bruk ein *fine-grained personal access token* avgrensa til dette
 eine repoet (GitHub → Settings → Developer settings → Fine-grained tokens →

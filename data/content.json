@@ -58,7 +58,7 @@
   "pages": {
     "home": {
       "seoTitle": "Rørleggar i Stryn og på Nordfjordeid | Kr. A. Vik AS",
-      "seoDescription": "Kr. A. Vik AS er ei familieeigd rørleggarbedrift i Stryn – sidan 1933. Bad, sanitær, varmeanlegg, sprinkler og VA. Comfort-butikk og landbruksavdeling. Ring 57 87 14 88.",
+      "seoDescription": "Familieeigd rørleggarbedrift i Stryn og på Nordfjordeid sidan 1933. Bad, varme, sprinkler og VA. Comfort-butikk og landbruksavdeling. Ring 57 87 14 88.",
       "heroTitle": "Rørleggaren i Nordfjord – sidan 1933",
       "heroLead": "Familieeigd rørleggarbedrift med 21 fagfolk i Stryn og på Nordfjordeid. Frå draumebadet til komplette varmeanlegg – vi er der frå teikning til ferdig jobb.",
       "heroImage": "hero-framsida",
@@ -68,7 +68,7 @@
     "tenester": {
       "title": "Tenester",
       "seoTitle": "Tenester – bad, varme, sanitær, VA og sprinkler | Kr. A. Vik AS",
-      "seoDescription": "Rørleggartenester i Nordfjord: baderom, sanitæranlegg, varmepumper og varmeanlegg, sprinkler, VA, røyrsveising, kamerainspeksjon og kjerneboring. Kr. A. Vik AS, Stryn.",
+      "seoDescription": "Rørleggartenester i Nordfjord: baderom, sanitæranlegg, varme, sprinkler, VA, rørsveising, kamerainspeksjon og kjerneboring. Kr. A. Vik AS, Stryn.",
       "intro": "Vi tek på oss alt frå små servicejobbar til komplette anlegg i hus, hytter og større prosjekt. Fagfolka våre har spesialkompetanse innan mellom anna sprinkler og VA.",
       "headerImage": "header-om-oss"
     },
@@ -170,7 +170,7 @@
       "id": "sanitar",
       "title": "Sanitæranlegg",
       "icon": "kran",
-      "text": "Sanitæranlegg i hus, hytter og næringsbygg – med mykje meir. Vi tek både nyanlegg, rehabilitering og service."
+      "text": "Sanitæranlegg i hus, hytter og næringsbygg – og mykje meir. Vi tek både nyanlegg, rehabilitering og service."
     },
     {
       "id": "varme",
@@ -262,24 +262,17 @@
   ],
   "properties": [
     {
-      "title": "Øvre Fjellsmauet 8, 5018 BERGEN",
+      "title": "Øvre Fjellsmauet 8, Bergen",
       "slug": "ovre-fjellsmauet-8-bergen",
       "image": "leilegheit-1",
       "status": "ledig",
-      "description": "kom å sjå i kveld!",
-      "facts": [
-        {
-          "label": "soverom",
-          "value": "2"
-        }
-      ],
+      "description": "",
+      "soverom": "2",
+      "facts": [],
       "mapEmbed": "",
       "lat": 60.396500996913225,
       "lng": 5.329906021928492,
-      "images": [
-        "produkt-1-png-2",
-        "produkt-2-png"
-      ]
+      "images": []
     },
     {
       "title": "Øvregaten 7, Bergen",

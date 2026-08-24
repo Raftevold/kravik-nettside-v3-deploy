@@ -24,10 +24,39 @@ const SYNC_MESSAGES = process.env.SYNC_MESSAGES === 'true';
 
 const enabled = Boolean(TOKEN && REPO);
 
+// Kvart API-kall får ei hard tidsgrense, slik at ein hengande forbindelse
+// aldri kan blokkere synk-køa (og dermed admin-lagringar) i minuttvis.
+const FETCH_TIMEOUT_MS = 15000;
+
 let lastError = null;
 let lastSyncAt = null;
 let pulledOk = false; // ingen push før ein vellukka pull – hindrar at forelda data overskriv repoet
+let tokenExpiresAt = null; // frå github-authentication-token-expiration-headeren (fine-grained PAT)
 let queue = Promise.resolve();
+
+function hentMedFrist(url, options = {}) {
+  return fetch(url, { ...options, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) }).then((res) => {
+    // GitHub sender utløpstidspunktet for fine-grained tokens på kvar respons
+    // (t.d. "2026-10-01 12:00:00 UTC") – les det, så admin kan varsle i god tid.
+    const utlop = res.headers.get('github-authentication-token-expiration');
+    if (utlop) {
+      const d = new Date(utlop.replace(' UTC', 'Z').replace(' ', 'T'));
+      if (!Number.isNaN(d.getTime())) {
+        tokenExpiresAt = d.toISOString();
+        const dagarAtt = (d.getTime() - Date.now()) / 86400000;
+        if (dagarAtt < 14) {
+          // Lazy require unngår sirkulær avhengigheit ved modul-lasting.
+          // notifyDrift sender maks éin e-post per emne per døgn.
+          require('./mail').notifyDrift(
+            'GITHUB_TOKEN utløper snart',
+            `Tokenet som gjev nettsida varig lagring utløper ${tokenExpiresAt.slice(0, 10)} (${Math.max(0, Math.floor(dagarAtt))} dagar att). Lag eit nytt fine-grained token på GitHub (Contents read/write på deploy-repoet) og oppdater GITHUB_TOKEN i Render. Sjå docs/DRIFT.md.`
+          );
+        }
+      }
+    }
+    return res;
+  });
+}
 
 function headers(extra) {
   return {
@@ -48,7 +77,7 @@ function contentsUrl(repoPath) {
 }
 
 async function getSha(repoPath) {
-  const res = await fetch(contentsUrl(repoPath), { headers: headers() });
+  const res = await hentMedFrist(contentsUrl(repoPath), { headers: headers() });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`GitHub GET ${repoPath}: ${res.status}`);
   const json = await res.json();
@@ -63,7 +92,7 @@ async function putFileOnce(repoPath, buffer, message) {
     branch: BRANCH,
   };
   if (sha) body.sha = sha;
-  const res = await fetch(contentsUrl(repoPath).split('?')[0], {
+  const res = await hentMedFrist(contentsUrl(repoPath).split('?')[0], {
     method: 'PUT',
     headers: headers({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(body),
@@ -77,7 +106,7 @@ async function putFileOnce(repoPath, buffer, message) {
 async function deleteFileOnce(repoPath, message) {
   const sha = await getSha(repoPath);
   if (!sha) return;
-  const res = await fetch(contentsUrl(repoPath).split('?')[0], {
+  const res = await hentMedFrist(contentsUrl(repoPath).split('?')[0], {
     method: 'DELETE',
     headers: headers({ 'Content-Type': 'application/json' }),
     body: JSON.stringify({ message, sha, branch: BRANCH }),
@@ -142,7 +171,7 @@ function flush() {
 
 async function listDir(repoRelPath) {
   const repoPath = toRepoPath(repoRelPath);
-  const res = await fetch(`${API}/repos/${REPO}/contents/${repoPath}?ref=${BRANCH}`, { headers: headers() });
+  const res = await hentMedFrist(`${API}/repos/${REPO}/contents/${repoPath}?ref=${BRANCH}`, { headers: headers() });
   if (res.status === 404) return [];
   if (!res.ok) throw new Error(`GitHub LIST ${repoPath}: ${res.status}`);
   const json = await res.json();
@@ -155,7 +184,7 @@ async function listDir(repoRelPath) {
  * taklar ~100k og seier ifrå med eit truncated-flagg.
  */
 async function listTree(prefix) {
-  const res = await fetch(`${API}/repos/${REPO}/git/trees/${BRANCH}?recursive=1`, { headers: headers() });
+  const res = await hentMedFrist(`${API}/repos/${REPO}/git/trees/${BRANCH}?recursive=1`, { headers: headers() });
   if (res.status === 404) return [];
   if (!res.ok) throw new Error(`GitHub TREE: ${res.status}`);
   const json = await res.json();
@@ -164,7 +193,7 @@ async function listTree(prefix) {
 }
 
 async function downloadTo(url, localPath, raw = false) {
-  const res = await fetch(url, {
+  const res = await hentMedFrist(url, {
     headers: headers(raw ? { Accept: 'application/vnd.github.raw+json' } : undefined),
   });
   if (!res.ok) throw new Error(`GitHub nedlasting: ${res.status}`);
@@ -206,7 +235,7 @@ async function pullAll(dataDir) {
 }
 
 function status() {
-  return { enabled, lastSyncAt, lastError, pulledOk, syncMessages: SYNC_MESSAGES, repo: enabled ? REPO : null, branch: BRANCH };
+  return { enabled, lastSyncAt, lastError, pulledOk, tokenExpiresAt, syncMessages: SYNC_MESSAGES, repo: enabled ? REPO : null, branch: BRANCH };
 }
 
 module.exports = { enabled, SYNC_MESSAGES, pushFile, pushBuffer, removeFile, pullAll, flush, status };

@@ -1,8 +1,9 @@
 <%- include('partials/atop', { tittel: 'Meldingar frå kontaktskjemaet' }) %>
 
 <% if (!mailConfigured) { %>
-<p class="admin-forklaring">💡 E-postvarsling er ikkje sett opp – nye meldingar dukkar opp her.
-Vil du ha dei på e-post òg? Sett SMTP-miljøvariablane (sjå docs/DRIFT.md).</p>
+<p class="admin-forklaring">⚠️ E-postvarsling er ikkje sett opp – nye meldingar finst BERRE her.
+Merk: på Render gratisplan kan innboksen bli tømd ved omstart/dvale, så utan SMTP kan meldingar gå tapt.
+Sett SMTP-miljøvariablane (sjå docs/DRIFT.md).</p>
 <% } %>
 
 <% if (!messages.length) { %>
@@ -15,7 +16,8 @@ Vil du ha dei på e-post òg? Sett SMTP-miljøvariablane (sjå docs/DRIFT.md).</
     <h2><%= m.name %>
       <% if (m.type === 'tilbod') { %><span class="admin-merke admin-merke-tilbod">Tilbod</span><% } %>
       <% if (m.type === 'laerling') { %><span class="admin-merke admin-merke-laerling">Lærling</span><% } %>
-      <% if (!m.read) { %><span class="admin-merke">Ny</span><% } %></h2>
+      <% if (!m.read) { %><span class="admin-merke">Ny</span><% } %>
+      <% if (mailConfigured && m.mailSent === false) { %><span class="admin-merke admin-merke-tilbod" title="E-postvarslinga for denne meldinga feila – ho finst berre her">⚠️ E-post feila</span><% } %></h2>
     <p class="admin-dus"><%= new Date(m.sentAt).toLocaleString('no-NO', { dateStyle: 'medium', timeStyle: 'short' }) %></p>
   </header>
   <p class="admin-melding-kontakt">

@@ -10,12 +10,17 @@
   <meta property="og:url" content="<%= canonical %>" />
   <% } %>
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="<%= site.name %>" />
   <meta property="og:title" content="<%= seoTitle %>" />
   <meta property="og:description" content="<%= seoDescription %>" />
   <meta property="og:locale" content="nn_NO" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="<%= seoTitle %>" />
+  <meta name="twitter:description" content="<%= seoDescription %>" />
   <% if (typeof canonical !== 'undefined' && canonical && content.pages.home.heroImage) {
        const origin = canonical.replace(/^(https?:\/\/[^/]+).*$/, '$1'); %>
   <meta property="og:image" content="<%= origin %><%= mediaUrl(content.pages.home.heroImage, 'lg') %>" />
+  <meta name="twitter:image" content="<%= origin %><%= mediaUrl(content.pages.home.heroImage, 'lg') %>" />
   <% } %>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

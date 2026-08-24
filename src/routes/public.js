@@ -23,6 +23,35 @@ function page(view, build) {
   };
 }
 
+// --- Kanonisering: éi adresse per side ---
+// 1) Feil host (t.d. onrender-adressa etter domenebyte): 301 til SITE_URL.
+// 2) Skråstrek på slutten og store bokstavar: 301 til normalisert sti.
+//    (Alle ruter, slugs og filnamn her er små bokstavar, så dette er trygt.)
+router.use((req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+
+  const configured = process.env.SITE_URL;
+  if (configured) {
+    try {
+      const target = new URL(configured);
+      if (req.hostname && req.hostname !== target.hostname) {
+        return res.redirect(301, `${configured.replace(/\/$/, '')}${req.originalUrl}`);
+      }
+    } catch {
+      /* ugyldig SITE_URL skal aldri velte sida */
+    }
+  }
+
+  let sti = req.path;
+  if (sti.length > 1 && sti.endsWith('/')) sti = sti.replace(/\/+$/, '') || '/';
+  sti = sti.toLowerCase();
+  if (sti !== req.path) {
+    const query = req.originalUrl.slice(req.path.length);
+    return res.redirect(301, sti + query);
+  }
+  next();
+});
+
 // --- 301-redirects frå gamle URL-ar (beheld SEO-verdi) ---
 const REDIRECTS = new Map([
   ['/index', '/'],
@@ -143,9 +172,10 @@ router.get('/prosjekt/:id', (req, res, next) => {
     res.render('pages/prosjekt-detalj', {
       project,
       seoTitle: `${project.title} – prosjekt | ${content.site.name}`,
-      seoDescription: project.description
-        ? project.description.slice(0, 155)
-        : `${project.title} – prosjekt utført av ${content.site.name}.`,
+      seoDescription:
+        project.description && project.description.length >= 50
+          ? project.description.slice(0, 155)
+          : `${project.title}${project.place ? ` i ${project.place}` : ''}${project.year ? `, ${project.year}` : ''} – prosjekt utført av ${content.site.name}, rørleggar i Stryn og på Nordfjordeid.`,
       canonical: `${url}/prosjekt/${project.id}`,
       jsonLd: seo.plumberJsonLd(content, url),
     });
@@ -222,8 +252,14 @@ router.post('/kontakt', formLimiter, (req, res, next) => {
       sentAt: new Date().toISOString(),
       read: false,
     };
-    store.addMessage(msg);
-    mail.notifyNewMessage(msg, content.site.name); // asynkron, valfri
+    const rec = store.addMessage(msg);
+    // Asynkron, valfri – utfallet blir notert på meldinga så admin ser om
+    // e-postvarslinga faktisk gjekk ut (viktig på gratisplanen, der
+    // innboksen kan bli tømd ved omstart).
+    mail.notifyNewMessage(msg, content.site.name).then((ok) => {
+      rec.mailSent = ok;
+      store.touchMessages().catch(() => {});
+    });
 
     return res.redirect('/kontakt?sendt=1#kontaktskjema');
   } catch (err) {
@@ -262,8 +298,11 @@ router.post('/opplaeringsbedrift', formLimiter, (req, res, next) => {
       sentAt: new Date().toISOString(),
       read: false,
     };
-    store.addMessage(msg);
-    mail.notifyNewMessage(msg, content.site.name);
+    const rec = store.addMessage(msg);
+    mail.notifyNewMessage(msg, content.site.name).then((ok) => {
+      rec.mailSent = ok;
+      store.touchMessages().catch(() => {});
+    });
 
     return res.redirect('/opplaeringsbedrift?sendt=1#soknad');
   } catch (err) {
