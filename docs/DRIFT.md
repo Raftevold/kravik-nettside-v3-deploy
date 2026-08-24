@@ -86,6 +86,11 @@ utsendingsteneste i staden for @kravik.no-kontoen:
 - `MAIL_FROM` = `onboarding@resend.dev` (før domeneverifisering)
 - `CONTACT_EMAIL` = mottakaradressa
 
+**Merk:** Render gratisplan blokkerer utgåande SMTP-portar (25/465/587,
+sidan sept. 2025). Med SMTP_HOST=smtp.resend.com går sendinga difor
+automatisk via Resend sitt HTTPS-API i staden (mail.js) – same variablar.
+Andre SMTP-vertar fungerer først på betalt Render-plan.
+
 Utan verifisert domene leverer Resend berre til kontoeigaren si adresse.
 Ved domenebytet: verifiser kravik.no i Resend (DNS: SPF/DKIM-postar, rører
 ikkje MX/e-posten elles), og byt MAIL_FROM til t.d. `nettside@kravik.no`
