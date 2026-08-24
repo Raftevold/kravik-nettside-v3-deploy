@@ -42,5 +42,9 @@ services:
         sync: false
       - key: SMTP_PASS
         sync: false
+      # Avsendaradresse – påkravd når SMTP_USER ikkje er ei e-postadresse
+      # (t.d. Resend, der brukarnamnet er «resend»)
+      - key: MAIL_FROM
+        sync: false
       - key: CONTACT_EMAIL
         sync: false
