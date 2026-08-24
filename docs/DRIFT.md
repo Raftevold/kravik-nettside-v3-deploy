@@ -34,7 +34,8 @@ tokenet har mindre enn 14 dagar att.
 | `GITHUB_TOKEN` | ja* | Token med `contents: read/write` på dette repoet |
 | `GITHUB_REPO` | ja* | T.d. `Raftevold/kravik-nettside` |
 | `GITHUB_BRANCH` | nei | Standard `main` |
-| `SMTP_HOST/PORT/USER/PASS` | nei | Aktiverer e-postvarsling for kontaktskjema |
+| `SMTP_HOST/PORT/USER/PASS` | nei | Aktiverer e-postvarsling for kontaktskjema og driftsvarsel |
+| `MAIL_FROM` | nei* | Avsendaradresse. Påkravd når SMTP_USER ikkje er ei e-postadresse (t.d. Resend) |
 | `CONTACT_EMAIL` | nei | Mottakar for varsling (standard: SMTP_USER) |
 
 \* Utan GitHub-variablane køyrer sida fint, men admin-endringar forsvinn når
@@ -74,8 +75,21 @@ sett `PLAUSIBLE_DOMAIN` – skriptet og CSP-reglane blir lagde til automatisk.
 ## E-post for kontaktskjema
 
 Meldingar blir alltid lagra i admin-innboksen. For e-postvarsling i tillegg:
-sett SMTP-variablane (t.d. frå Domeneshop/One.com/Microsoft 365 som bedrifta
-alt brukar for @kravik.no-adressene).
+sett SMTP-variablane.
+
+**Tilrådd oppsett (Resend):** Microsoft pensjonerer passordbasert SMTP i
+Exchange Online (av som standard frå des. 2026), så bruk ein dedikert
+utsendingsteneste i staden for @kravik.no-kontoen:
+
+- `SMTP_HOST` = `smtp.resend.com`, `SMTP_PORT` = `465`
+- `SMTP_USER` = `resend`, `SMTP_PASS` = API-nøkkel frå resend.com
+- `MAIL_FROM` = `onboarding@resend.dev` (før domeneverifisering)
+- `CONTACT_EMAIL` = mottakaradressa
+
+Utan verifisert domene leverer Resend berre til kontoeigaren si adresse.
+Ved domenebytet: verifiser kravik.no i Resend (DNS: SPF/DKIM-postar, rører
+ikkje MX/e-posten elles), og byt MAIL_FROM til t.d. `nettside@kravik.no`
+og CONTACT_EMAIL til `post@kravik.no`.
 
 ## Personvern i drift
 

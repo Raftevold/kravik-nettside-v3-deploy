@@ -8,6 +8,12 @@ const nodemailer = require('nodemailer');
 
 const configured = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
 
+// Avsendaradresse. Hos transaksjonstenester (t.d. Resend) er SMTP_USER eit
+// teknisk brukarnamn («resend»), ikkje ei e-postadresse – då MÅ MAIL_FROM
+// setjast (t.d. onboarding@resend.dev, eller postmaster@kravik.no når
+// domenet er verifisert hos tenesta).
+const FROM_ADDR = process.env.MAIL_FROM || process.env.SMTP_USER;
+
 let transporter = null;
 if (configured) {
   transporter = nodemailer.createTransport({
@@ -32,7 +38,7 @@ async function notifyNewMessage(msg, siteName) {
   const label = TYPE_LABELS[msg.type] || TYPE_LABELS.kontakt;
   try {
     await transporter.sendMail({
-      from: `"${siteName} – nettside" <${process.env.SMTP_USER}>`,
+      from: `"${siteName} – nettside" <${FROM_ADDR}>`,
       to,
       replyTo: msg.email || undefined,
       subject: `${label} – ${reinsHeader(msg.name)}`,
@@ -70,7 +76,7 @@ async function notifyDrift(subject, text) {
   const to = process.env.CONTACT_EMAIL || process.env.SMTP_USER;
   try {
     await transporter.sendMail({
-      from: `"Nettsida (drift)" <${process.env.SMTP_USER}>`,
+      from: `"Nettsida (drift)" <${FROM_ADDR}>`,
       to,
       subject: `[kravik-nettside] ${reinsHeader(subject)}`,
       text,
