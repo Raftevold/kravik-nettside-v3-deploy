@@ -255,7 +255,8 @@
       "after": "nyttt-bad",
       "images": [
         "nyttt-bad",
-        "gammelt-bad-2"
+        "gammelt-bad-2",
+        "14193d75-7fe0-4218-9dde-457a674d342b"
       ],
       "id": "renovering-bad"
     }
@@ -873,7 +874,13 @@
       "w": 1408,
       "h": 768,
       "alt": ""
+    },
+    {
+      "id": "14193d75-7fe0-4218-9dde-457a674d342b",
+      "w": 1024,
+      "h": 1536,
+      "alt": ""
     }
   ],
-  "updatedAt": "2026-07-03T21:35:56.512Z"
+  "updatedAt": "2026-08-24T11:16:11.608Z"
 }
