@@ -1,0 +1,12 @@
+<section class="seksjon tenester-framside" aria-labelledby="tenester-tittel"><div class="ramme">
+  <div class="redaksjon-hovud"><p class="etikett"><%= design.servicesEyebrow %></p><div><h2 id="tenester-tittel"><%= design.servicesTitle %><br /><span class="tekst-dus"><%= design.servicesTitleSecondary %></span></h2><p><%= design.servicesIntro %></p></div></div>
+  <div class="teneste-fokus">
+    <a class="baderom-kort" href="<%= safeUrl(design.serviceImageUrl) %>"><img src="<%= mediaUrl(design.serviceImage, 'md') %>" alt="<%= mediaAlt(design.serviceImage) %>" loading="lazy" width="800" height="1000" /><span class="baderom-kort-tekst"><span class="etikett"><%= design.serviceImageEyebrow %></span><strong><%= design.serviceImageTitle %></strong><span class="sirkel-pil" aria-hidden="true">↗</span></span></a>
+    <div class="teneste-rader">
+      <% const utval = String(design.featuredServices).split(',').map(x=>x.trim()).map(id=>content.services.find(s=>s.id===id)).filter(Boolean); for (const [i,s] of utval.entries()) { const id=s.id, nr=String(i+1).padStart(2,'0'), title=s.title; %>
+      <a class="teneste-rad" href="/tenester#<%= id %>"><span class="rad-nummer"><%= nr %></span><span><h3><%= title %></h3><p><%= s.text %></p></span><span class="rad-pil" aria-hidden="true">↗</span></a>
+      <% } %>
+      <a class="tekst-lenke alle-tenester" href="/tenester"><%= design.servicesLink %> <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</div></section>

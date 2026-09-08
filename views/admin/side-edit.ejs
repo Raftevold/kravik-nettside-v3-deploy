@@ -19,7 +19,7 @@
 
   <% if (def.fields.length) { %>
   <fieldset>
-    <legend>Innhald</legend>
+    <legend>Innhald</legend><div class="felt"><label for="page-title">Synleg sidetittel</label><input id="page-title" name="title" value="<%= pageData.title || '' %>" maxlength="200" /></div>
     <% for (const [name, label, type] of def.fields) { %>
       <% if (type === 'textarea') { %>
       <div class="felt">

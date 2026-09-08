@@ -1,128 +1,47 @@
-# Drift
+# Drift av Kravik / Anter
 
-## Helsesjekk og overvaking
+## Helsesjekk
+- `GET /health`: 200 når nettsida har innhald å vise. Dette er Render sin helsesjekk.
+- `GET /health/synk`: 500 ved feil i GitHub-synken, degradert oppstart eller token som utløper om mindre enn 14 dagar.
+- Ved degradert modus blir deploy-versjonen vist. Synk er sperra til oppstartshenting lukkast. Oppdater GitHub-tokenet i Render dersom det er utgått.
 
-- `GET /health` – 200 så lenge sida kan servere innhald. Dette er Render sin
-  helsesjekk (`healthCheckPath` i render.yaml): han skal IKKJE feile berre
-  fordi GitHub-synken er nede, elles restartar Render den fungerande instansen.
-- `GET /health/synk` – 500 når GitHub-synken er nede, oppstartshentinga feila
-  (degradert modus) eller GITHUB_TOKEN utløper om mindre enn 14 dagar.
-  **Tilråding:** registrer denne adressa hos ein gratis opptidsmonitor
-  (t.d. UptimeRobot) med e-postvarsling – då får de beskjed FØR sida får
-  problem. (Bonus: monitor-trafikken held òg tenesta vaken.)
+## Miljøvariablar
+| Variabel | Bruk |
+|---|---|
+| SITE_URL | Endeleg offentleg adresse for canonical, sitemap og JSON-LD |
+| SESSION_SECRET | Lang tilfeldig sesjonsnøkkel |
+| ADMIN_USER / ADMIN_PASSWORD_HASH | Administratorbrukar og bcrypt-hash for passord |
+| GITHUB_TOKEN / GITHUB_REPO / GITHUB_BRANCH | Varig lagring av offentleg CMS-innhald og bilete |
+| SMTP_HOST / SMTP_PORT / SMTP_USER / SMTP_PASS | Transport for skjema og driftsvarsel |
+| MAIL_FROM | Verifisert avsendaradresse |
+| CONTACT_EMAIL | Standard mottakar; kan overstyrast i Admin → Generelt → Mottakar for nettskjema |
+| DATA_DIR | Valfri absolutt datamappe for ei teneste med varig disk |
+| PLAUSIBLE_DOMAIN | Valfri cookie-fri analyse; krev separat oppsett |
 
-## Degradert modus (utgått GITHUB_TOKEN)
+Bruk eit GitHub-token avgrensa til Contents read/write på berre deploy-repoet. Innhald og offentlege bilete kan liggje i GitHub; kundemeldingar, vedlegg og passordhashar skal aldri dit. SYNC_MESSAGES er slått permanent av i kode.
 
-Feilar oppstartshentinga frå GitHub (typisk 401 = utgått token), startar sida
-likevel – med innhaldet frå siste deploy. Push til GitHub er sperra, admin
-viser raudt varsel, og det går driftsvarsel på e-post (om SMTP er sett opp).
-Fiks: lag nytt fine-grained token (Contents read/write på deploy-repoet),
-oppdater `GITHUB_TOKEN` i Render, og restart tenesta. Admin varslar òg når
-tokenet har mindre enn 14 dagar att.
+Admin-passordet blir medvite ikkje synka til GitHub. Ved passordbyte viser admin ein ny bcrypt-hash som må setjast i ADMIN_PASSWORD_HASH i Render for å overleve neste omstart. Ikkje publiser hashen. Sjå også [lanseringsmerknadene](LEVERANSE-ANTER.md).
 
-## Miljøvariablar (Render → Environment)
+## Render og publisering
+Kjelda ligg i main i det private utviklingsrepoet. Deploy-spegelens main blir bygd av Render. Innhaldscommits under data/ skal ikkje starte ny deploy (buildFilter i render.yaml).
 
-| Variabel | Påkravd | Forklaring |
-|---|---|---|
-| `SITE_URL` | tilrådd | Offentleg adresse (til sitemap/canonical/JSON-LD) |
-| `SESSION_SECRET` | ja | Lang tilfeldig streng – held admin-innlogging gyldig over omstart |
-| `ADMIN_USER` | nei | Standard `admin` |
-| `ADMIN_PASSWORD_HASH` | nei | Overstyrer passordet i `data/auth.json` (bcrypt-hash) |
-| `ADMIN_PASSWORD` | nei | Set startpassord ved første oppstart (blir hasha og lagra). Har ingen effekt om hash alt finst. Fjern frå Render etter bruk – ligg i klartekst der. |
-| `SYNC_MESSAGES` | nei | `true` = kontaktmeldingar blir òg synka til GitHub-repoet. Standard AV, sjå «Personvern i drift». |
-| `PLAUSIBLE_DOMAIN` | nei | Slår på Plausible-analyse (cookie-fri). Sett til domenet slik det er registrert hos plausible.io (t.d. `kravik.no`) – krev eige Plausible-abonnement. |
-| `GITHUB_TOKEN` | ja* | Token med `contents: read/write` på dette repoet |
-| `GITHUB_REPO` | ja* | T.d. `Raftevold/kravik-nettside` |
-| `GITHUB_BRANCH` | nei | Standard `main` |
-| `SMTP_HOST/PORT/USER/PASS` | nei | Aktiverer e-postvarsling for kontaktskjema og driftsvarsel |
-| `MAIL_FROM` | nei* | Avsendaradresse. Påkravd når SMTP_USER ikkje er ei e-postadresse (t.d. Resend) |
-| `CONTACT_EMAIL` | nei | Mottakar for varsling (standard: SMTP_USER) |
+Render Free har flyktig filsystem og kan gå i dvale. GitHub-synk bevarer det offentlege CMS-innhaldet, men erstattar ikkje varig lagring av kundemeldingar. Til ordinær produksjon bør eigaren velje eit driftsoppsett med kapasitet og varig lagring tilpassa verksemda. Sjå https://render.com/docs/free.
 
-\* Utan GitHub-variablane køyrer sida fint, men admin-endringar forsvinn når
-tenesta startar på nytt (Render gratisplan har flyktig filsystem). Med dei blir
-kvar lagring committa til repoet og henta ned att ved oppstart.
+## Kontaktskjema og e-post
+Skjemaet er tilgjengeleg når e-posttransporten er konfigurert. Ei melding blir først stadfesta som sendt når transporten har akseptert henne. Ved leveringsfeil får brukaren feilmelding og behaldne tekstfelt; den mellombelse meldinga blir sletta. Akseptert transport er ikkje garanti for innbokslevering.
 
-**Om admin-passordet:** `data/auth.json` blir MEDVITE ikkje synka til GitHub
-(deploy-repoet er offentleg – passordhashen skal aldri dit). Byter du passord i
-admin, viser flash-meldinga den nye bcrypt-hashen: legg han inn i
-`ADMIN_PASSWORD_HASH` i Render, elles gjeld ikkje endringa etter neste omstart.
+Med SMTP_HOST=smtp.resend.com blir Resend sitt HTTPS-API brukt. Andre SMTP-vertar bruker Nodemailer. Verifiser avsendardomenet og mottakaren i leverandøren før reell bruk. Den eksisterande førehandsvisinga har ein test-/eigarmottakar, ikkje post@kravik.no. Ingen reell testmelding er sendt i denne leveransen.
 
-**Tilråding:** bruk ein *fine-grained personal access token* avgrensa til dette
-eine repoet (GitHub → Settings → Developer settings → Fine-grained tokens →
-Repository access: berre dette repoet → Permissions: Contents read/write).
+Innboksen i admin er mellombels og kan forsvinne ved omstart på Free. Aksepterte meldingar med vedlegg blir sende til e-postmottakaren. Admin viser e-poststatus. Sett slettefrist i Framside og profil (1–90 dagar, standard 30); gamle lokale meldingar og vedlegg blir sletta ved oppstart, kvar time og ved bruk av innboksen. Verksemda må i tillegg ha sletterutinar for e-post og fagsystem.
 
-## Render gratisplan – kjende avgrensingar
+## Innhald og sikkerheitskopi
+- Framside og profil: fargar, logo, meny, bilete, seksjonar, rekkjefølgje og tekstar.
+- Sider, tenester, prosjekt, galleri, kontaktpersonar og partnarar: eigne redigeringssider.
+- Innstillingar: last ned innhald som JSON. Import blir validert og tek ein lokal kopi før overskriving.
+- Git-historikken tek vare på offentlege innhaldsendringar. Last også ned opplasta bilete ved full backup.
+- Passord og kundemeldingar skal ikkje vere del av ein offentleg backup.
 
-- **Dvale:** tenesta søv etter ~15 min utan trafikk; første besøk etterpå tek
-  30–60 sekund. Betalt plan fjernar dette.
-- **Flyktig filsystem:** løyst med GitHub-synk (sjå over).
-- **Deploy ved innhaldsendring:** `render.yaml` har `buildFilter.ignoredPaths:
-  data/**`, så innhaldscommits frå admin utløyser IKKJE ny deploy.
+## Personvern og statistikk
+Ingen kart blir lasta før samtykke. Kartvalet blir lagra lokalt i nettlesaren i inntil 180 dagar og kan endrast i botnmenyen. Det er ikkje behov for samtykkebanner ved vanleg sidevising utan eksternt kart.
 
-## Statistikk
-
-Sida tel sidevisingar anonymt (utan cookies/IP) og viser tala på
-admin-dashbordet. Tala ligg i `data/stats.json` og blir synka til GitHub maks
-kvar 30. minutt. For meir avansert analyse: opprett konto hos plausible.io og
-sett `PLAUSIBLE_DOMAIN` – skriptet og CSP-reglane blir lagde til automatisk.
-
-## Sikkerheitskopi
-
-- Admin → Innstillingar → «Last ned innhald (JSON)».
-- Heile historikken ligg dessutan i git – kvar admin-lagring er ein commit.
-  Rull tilbake ved å reverte commiten og starte tenesta på nytt.
-
-## E-post for kontaktskjema
-
-Meldingar blir alltid lagra i admin-innboksen. For e-postvarsling i tillegg:
-sett SMTP-variablane.
-
-**Tilrådd oppsett (Resend):** Microsoft pensjonerer passordbasert SMTP i
-Exchange Online (av som standard frå des. 2026), så bruk ein dedikert
-utsendingsteneste i staden for @kravik.no-kontoen:
-
-- `SMTP_HOST` = `smtp.resend.com`, `SMTP_PORT` = `465`
-- `SMTP_USER` = `resend`, `SMTP_PASS` = API-nøkkel frå resend.com
-- `MAIL_FROM` = `onboarding@resend.dev` (før domeneverifisering)
-- `CONTACT_EMAIL` = mottakaradressa
-
-**Merk:** Render gratisplan blokkerer utgåande SMTP-portar (25/465/587,
-sidan sept. 2025). Med SMTP_HOST=smtp.resend.com går sendinga difor
-automatisk via Resend sitt HTTPS-API i staden (mail.js) – same variablar.
-Andre SMTP-vertar fungerer først på betalt Render-plan.
-
-Utan verifisert domene leverer Resend berre til kontoeigaren si adresse.
-Ved domenebytet: verifiser kravik.no i Resend (DNS: SPF/DKIM-postar, rører
-ikkje MX/e-posten elles), og byt MAIL_FROM til t.d. `nettside@kravik.no`
-og CONTACT_EMAIL til `post@kravik.no`.
-
-## Google-omtalar på framsida (valfritt)
-
-Framsida kan vise ekte Google-vurdering («4,8 av 5 · 27 omtalar») og dei
-beste omtalane (4–5 stjerner) automatisk. Slå på med:
-
-1. Google Cloud Console → nytt prosjekt → aktiver **Places API (New)** →
-   lag ein API-nøkkel (avgrens han til Places API). Krev at fakturering er
-   aktivert, men bruken her ligg langt innanfor gratiskvoten.
-2. Finn Place ID for bedrifta: søk «Place ID Finder» hos Google Maps
-   Platform og slå opp «Kr. A. Vik» i Stryn.
-3. Sett `GOOGLE_PLACES_API_KEY` og `GOOGLE_PLACE_ID` i Render.
-
-Omtalane blir henta server-side ved oppstart og kvar 12. time – ingen
-Google-skript i nettlesaren, og feilar hentinga viser sida berre dei
-manuelle referansane som før.
-
-## Personvern i drift
-
-- Meldingar frå kontaktskjemaet inneheld persondata. Som standard blir dei
-  **ikkje** synkroniserte til GitHub – git-historikk kan nemleg ikkje slettast
-  melding for melding, og då ville sletteplikta i GDPR art. 17 vore vanskeleg
-  å oppfylle. Konsekvens på Render gratisplan: admin-innboksen kan bli tømd
-  ved omstart/dvale.
-- **Tilråding: sett opp SMTP-varsling** (over), slik at e-postkassa til
-  bedrifta er den varige kanalen for kundemeldingar. Innboksen i admin er då
-  eit praktisk arbeidsverktøy, ikkje arkivet.
-- Om de heller vil ha varig innboks i admin: sett `SYNC_MESSAGES=true` og
-  hald repoet **privat**. Ver då klar over at sletta meldingar framleis ligg
-  i git-historikken til repoet.
-- Slett gamle meldingar i admin når dei er ferdig behandla.
+Sidevisingar blir talde utan IP-adresse eller besøks-ID. Lokal statistikk kan synkast til GitHub. Kundemeldingar er aldri ein del av denne statistikken. Personverninformasjonen må haldast i samsvar med dei faktiske leverandørane, avtalane, mottakarane og sletterutinane.

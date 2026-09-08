@@ -3,10 +3,9 @@
   <footer class="botn">
     <div class="ramme botn-kolonnar">
       <div>
-        <img src="/img/logo-kravik-kvit.png" alt="" width="171" height="64" loading="lazy" />
+        <img src="<%= design.logoImage ? mediaUrl(design.logoImage,'md') : '/img/logo-kravik-modern.svg' %>" alt="Kr. A. Vik" width="230" height="76" loading="lazy" />
         <p><%= site.tagline %></p>
-        <p class="botn-orgnr"><%= site.legalName || site.name %><br />Org.nr <%= site.orgnr %></p>
-        <img src="/img/sentralt-godkjent.png" alt="Sentralt godkjend verksemd" width="64" height="64" loading="lazy" />
+        <p class="botn-orgnr"><%= site.legalName || site.name %><br />Org.nr <%= site.orgnr %> MVA<br />Registrert i Foretaksregisteret</p>
       </div>
       <div>
         <h2 class="botn-tittel">Kontakt</h2>
@@ -22,20 +21,13 @@
       </div>
       <div>
         <h2 class="botn-tittel">Snarvegar</h2>
-        <ul class="botn-lenker">
-          <li><a href="/tenester">Tenester</a></li>
-          <li><a href="/prosjekt">Prosjekt og galleri</a></li>
-          <li><a href="/butikk-og-landbruk">Butikk og landbruk</a></li>
-          <li><a href="/opplaeringsbedrift">Bli lærling</a></li>
-          <li><a href="/eigedom">Leilegheit til leige</a></li>
-          <li><a href="/miljo-og-berekraft">Miljø og berekraft</a></li>
-        </ul>
+        <ul class="botn-lenker"><% for(const [label,url] of designRows(design.footerLinks)){ %><li><a href="<%= safeUrl(url) %>"><%= label %></a></li><% } %></ul>
       </div>
       <div>
         <h2 class="botn-tittel">Samarbeidspartnarar</h2>
         <ul class="botn-partnarar">
-          <% for (const p of (content.partners || [])) { %>
-          <li><a href="<%= p.url %>" rel="external noopener"><%= p.name %></a></li>
+          <% for (const p of (content.partners || []).filter(p=>!p.hidden)) { %>
+          <li><a href="<%= safeUrl(p.url) %>" rel="external noopener"><%= p.name %></a></li>
           <% } %>
         </ul>
         <% if (site.social && site.social.length) { %>
@@ -73,8 +65,8 @@
         Du kan endre valet når som helst. <a href="/informasjonskapslar">Les meir</a>.
       </p>
       <div class="samtykke-knappar">
-        <button type="button" class="knapp knapp-primar" data-samtykke="alle">Godta alt</button>
-        <button type="button" class="knapp knapp-sekundar" data-samtykke="nodvendige">Berre nødvendige</button>
+        <button type="button" class="knapp knapp-sekundar" data-samtykke="alle">Tillat Google Maps</button>
+        <button type="button" class="knapp knapp-sekundar" data-samtykke="nodvendige">Ikkje tillat</button>
       </div>
     </div>
   </section>
@@ -88,6 +80,5 @@
   </dialog>
 
   <script src="/js/site.js?v=<%= assetV %>" defer></script>
-  <script src="/js/motion.js?v=<%= assetV %>" defer></script>
 </body>
 </html>

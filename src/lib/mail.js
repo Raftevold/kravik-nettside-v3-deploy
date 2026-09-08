@@ -12,7 +12,7 @@
  */
 const nodemailer = require('nodemailer');
 
-const configured = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+const configured = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS && (process.env.MAIL_FROM || /@/.test(process.env.SMTP_USER)) && (process.env.CONTACT_EMAIL || /@/.test(process.env.SMTP_USER)));
 const viaResendApi = process.env.SMTP_HOST === 'smtp.resend.com';
 
 // Avsendaradresse. Hos transaksjonstenester (t.d. Resend) er SMTP_USER eit
@@ -27,6 +27,11 @@ if (configured && !viaResendApi) {
     port: Number(process.env.SMTP_PORT || 587),
     secure: Number(process.env.SMTP_PORT) === 465,
     auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 20000,
+    disableFileAccess: true,
+    disableUrlAccess: true,
   });
 }
 
@@ -82,7 +87,7 @@ const TYPE_LABELS = { tilbod: 'Førespurnad om tilbod', laerling: 'Lærling-søk
 
 async function notifyNewMessage(msg, siteName, attachments) {
   if (!configured) return false;
-  const to = process.env.CONTACT_EMAIL || process.env.SMTP_USER;
+  const to = require('./store').getContent()?.site?.formRecipient || process.env.CONTACT_EMAIL || process.env.SMTP_USER;
   const label = TYPE_LABELS[msg.type] || TYPE_LABELS.kontakt;
   try {
     await send({

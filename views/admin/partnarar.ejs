@@ -1,0 +1,11 @@
+<%- include('partials/atop',{tittel:'Samarbeidspartnarar'}) %>
+<p class="admin-forklaring">Oppdater namna, lenkjene og logoane. Rekkja her blir brukt på nettsida. La namnet stå tomt for å fjerne ei oppføring. Nye logoar lastar du opp i biletbiblioteket.</p>
+<form method="post" action="/admin/partnarar" class="admin-skjema editor-skjema" data-dirty-form><input type="hidden" name="_csrf" value="<%= csrf %>" /><input type="hidden" name="version" value="<%= content.updatedAt %>" />
+<% const count=Math.min(12,(content.partners||[]).length+2);for(let i=0;i<count;i++){const p=content.partners[i]||{}; %>
+<details class="admin-detalj editor-section" <%= i===0?'open':'' %>><summary><span class="editor-index"><%= String(i+1).padStart(2,'0') %></span><strong><%= p.name || 'Legg til samarbeidspartnar' %></strong><span class="editor-chevron" aria-hidden="true">+</span></summary><div class="editor-fields">
+<div class="felt-rad"><div class="felt"><label for="name<%= i %>">Namn</label><input id="name<%= i %>" name="name<%= i %>" value="<%= p.name||'' %>" maxlength="100" /></div><div class="felt"><label for="url<%= i %>">Nettside</label><input id="url<%= i %>" name="url<%= i %>" value="<%= p.url||'' %>" placeholder="https://" /></div></div>
+<div class="felt"><label for="text<%= i %>">Kort beskriving</label><textarea id="text<%= i %>" name="text<%= i %>" rows="3" maxlength="1000"><%= p.text||'' %></textarea></div>
+<div class="felt"><label for="image<%= i %>">Logo frå biletbiblioteket</label><select class="admin-biletveljar" id="image<%= i %>" name="image<%= i %>"><option value="">Behald standardlogo / vis namn</option><% for(const m of content.media){ %><option value="<%= m.id %>" <%= p.image===m.id?'selected':'' %>><%= m.alt||m.id %></option><% } %></select><img class="admin-miniatyr" <%- p.image?'src="'+mediaUrl(p.image,'sm')+'"':'hidden' %> alt="Vald logo" width="120" /></div>
+<label><input type="checkbox" name="hidden<%= i %>" <%= p.hidden?'checked':'' %> /> Skjul denne samarbeidspartnaren</label>
+</div></details><% } %><div class="editor-savebar"><p data-save-state>Alle endringar er lagra.</p><button class="knapp knapp-primar" type="submit">Lagre samarbeidspartnarane</button></div></form>
+<%- include('partials/abot') %>

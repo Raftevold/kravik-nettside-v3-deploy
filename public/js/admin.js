@@ -2,6 +2,20 @@
    «hugs kvar eg var»-oppførsel etter lagring. */
 (function () {
   'use strict';
+  var dirty=false;
+  document.querySelectorAll('form[data-dirty-form],form.admin-skjema').forEach(function(form){
+    form.addEventListener('input',function(){dirty=true;document.querySelectorAll('[data-save-state]').forEach(function(el){el.textContent='Du har endringar som ikkje er lagra.';});});
+    form.addEventListener('change',function(){dirty=true;});
+    form.addEventListener('submit',function(e){if(!e.defaultPrevented)dirty=false;});
+  });
+  window.addEventListener('beforeunload',function(e){if(dirty){e.preventDefault();e.returnValue='';}});
+  document.querySelectorAll('.admin-biletveljar').forEach(function(select){
+    select.addEventListener('change',function(){
+      var field=select.closest('.felt');var preview=field&&field.querySelector('.admin-miniatyr');
+      if(!preview){preview=document.createElement('img');preview.className='admin-miniatyr';preview.alt='Valt bilete';preview.width=120;field.appendChild(preview);}
+      preview.hidden=!select.value;if(select.value)preview.src='/media/'+encodeURIComponent(select.value)+'-sm.webp';else preview.removeAttribute('src');
+    });
+  });
   document.querySelectorAll('form[data-stadfest]').forEach(function (form) {
     form.addEventListener('submit', function (e) {
       if (!window.confirm(form.getAttribute('data-stadfest'))) e.preventDefault();
@@ -35,16 +49,6 @@
       sessionStorage.setItem(tilstandsNokkel, JSON.stringify({ opne: opne, scroll: window.scrollY }));
     } catch (err) { /* ok */ }
   });
-
-  /* Toast-meldinga («Lagra!») forsvinn av seg sjølv etter nokre sekund */
-  var toast = document.querySelector('.admin-flash-toast');
-  if (toast) {
-    setTimeout(function () {
-      toast.style.transition = 'opacity 0.4s ease';
-      toast.style.opacity = '0';
-      setTimeout(function () { toast.remove(); }, 450);
-    }, 6000);
-  }
 
   var malFelt = document.getElementById('hurtig-text');
   document.querySelectorAll('[data-mal]').forEach(function (knapp) {

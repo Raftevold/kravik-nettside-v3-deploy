@@ -1,0 +1,3 @@
+<% const reviews=(content.testimonials||[]); if(design.showReviews && reviews.length){ %>
+<section class="seksjon omtalar-premium" aria-labelledby="omtalar-tittel"><div class="ramme"><p class="etikett">Frå kundane våre</p><h2 id="omtalar-tittel"><%= design.reviewsTitle %></h2><ul class="omtale-grid"><% for(const t of reviews.slice(0,3)){ %><li><% if(t.rating){ %><p class="stjerner"><span aria-hidden="true"><%= '★'.repeat(t.rating) %></span><span class="sr-only"><%= t.rating %> av 5 stjerner</span></p><% } %><blockquote><p>«<%= t.quote %>»</p></blockquote><p class="omtale-forfattar"><%= t.author %><% if(t.context){ %><span><%= t.context %></span><% } %></p></li><% } %></ul></div></section>
+<% } %>

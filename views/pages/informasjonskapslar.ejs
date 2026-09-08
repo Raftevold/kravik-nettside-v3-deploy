@@ -1,28 +1,9 @@
 <%- include('../partials/top') %>
-<%- include('../partials/sidehovud', { title: 'Informasjonskapslar (cookies)', lead: null, image: null }) %>
-
-<section class="seksjon">
-  <div class="ramme brodtekst brodtekst-smal">
-    <p>Informasjonskapslar (cookies) er små tekstfiler som blir lagra på eininga di
-    når du besøkjer ei nettside. Denne nettsida er laga for å bruke så få som råd.</p>
-
-    <h2>Nødvendige</h2>
-    <p>For vanlege besøkande set nettsida <strong>ingen informasjonskapslar</strong>.
-    Valet ditt om samtykke blir lagra lokalt i nettlesaren din (localStorage) og blir
-    aldri sendt til oss. Ved innlogging til administrasjonssida blir det sett ein
-    nødvendig påloggingskapsel («kravik_admin») – denne gjeld berre dei som
-    administrerer sida.</p>
-
-    <h2>Eksternt innhald (krev samtykke)</h2>
-    <p>Kartet på kontakt- og butikksida blir levert av Google Maps. Det blir først
-    lasta når du har trykt «Godta alt» eller «Vis kart». Då kan Google setje sine
-    eigne informasjonskapslar, etter
-    <a href="https://policies.google.com/technologies/cookies" rel="external noopener">Google sine retningslinjer</a>.</p>
-
-    <h2>Endre valet ditt</h2>
-    <p>Du kan når som helst endre samtykket ditt:</p>
-    <p><button type="button" class="knapp knapp-sekundar" data-opne-samtykke>Endre samtykke</button></p>
-  </div>
-</section>
-
-<%- include('../partials/bottom') %>
+<%- include('../partials/sidehovud',{title:'Informasjonskapslar og kart',lead:null,image:null}) %>
+<section class="seksjon"><div class="ramme brodtekst brodtekst-smal">
+<p>Du kan bruke nettsida utan å godta sporing eller laste inn Google Maps. Skrifttypar, bilete og vanlege funksjonar blir leverte frå nettsida vår.</p>
+<h2>Nødvendig lagring</h2><p>Vanlege besøk set ingen informasjonskapslar frå nettsida. Når du vel om Google Maps kan lastast, lagrar vi valet i nettlesaren under <code>kravik_samtykke_v1</code>. Valet gjeld i 180 dagar, blir berre brukt til dette føremålet og blir ikkje sendt til oss.</p>
+<p>Administratorar får ein nødvendig, signert påloggingskapsel kalla <code>kravik_admin</code>, med tilhøyrande signatur. Han varer i opptil 8 timar og gjeld berre administrasjonssidene. Administrasjonen brukar òg mellombels nettlesarlagring for å hugse plasseringa i redigeringsskjema.</p>
+<h2>Valfritt innhald: Google Maps</h2><p>Kart blir ikkje henta før du trykkjer «Tillat Google Maps» i samtykkepanelet. «Vis kart» opnar panelet. Du kan like gjerne velje «Ikkje tillat» og bruke adressa som står på sida.</p><p>Ved tillating blir IP-adressa og tekniske nettlesaropplysningar sende til Google, som kan lagre eigne informasjonskapslar. Google behandlar opplysningane etter <a href="https://policies.google.com/privacy" rel="external noopener">sine personvernreglar</a> og <a href="https://policies.google.com/technologies/cookies" rel="external noopener">reglar for informasjonskapslar</a>, og kan overføre data utanfor EØS.</p>
+<h2>Endre eller trekkje tilbake valet</h2><p>Vel «Ikkje tillat» for å fjerne innlasta kart med ein gong og hindre ny lasting. Nettsida vår kan ikkje slette Google sine eigne informasjonskapslar; dei kan du slette i nettlesarinnstillingane dine.</p><p><button type="button" class="knapp knapp-sekundar" data-opne-samtykke>Endre samtykke</button></p><p>Sjå òg <a href="/personvern">personvernerklæringa</a>.</p>
+</div></section><%- include('../partials/bottom') %>

@@ -32,7 +32,7 @@ router.use(
 // innanfor; 20 filer var det ikkje nødvendigvis).
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 12 * 1024 * 1024, files: 10 },
+  limits: { fileSize: 12 * 1024 * 1024, files: 10, fields: 20, parts: 30, fieldSize: 10000 },
 });
 
 // Multer-feil (for stor fil o.l.) skal gi ei forståeleg flash-melding og
@@ -54,6 +54,7 @@ function uploadMedFeilmelding(mw, tilbake) {
 // Ikkje indekser admin
 router.use((req, res, next) => {
   res.set('X-Robots-Tag', 'noindex, nofollow');
+  res.set('Cache-Control','no-store');
   res.locals.admin = true;
   res.locals.csrf = (req.session && req.session.csrf) || '';
   res.locals.flash = req.session ? req.session.flash : null;
@@ -102,13 +103,14 @@ router.post('/logg-inn', auth.loginLimiter, (req, res) => {
   res.status(401).render('admin/login', { error: 'Feil brukarnamn eller passord.', hasPassword: auth.hasPassword() });
 });
 
-router.post('/logg-ut', (req, res) => {
+router.post('/logg-ut', auth.verifyCsrf, (req, res) => {
   req.session = null;
   res.redirect('/admin/logg-inn');
 });
 
 // Alt under her krev innlogging
 router.use(auth.requireAuth);
+router.use('/eigedom', (req,res)=>res.redirect('/admin/oversikt'));
 router.get('/', (req, res) => res.redirect('/admin/oversikt'));
 
 // Alle POST krev gyldig CSRF-token. Multipart-skjema blir parsa av multer
@@ -116,7 +118,7 @@ router.get('/', (req, res) => res.redirect('/admin/oversikt'));
 // CSRF-sjekken ETTER multer. Unntaket gjeld BERRE dei faktiske
 // opplastingsrutene: elles kunne ein forfalska multipart-Content-Type
 // sleppe forbi tokensjekken på alle andre ruter.
-const MULTIPART_RUTER = new Set(['/bilete/last-opp', '/prosjekt/last-opp', '/eigedom/last-opp', '/import']);
+const MULTIPART_RUTER = new Set(['/bilete/last-opp', '/prosjekt/last-opp', '/import']);
 router.post('*', (req, res, next) => {
   if (req.is('multipart/form-data')) {
     if (MULTIPART_RUTER.has(req.path)) return next();
@@ -135,6 +137,8 @@ async function persist(req, savePromise, okMsg) {
     flash(req, `Lagra lokalt – men synk til GitHub FEILA (${err.message}). Endringa kan gå tapt ved omstart.`, 'feil');
   }
 }
+
+router.use(require('./editor')({flash,persist}));
 
 // ---------- Handbok ----------
 router.get('/handbok', (req, res) => res.render('admin/handbok', {}));
@@ -160,9 +164,11 @@ router.get('/generelt', (req, res) => {
 });
 
 router.post('/generelt', async (req, res) => {
-  const c = store.getContent();
+  const c = structuredClone(store.getContent());
   const b = req.body;
   c.site.name = str(b.name, 100) || c.site.name;
+  c.site.legalName = str(b.legalName, 100) || c.site.name;
+  c.site.formRecipient = str(b.formRecipient,200);
   c.site.tagline = str(b.tagline, 200);
   c.site.orgnr = str(b.orgnr, 20);
   c.site.phone = str(b.phone, 30);
@@ -197,6 +203,7 @@ router.post('/generelt', async (req, res) => {
       address: str(b[`dep_address_${i}`], 150),
       phone: str(b[`dep_phone_${i}`], 30),
       note: str(b[`dep_note_${i}`], 150),
+      label: str(b[`dep_label_${i}`], 100),
     });
   }
   await persist(req, store.saveContent(c, 'kontaktinfo og generelt'), 'Lagra!');
@@ -207,7 +214,7 @@ router.post('/generelt', async (req, res) => {
 router.get('/varsellinje', (req, res) => res.render('admin/varsellinje', {}));
 
 router.post('/varsellinje', async (req, res) => {
-  const c = store.getContent();
+  const c = structuredClone(store.getContent());
   c.alert = {
     enabled: req.body.enabled === 'on',
     text: str(req.body.text, 300),
@@ -228,7 +235,6 @@ const PAGE_DEFS = {
       ['heroLead', 'Ingress (hero)', 'textarea'],
       ['heroImage', 'Hero-bilete', 'image'],
       ['ctaPrimaryText', 'Primærknapp-tekst', 'text'],
-      ['ctaSecondaryText', 'Sekundærknapp-tekst', 'text'],
     ],
   },
   tenester: {
@@ -256,8 +262,12 @@ const PAGE_DEFS = {
     label: 'Butikk og landbruk',
     fields: [
       ['intro', 'Introtekst', 'textarea'],
-      ['comfortText', 'Tekst om Comfort-butikken', 'textarea'],
+      ['anterText', 'Tekst om baderomsbutikken', 'textarea'],
+      ['bathTitle', 'Overskrift for bad og VVS', 'text'],
       ['landbrukText', 'Tekst om landbruksavdelinga', 'textarea'],
+      ['farmTitle', 'Overskrift for landbruksavdelinga', 'text'],
+      ['visitTitle', 'Overskrift ved adresse og opningstider', 'text'],
+      ['partnersTitle', 'Overskrift over samarbeidspartnarar', 'text'],
       ['image', 'Bilete av butikken (valfritt – vist på framsida og butikksida)', 'image'],
       ['headerImage', 'Toppbilete', 'image'],
     ],
@@ -266,19 +276,6 @@ const PAGE_DEFS = {
     label: 'Opplæringsbedrift',
     fields: [
       ['body', 'Brødtekst', 'textarea'],
-      ['headerImage', 'Toppbilete', 'image'],
-    ],
-  },
-  eigedom: {
-    label: 'Eigedom',
-    fields: [
-      ['body', 'Brødtekst', 'textarea'],
-      ['orgnr', 'Org.nr (eigedomsselskapet)', 'text'],
-      ['contactName', 'Kontaktperson', 'text'],
-      ['contactRole', 'Rolle', 'text'],
-      ['contactPhone', 'Telefon', 'text'],
-      ['contactEmail', 'E-post', 'text'],
-      ['contactImage', 'Bilete av kontaktperson', 'image'],
       ['headerImage', 'Toppbilete', 'image'],
     ],
   },
@@ -302,9 +299,9 @@ const PAGE_DEFS = {
 router.get('/sider', (req, res) => res.render('admin/sider', { PAGE_DEFS }));
 
 router.get('/sider/:key', (req, res) => {
-  const def = PAGE_DEFS[req.params.key];
+  const def = Object.hasOwn(PAGE_DEFS,req.params.key) ? PAGE_DEFS[req.params.key] : null;
   if (!def) return res.redirect('/admin/sider');
-  const c = store.getContent();
+  const c = structuredClone(store.getContent());
   const pageData = { ...c.pages[req.params.key] };
   if (req.params.key === 'miljo') {
     pageData.docsRaw = (pageData.docs || []).map((d) => `${d.title}|${d.url}`).join('\n');
@@ -315,8 +312,9 @@ router.get('/sider/:key', (req, res) => {
 router.post('/sider/:key', async (req, res) => {
   const def = PAGE_DEFS[req.params.key];
   if (!def) return res.redirect('/admin/sider');
-  const c = store.getContent();
+  const c = structuredClone(store.getContent());
   const p = c.pages[req.params.key];
+  p.title = str(req.body.title,200);
   p.seoTitle = str(req.body.seoTitle, 70);
   p.seoDescription = str(req.body.seoDescription, 170);
   for (const [name, , type] of def.fields) {
@@ -336,6 +334,7 @@ router.post('/sider/:key', async (req, res) => {
       p[name] = str(req.body[name], 300);
     }
   }
+  if(req.params.key==='home' && !p.heroImage)p.heroImage='bad-nordfjord';
   await persist(req, store.saveContent(c, `sida «${def.label}»`), 'Lagra!');
   res.redirect(`/admin/sider/${req.params.key}`);
 });
@@ -346,7 +345,7 @@ const ICONS = ['bad', 'kran', 'varme', 'sprinkler', 'va', 'sveis', 'kamera', 'bo
 router.get('/tenester', (req, res) => res.render('admin/tenester', { ICONS }));
 
 router.post('/tenester/lagre', async (req, res) => {
-  const c = store.getContent();
+  const c = structuredClone(store.getContent());
   const idx = Number(req.body.index);
   const item = {
     id: str(req.body.id, 40) || `teneste-${Date.now().toString(36)}`,
@@ -365,7 +364,7 @@ router.post('/tenester/lagre', async (req, res) => {
 });
 
 router.post('/tenester/slett', async (req, res) => {
-  const c = store.getContent();
+  const c = structuredClone(store.getContent());
   const idx = Number(req.body.index);
   if (Number.isInteger(idx) && idx >= 0 && idx < c.services.length) c.services.splice(idx, 1);
   await persist(req, store.saveContent(c, 'tenester'), 'Sletta.');
@@ -373,7 +372,7 @@ router.post('/tenester/slett', async (req, res) => {
 });
 
 router.post('/tenester/flytt', async (req, res) => {
-  const c = store.getContent();
+  const c = structuredClone(store.getContent());
   const idx = Number(req.body.index);
   const dir = req.body.dir === 'opp' ? -1 : 1;
   const j = idx + dir;
@@ -388,7 +387,7 @@ router.post('/tenester/flytt', async (req, res) => {
 router.get('/team', (req, res) => res.render('admin/team', {}));
 
 router.post('/team/lagre', async (req, res) => {
-  const c = store.getContent();
+  const c = structuredClone(store.getContent());
   const idx = Number(req.body.index);
   const item = {
     name: str(req.body.name, 100),
@@ -408,7 +407,7 @@ router.post('/team/lagre', async (req, res) => {
 });
 
 router.post('/team/slett', async (req, res) => {
-  const c = store.getContent();
+  const c = structuredClone(store.getContent());
   const idx = Number(req.body.index);
   if (Number.isInteger(idx) && idx >= 0 && idx < c.team.length) c.team.splice(idx, 1);
   await persist(req, store.saveContent(c, 'kontaktpersonar'), 'Sletta.');
@@ -419,7 +418,7 @@ router.post('/team/slett', async (req, res) => {
 router.get('/referansar', (req, res) => res.render('admin/referansar', {}));
 
 router.post('/referansar/lagre', async (req, res) => {
-  const c = store.getContent();
+  const c = structuredClone(store.getContent());
   const idx = Number(req.body.index);
   const rating = Number.parseInt(req.body.rating, 10);
   const item = {
@@ -439,7 +438,7 @@ router.post('/referansar/lagre', async (req, res) => {
 });
 
 router.post('/referansar/slett', async (req, res) => {
-  const c = store.getContent();
+  const c = structuredClone(store.getContent());
   const idx = Number(req.body.index);
   if (Number.isInteger(idx) && idx >= 0 && idx < c.testimonials.length) c.testimonials.splice(idx, 1);
   await persist(req, store.saveContent(c, 'referansar'), 'Sletta.');
@@ -457,6 +456,7 @@ function readProjectFields(body, existing = {}) {
     place: str(body.place, 100),
     year: str(body.year, 10),
     description: str(body.description, 5000),
+    published: body.published === 'on',
     cover: str(body.cover, 60),
     before: str(body.before, 60),
     after: str(body.after, 60),
@@ -465,7 +465,7 @@ function readProjectFields(body, existing = {}) {
 }
 
 router.post('/prosjekt/lagre', async (req, res) => {
-  const c = store.getContent();
+  const c = structuredClone(store.getContent());
   c.projects = c.projects || [];
   const idx = Number(req.body.index);
   if (Number.isInteger(idx) && idx >= 0 && idx < c.projects.length) {
@@ -484,7 +484,7 @@ router.post('/prosjekt/lagre', async (req, res) => {
 });
 
 router.post('/prosjekt/slett', async (req, res) => {
-  const c = store.getContent();
+  const c = structuredClone(store.getContent());
   c.projects = c.projects || [];
   const idx = Number(req.body.index);
   if (Number.isInteger(idx) && idx >= 0 && idx < c.projects.length) c.projects.splice(idx, 1);
@@ -492,32 +492,37 @@ router.post('/prosjekt/slett', async (req, res) => {
   res.redirect('/admin/prosjekt');
 });
 
-router.post('/prosjekt/last-opp', uploadMedFeilmelding(upload.array('bilete', 10), '/admin/prosjekt'), auth.verifyCsrf, async (req, res) => {
-  const c = store.getContent();
-  c.projects = c.projects || [];
-  c.media = c.media || [];
-  const idx = Number(req.body.index);
-  if (!Number.isInteger(idx) || idx < 0 || idx >= c.projects.length) return res.redirect('/admin/prosjekt');
-  const project = c.projects[idx];
-  let count = 0;
-  for (const file of req.files || []) {
-    if (!/^image\/(jpeg|png|webp|avif|gif)$/.test(file.mimetype)) continue;
-    try {
-      const entry = await images.processUpload(file.buffer, file.originalname, c.media.map((m) => m.id));
-      c.media.push(entry);
-      project.images.push(entry.id);
-      if (!project.cover) project.cover = entry.id;
-      count++;
-    } catch (err) {
-      console.error('[opplasting]', err.message);
-    }
+async function processAdminImages(files) {
+  const entries=[];
+  let failed=0;
+  for(const file of files||[]){
+    if(!/^image\/(jpeg|png|webp|avif|gif)$/.test(file.mimetype)){failed++;continue;}
+    try{
+      entries.push(await images.processUpload(file.buffer,file.originalname,[...store.getContent().media,...entries].map(m=>m.id)));
+    }catch(err){failed++;console.error('[opplasting]',err.message);}
   }
-  await persist(req, store.saveContent(c, `prosjektbilete (${count} opplasta)`), count ? `${count} bilete lasta opp.` : 'Ingen bilete vart lasta opp – sjekk filformatet.');
+  return {entries,failed};
+}
+
+router.post('/prosjekt/last-opp', uploadMedFeilmelding(upload.array('bilete', 10), '/admin/prosjekt'), auth.verifyCsrf, async (req, res) => {
+  const idx = Number(req.body.index);
+  const projectId=Number.isInteger(idx)&&idx>=0 ? store.getContent().projects[idx]?.id : null;
+  if(!projectId)return res.redirect('/admin/prosjekt');
+  const {entries,failed}=await processAdminImages(req.files);
+  const c=structuredClone(store.getContent());
+  const project=c.projects.find(p=>p.id===projectId);
+  c.media.push(...entries);
+  if(project){
+    project.images.push(...entries.map(e=>e.id));
+    if(!project.cover&&entries.length)project.cover=entries[0].id;
+  }
+  if(entries.length)await persist(req,store.saveContent(c,'prosjektbilete'),`${entries.length} bilete lasta opp.${project?'':' Prosjektet vart fjerna i mellomtida; bileta ligg i biblioteket.'}`);
+  if(failed||!entries.length)flash(req,`${entries.length} bilete lasta opp. ${failed||'Ingen'} bilete kunne ikkje lagrast. Sjekk format og synkstatus før du prøver igjen.`,'feil');
   res.redirect('/admin/prosjekt');
 });
 
 router.post('/prosjekt/fjern-bilete', async (req, res) => {
-  const c = store.getContent();
+  const c = structuredClone(store.getContent());
   const idx = Number(req.body.index);
   const id = str(req.body.id, 60);
   if (Number.isInteger(idx) && idx >= 0 && idx < (c.projects || []).length) {
@@ -531,169 +536,22 @@ router.post('/prosjekt/fjern-bilete', async (req, res) => {
   res.redirect('/admin/prosjekt');
 });
 
-// ---------- Eigedom (leilegheiter) ----------
-// Fasilitetar ein kan krysse av for (inspirert av finn.no sine filter)
-const FASILITETAR = [
-  'Balkong/terrasse',
-  'Garasje/P-plass',
-  'Heis',
-  'Lademoglegheit',
-  'Peis/eldstad',
-  'Utsikt',
-  'Turterreng',
-  'Fellesvaskeri',
-  'Breiband',
-  'Aircondition',
-  'Alarm',
-  'Vaktmeisterteneste',
-];
-
-router.get('/eigedom', (req, res) => res.render('admin/eigedom', { FASILITETAR }));
-
-router.post('/eigedom/lagre', async (req, res) => {
-  const c = store.getContent();
-  c.properties = c.properties || [];
-  const idx = Number(req.body.index);
-  const existing = Number.isInteger(idx) && idx >= 0 && idx < c.properties.length ? c.properties[idx] : {};
-  const lat = Number.parseFloat(String(req.body.lat || '').replace(',', '.'));
-  const lng = Number.parseFloat(String(req.body.lng || '').replace(',', '.'));
-  const areal = Number.parseInt(req.body.areal, 10);
-  const leige = Number.parseInt(String(req.body.leige || '').replace(/[\s.]/g, ''), 10);
-  const valgteFasilitetar = [].concat(req.body.fasilitetar || []).filter((f) => FASILITETAR.includes(f));
-  const item = {
-    ...existing,
-    title: str(req.body.title, 150),
-    status: ['', 'ledig', 'utleigd'].includes(req.body.status) ? req.body.status : '',
-    description: str(req.body.description, 5000),
-    // Strukturert nøkkelinfo – alt valfritt
-    soverom: ['', '1', '2', '3', '4', '5', '6', '7+'].includes(req.body.soverom) && req.body.soverom ? req.body.soverom : undefined,
-    areal: Number.isFinite(areal) && areal > 0 ? areal : undefined,
-    leige: Number.isFinite(leige) && leige > 0 ? leige : undefined,
-    moblert: ['moblert', 'delvis', 'umoblert'].includes(req.body.moblert) ? req.body.moblert : undefined,
-    dyrehold: ['ja', 'nei'].includes(req.body.dyrehold) ? req.body.dyrehold : undefined,
-    ledigFra: str(req.body.ledigFra, 60) || undefined,
-    fasilitetar: valgteFasilitetar.length ? valgteFasilitetar : undefined,
-    facts: str(req.body.facts, 2000)
-      .split('\n')
-      .map((l) => l.trim())
-      .filter(Boolean)
-      .map((l) => {
-        const [label, ...rest] = l.split('|');
-        return { label: str(label, 60), value: str(rest.join('|'), 120) };
-      })
-      .filter((f) => f.label && f.value),
-    mapEmbed: str(req.body.mapEmbed, 2000),
-    lat: Number.isFinite(lat) ? lat : undefined,
-    lng: Number.isFinite(lng) ? lng : undefined,
-    images: existing.images || [],
-  };
-  if (!item.title) {
-    flash(req, 'Adresse/tittel manglar.', 'feil');
-    return res.redirect('/admin/eigedom');
-  }
-  if (!item.slug) {
-    item.slug = uniqueSlug(slugify(item.title), c.properties.map((p) => p.slug).filter(Boolean));
-  }
-  if (Number.isInteger(idx) && idx >= 0 && idx < c.properties.length) c.properties[idx] = item;
-  else c.properties.push(item);
-  await persist(req, store.saveContent(c, 'leilegheiter'), 'Lagra!');
-  res.redirect('/admin/eigedom');
-});
-
-router.post('/eigedom/slett', async (req, res) => {
-  const c = store.getContent();
-  c.properties = c.properties || [];
-  const idx = Number(req.body.index);
-  if (Number.isInteger(idx) && idx >= 0 && idx < c.properties.length) c.properties.splice(idx, 1);
-  await persist(req, store.saveContent(c, 'leilegheiter'), 'Sletta.');
-  res.redirect('/admin/eigedom');
-});
-
-router.post('/eigedom/last-opp', uploadMedFeilmelding(upload.array('bilete', 10), '/admin/eigedom'), auth.verifyCsrf, async (req, res) => {
-  const c = store.getContent();
-  c.properties = c.properties || [];
-  c.media = c.media || [];
-  const idx = Number(req.body.index);
-  if (!Number.isInteger(idx) || idx < 0 || idx >= c.properties.length) return res.redirect('/admin/eigedom');
-  const property = c.properties[idx];
-  property.images = property.images || [];
-  let count = 0;
-  for (const file of req.files || []) {
-    if (!/^image\/(jpeg|png|webp|avif|gif)$/.test(file.mimetype)) continue;
-    try {
-      const entry = await images.processUpload(file.buffer, file.originalname, c.media.map((m) => m.id));
-      c.media.push(entry);
-      property.images.push(entry.id);
-      if (!property.cover && !property.image) property.cover = entry.id;
-      count++;
-    } catch (err) {
-      console.error('[opplasting]', err.message);
-    }
-  }
-  await persist(req, store.saveContent(c, `leilegheitsbilete (${count} opplasta)`), count ? `${count} bilete lasta opp.` : 'Ingen bilete vart lasta opp – sjekk filformatet.');
-  res.redirect('/admin/eigedom');
-});
-
-router.post('/eigedom/framside', async (req, res) => {
-  const c = store.getContent();
-  c.properties = c.properties || [];
-  const idx = Number(req.body.index);
-  const id = str(req.body.id, 60);
-  if (Number.isInteger(idx) && idx >= 0 && idx < c.properties.length) {
-    const p = c.properties[idx];
-    if ((p.images || []).includes(id) || p.image === id) {
-      p.cover = id;
-      await persist(req, store.saveContent(c, 'leilegheiter (framsidebilete)'), 'Framsidebiletet er sett.');
-    }
-  }
-  res.redirect('/admin/eigedom');
-});
-
-router.post('/eigedom/fjern-bilete', async (req, res) => {
-  const c = store.getContent();
-  c.properties = c.properties || [];
-  const idx = Number(req.body.index);
-  const id = str(req.body.id, 60);
-  if (Number.isInteger(idx) && idx >= 0 && idx < c.properties.length) {
-    const p = c.properties[idx];
-    p.images = (p.images || []).filter((x) => x !== id);
-    if (p.image === id) p.image = '';
-    if (p.cover === id) p.cover = p.images[0] || p.image || '';
-    await persist(req, store.saveContent(c, 'leilegheitsbilete'), 'Biletet er teke ut av leilegheita (ligg framleis i biblioteket).');
-  }
-  res.redirect('/admin/eigedom');
-});
-
 // ---------- Bilete (mediebibliotek + galleri) ----------
 router.get('/bilete', (req, res) => res.render('admin/bilete', {}));
 
 router.post('/bilete/last-opp', uploadMedFeilmelding(upload.array('bilete', 10), '/admin/bilete'), auth.verifyCsrf, async (req, res) => {
-  const c = store.getContent();
-  c.media = c.media || [];
-  c.gallery = c.gallery || [];
   const addToGallery = req.body.tilGalleri === 'on';
-  let count = 0;
-  for (const file of req.files || []) {
-    if (!/^image\/(jpeg|png|webp|avif|gif)$/.test(file.mimetype)) continue;
-    try {
-      const entry = await images.processUpload(
-        file.buffer,
-        file.originalname,
-        c.media.map((m) => m.id)
-      );
-      c.media.push(entry);
-      if (addToGallery) c.gallery.push({ image: entry.id });
-      count++;
-    } catch (err) {
-      console.error('[opplasting]', err.message);
-    }
-  }
-  await persist(req, store.saveContent(c, `bilete (${count} opplasta)`), count ? `${count} bilete lasta opp.` : 'Ingen bilete vart lasta opp – sjekk filformatet.');
+  const {entries,failed}=await processAdminImages(req.files);
+  const c=structuredClone(store.getContent());
+  c.media.push(...entries);
+  if(addToGallery)c.gallery.push(...entries.map(e=>({image:e.id})));
+  if(entries.length)await persist(req,store.saveContent(c,'bilete'),`${entries.length} bilete lasta opp.`);
+  if(failed||!entries.length)flash(req,`${entries.length} bilete lasta opp. ${failed||'Ingen'} bilete kunne ikkje lagrast. Sjekk format og synkstatus før du prøver igjen.`,'feil');
   res.redirect('/admin/bilete');
 });
 
 router.post('/bilete/alt', async (req, res) => {
-  const c = store.getContent();
+  const c = structuredClone(store.getContent());
   const m = (c.media || []).find((x) => x.id === req.body.id);
   if (m) {
     m.alt = str(req.body.alt, 200);
@@ -703,13 +561,15 @@ router.post('/bilete/alt', async (req, res) => {
 });
 
 router.post('/bilete/slett', async (req, res) => {
-  const c = store.getContent();
+  const c = structuredClone(store.getContent());
   const id = str(req.body.id, 60);
   // Same teiknsett som opplastinga lagar – hindrar path traversal i slettevegen
   if (!/^[a-z0-9-]+$/.test(id)) {
     flash(req, 'Ugyldig bilet-id.', 'feil');
     return res.redirect('/admin/bilete');
   }
+  const refs=JSON.stringify({pages:c.pages,team:c.team,design:require('../lib/design').read(c),partners:c.partners});
+  if(refs.includes(JSON.stringify(id))){flash(req,'Biletet er i bruk på ei side, i profilen eller av ein kontaktperson. Byt biletet der før du slettar det.','feil');return res.redirect('/admin/bilete');}
   c.media = (c.media || []).filter((m) => m.id !== id);
   c.gallery = (c.gallery || []).filter((g) => g.image !== id);
   for (const p of c.projects || []) {
@@ -723,13 +583,15 @@ router.post('/bilete/slett', async (req, res) => {
     if (e.image === id) e.image = '';
     if (e.cover === id) e.cover = e.images[0] || '';
   }
-  images.deleteMedia(id);
-  await persist(req, store.saveContent(c, 'sletta bilete'), 'Biletet er sletta.');
+  await persist(req, (async()=>{
+    await store.saveContent(c,'sletta bilete');
+    await images.deleteMedia(id);
+  })(), 'Biletet er sletta.');
   res.redirect('/admin/bilete');
 });
 
 router.post('/galleri/toggle', async (req, res) => {
-  const c = store.getContent();
+  const c = structuredClone(store.getContent());
   const id = str(req.body.id, 60);
   c.gallery = c.gallery || [];
   const idx = c.gallery.findIndex((g) => g.image === id);
@@ -820,11 +682,15 @@ router.post('/import', uploadMedFeilmelding(upload.single('fil'), '/admin/innsti
       json.site[nokkel] = Array.isArray(json.site[nokkel]) ? json.site[nokkel] : [];
     }
 
-    await persist(req, store.saveContent(json, 'import av innhald'), 'Innhald importert.');
+    require('../lib/validateContent').validateContent(json);
+    require('fs').writeFileSync(require('path').join(store.DATA_DIR,'content-backup.json'),JSON.stringify(store.getContent(),null,2));
+    await persist(req, store.saveContent(json, 'import av innhald'), 'Innhald importert. Førre innhald er teke vare på som mellombels kopi.');
   } catch (err) {
     flash(req, `Import feila: ${err.message}`, 'feil');
   }
   res.redirect('/admin/innstillingar');
 });
 
+// Express 4 må sende avviste promises vidare til feilhandteraren.
+for(const layer of router.stack)if(layer.route)for(const handler of layer.route.stack){const fn=handler.handle;handler.handle=(req,res,next)=>{try{Promise.resolve(fn(req,res,next)).catch(next);}catch(err){next(err);}};}
 module.exports = router;

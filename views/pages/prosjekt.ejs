@@ -1,5 +1,5 @@
 <%- include('../partials/top') %>
-<% const p = content.pages.prosjekt; const projects = content.projects || []; %>
+<% const p = content.pages.prosjekt; const projects = (content.projects || []).filter(p=>p.published!==false); %>
 <%- include('../partials/sidehovud', { title: p.title, lead: p.intro, image: p.headerImage }) %>
 
 <% if (projects.length) { %>
@@ -32,7 +32,7 @@
   <div class="ramme">
     <div class="seksjon-hovud">
       <h2 id="galleri-tittel">Galleri</h2>
-      <p>Glimt frå arbeidskvardagen vår.</p>
+      <p>Utval frå baderomsutstillinga. Bileta viser utstillingar, ikkje ferdige kundeprosjekt.</p>
     </div>
     <% if (content.gallery && content.gallery.length) { %>
     <ul class="galleri-rutenett">

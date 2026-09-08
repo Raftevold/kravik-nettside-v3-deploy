@@ -1,53 +1,24 @@
 <%- include('../partials/top') %>
-<%- include('../partials/sidehovud', { title: 'Personvernerklæring', lead: null, image: null }) %>
-
-<section class="seksjon">
-  <div class="ramme brodtekst brodtekst-smal">
-    <p><strong>Behandlingsansvarleg:</strong> <%= site.legalName || site.name %> (org.nr <%= site.orgnr %>),
-    <%= site.address.street %>, <%= site.address.zip %> <%= site.address.city %>.
-    Kontakt: <a href="mailto:<%= site.email %>"><%= site.email %></a>, telefon <a href="<%= telHref(site.phone) %>"><%= site.phone %></a>.</p>
-
-    <h2>Kva opplysningar behandlar vi?</h2>
-    <p>Når du sender inn kontaktskjemaet, behandlar vi opplysningane du sjølv oppgir:
-    namn, e-postadresse og/eller telefonnummer, innhaldet i meldinga, og eventuelle
-    bilete du sjølv vel å leggje ved (t.d. av badet eller røyra det gjeld).
-    Vi hentar ikkje inn andre personopplysningar om deg, og vi brukar ikkje
-    analyse- eller sporingsverktøy på nettsida.</p>
-
-    <h2>Føremål og rettsleg grunnlag</h2>
-    <p>Opplysningane blir brukte til å svare på førespurnaden din og følgje han opp
-    (GDPR artikkel 6 nr. 1 bokstav b – tiltak før avtaleinngåing, og bokstav f –
-    rettkomen interesse i å svare på førespurnader).</p>
-
-    <h2>Kor lenge lagrar vi opplysningane?</h2>
-    <p>Meldingar frå kontaktskjemaet blir lagra så lenge det er nødvendig for å
-    følgje opp saka di, og blir sletta når dei ikkje lenger trengst.</p>
-
-    <h2>Kven har tilgang?</h2>
-    <p>Berre tilsette som skal svare på førespurnaden har tilgang til meldingane.
-    Vi brukar databehandlarar for drift av nettsida (skyplattform for køyring og
-    lagring). Opplysningane blir ikkje selde eller delte med andre for marknadsføring.</p>
-
-    <h2>Statistikk</h2>
-    <p>Vi fører enkel, anonym statistikk over kor mange gonger sidene blir viste.
-    Teljinga brukar verken informasjonskapslar eller IP-adresser, og kan ikkje
-    knytast til deg som person.<% if (plausibleDomain) { %> I tillegg brukar vi
-    analyseverktøyet Plausible, som er informasjonskapsel-fritt og ikkje sporar
-    enkeltpersonar.<% } %></p>
-
-    <h2>Informasjonskapslar og eksternt innhald</h2>
-    <p>Nettsida set ingen informasjonskapslar for vanlege besøkande. Kart frå Google
-    Maps blir først lasta etter at du har samtykt – då gjeld
-    <a href="https://policies.google.com/privacy" rel="external noopener">Google sine personvernreglar</a>.
-    Sjå òg sida om <a href="/informasjonskapslar">informasjonskapslar</a>.</p>
-
-    <h2>Dine rettar</h2>
-    <p>Du har rett til innsyn, retting og sletting av opplysningane dine, og til å
-    protestere mot eller krevje avgrensa behandling. Ta kontakt på
-    <a href="mailto:<%= site.email %>"><%= site.email %></a>, så hjelper vi deg.
-    Du kan òg klage til <a href="https://www.datatilsynet.no" rel="external noopener">Datatilsynet</a>
-    dersom du meiner behandlinga bryt med regelverket.</p>
-  </div>
-</section>
-
-<%- include('../partials/bottom') %>
+<%- include('../partials/sidehovud', { title:'Personvernerklæring',lead:null,image:null }) %>
+<section class="seksjon"><div class="ramme brodtekst brodtekst-smal">
+<p>Sist oppdatert: 8. september 2026.</p>
+<p><strong>Behandlingsansvarleg:</strong> <%= site.legalName || site.name %>, org.nr. <%= site.orgnr %> MVA, <%= site.address.street %>, <%= site.address.zip %> <%= site.address.city %>. Kontakt oss på <a href="mailto:<%= site.email %>"><%= site.email %></a> eller <a href="<%= telHref(site.phone) %>"><%= site.phone %></a>.</p>
+<h2>Når du tek kontakt</h2>
+<p>Vi behandlar namn, telefon eller e-post, meldinga di og eventuelt jobbadresse, type oppdrag og bilete du vel å sende. Ved spørsmål om læreplass behandlar vi òg opplysningane om utdanning og erfaring du oppgir. Unngå fødselsnummer, helseopplysningar og andre sensitive opplysningar i skjemaet.</p>
+<p>Vi brukar opplysningane til å svare, vurdere oppdraget og følgje opp førespurnaden. For tilbod og læreplass er grunnlaget tiltak før ei mogleg avtale (personvernforordninga artikkel 6 nr. 1 bokstav b). For andre spørsmål og vern mot misbruk er grunnlaget ei rettkomen interesse i å handtere førespurnader og sikre nettsida (bokstav f).</p>
+<h2>Lagring og sletting</h2>
+<p>Den mellombelse innboksen på nettsida blir rydda automatisk etter <%= design.messageRetentionDays %> dagar. Han er eit arbeidsverktøy og kan bli tømd ved omstart. Leverte førespurnader blir òg sende til e-post for oppfølging.</p>
+<p>I e-postløysinga skal avslutta førespurnader utan vidare kundeforhold slettast seinast 12 månader etter siste kontakt. Søknader om læreplass utan tilsetjing skal slettast seinast 6 månader etter avslutta vurdering, med mindre du har avtalt vidare lagring. Blir du kunde, blir nødvendig avtale-, rekneskaps- og oppdragsdokumentasjon lagra så lenge relevante lovkrav eller dokumenterte rettskrav krev det. Desse fristane må følgjast opp av verksemda i e-post og andre fagsystem.</p>
+<h2>Leverandørar og tilgang</h2>
+<p>Nettsida blir drifta av Render i Frankfurt. Render behandlar tekniske opplysningar som IP-adresse og førespurnadsdata for å levere og sikre tenesta. Vi brukar ei mellombels IP-basert avgrensing av skjemainnsendingar og innloggingsforsøk. Desse teljarane varer i opptil 15 minutt.</p>
+<% if(mailConfigured){ %><p>Skjemameldingar blir leverte gjennom <%= design.mailProvider %>. Berre personar som treng opplysningane for å behandle førespurnaden, skal ha tilgang.</p><% }else{ %><p>Kontakt via e-post blir behandla i verksemda si e-postløysing. Skjemainnsending er ikkje aktiv før e-postlevering er sett opp.</p><% } %>
+<p>GitHub blir brukt til nettsidekode, offentleg innhald og bilete til publisering. Kundemeldingar, private vedlegg og passord blir ikkje sende til dette lageret. Opplysningar blir ikkje selde eller delte for marknadsføring.</p>
+<p>Leverandørane kan bruke underleverandørar utanfor EØS. Slike overføringar krev eit gyldig overføringsgrunnlag, til dømes EU-kommisjonen sine standardavtalar eller ei gjeldande avgjerd om tilstrekkeleg vern. Du kan kontakte oss for informasjon om databehandlaravtalar, aktuelle mottakarar og overføringsgrunnlag. Sjå <a href="https://render.com/privacy" rel="external noopener">Render sitt personvern</a> og <a href="https://resend.com/legal/privacy-policy" rel="external noopener">Resend sitt personvern</a>.</p>
+<h2>Statistikk og informasjonskapslar</h2>
+<p>Vi tel sidevisingar utan å lagre IP-adresser eller identifikatorar i statistikken. Teljinga bruker ikkje informasjonskapslar.<% if(plausibleDomain){ %> Vi brukar òg Plausible til statistikk utan informasjonskapslar.<% } %></p>
+<p>Google Maps blir berre lasta etter at du uttrykkeleg tillèt det. Då får Google mellom anna IP-adressa di og kan bruke eigne informasjonskapslar. Du kan trekkje tilbake valet via «Endre samtykke» nedst på sida. Les meir om <a href="/informasjonskapslar">informasjonskapslar og kart</a>.</p>
+<h2>Rettane dine</h2>
+<p>Du kan be om innsyn, retting, sletting, avgrensing av behandling og, når vilkåra er oppfylte, dataportabilitet. Du kan protestere mot behandling basert på rettkomen interesse og trekkje tilbake samtykke utan at det påverkar lovleg behandling før tilbaketrekkinga.</p>
+<p>Send førespurnaden til <a href="mailto:<%= site.email %>"><%= site.email %></a>. Du skal normalt få svar innan éin månad. Du kan klage til <a href="https://www.datatilsynet.no/om-datatilsynet/kontakt-oss/klage-til-datatilsynet/" rel="external noopener">Datatilsynet</a>.</p>
+<% if(design.privacyExtra){ %><h2>Tilleggsinformasjon</h2><%- nl2p(design.privacyExtra) %><% } %>
+</div></section><%- include('../partials/bottom') %>

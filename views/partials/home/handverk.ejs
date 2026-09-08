@@ -1,0 +1,4 @@
+<section class="handverk seksjon" aria-labelledby="handverk-tittel"><div class="ramme handverk-grid">
+  <div class="handverk-bilete"><img src="<%= mediaUrl(design.craftImage, 'lg') %>" alt="<%= mediaAlt(design.craftImage) %>" loading="lazy" width="1200" height="375" /><span><%= design.craftCaption %></span></div>
+  <div class="handverk-tekst"><p class="etikett"><%= design.craftEyebrow %></p><h2 id="handverk-tittel"><%= design.craftTitle %></h2><%- nl2p(design.craftBody) %><a class="tekst-lenke" href="<%= safeUrl(design.craftUrl) %>"><%= design.craftLink %> <span aria-hidden="true">↗</span></a><dl class="arv-tal"><% for (const [value,label] of designRows(design.facts)) { %><div><dt><%= value %></dt><dd><%= label %></dd></div><% } %></dl></div>
+</div></section>

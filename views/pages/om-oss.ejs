@@ -7,19 +7,9 @@
     <div class="brodtekst">
       <%- nl2p(p.body) %>
       <h2>Sertifiseringar og medlemskap</h2>
-      <ul class="hake-liste">
-        <li><%- include('../partials/icon', { name: 'sjekk' }) %> Sentralt godkjend verksemd</li>
-        <li><%- include('../partials/icon', { name: 'blad' }) %> Miljøfyrtårn-sertifisert (2022) – <a href="/miljo-og-berekraft">les meir</a></li>
-        <li><%- include('../partials/icon', { name: 'sjekk' }) %> Godkjend opplæringsbedrift – <a href="/opplaeringsbedrift">bli lærling</a></li>
-        <li><%- include('../partials/icon', { name: 'sjekk' }) %> Del av Comfort-kjeden</li>
-      </ul>
+      <ul class="hake-liste"><% for(const line of String(design.aboutCredentials).split("\n").filter(Boolean)){ %><li><%- include('../partials/icon',{name:'sjekk'}) %><%= line %></li><% } %><li><%- include('../partials/icon',{name:'sjekk'}) %>Ein del av <a href="<%= safeUrl(design.chainUrl) %>"><%= design.chainName %></a></li></ul>
     </div>
-    <dl class="tal-rekke tal-rekke-lodrett">
-      <div><dt>1933</dt><dd>grunnlagd</dd></div>
-      <div><dt>4.</dt><dd>generasjon i familien Vik</dd></div>
-      <div><dt>21</dt><dd>tilsette</dd></div>
-      <div><dt>2</dt><dd>avdelingar: Stryn og Nordfjordeid</dd></div>
-    </dl>
+    <dl class="tal-rekke tal-rekke-lodrett"><% for(const [value,label] of designRows(design.aboutFacts)){ %><div><dt><%= value %></dt><dd><%= label %></dd></div><% } %></dl>
   </div>
 </section>
 

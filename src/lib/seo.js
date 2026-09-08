@@ -81,35 +81,12 @@ function plumberJsonLd(content, url) {
   return ld;
 }
 
-function eigedomJsonLd(content, url) {
-  const p = content.pages.eigedom;
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'Kr. A. Vik Eigedom AS',
-    url: `${url}/eigedom`,
-    telephone: p.contactPhone ? `+47 ${p.contactPhone}` : undefined,
-    email: p.contactEmail || undefined,
-    identifier: p.orgnr
-      ? { '@type': 'PropertyValue', name: 'Organisasjonsnummer', value: p.orgnr.replace(/\s/g, '') }
-      : undefined,
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: content.site.address.street,
-      postalCode: content.site.address.zip,
-      addressLocality: content.site.address.city,
-      addressCountry: 'NO',
-    },
-  };
-}
-
 const ROUTES = [
   { path: '/', priority: '1.0' },
   { path: '/tenester', priority: '0.9' },
   { path: '/om-oss', priority: '0.8' },
   { path: '/butikk-og-landbruk', priority: '0.8' },
   { path: '/opplaeringsbedrift', priority: '0.6' },
-  { path: '/eigedom', priority: '0.7' },
   { path: '/miljo-og-berekraft', priority: '0.5' },
   { path: '/prosjekt', priority: '0.7' },
   { path: '/kontakt', priority: '0.9' },
@@ -120,13 +97,8 @@ const ROUTES = [
 function sitemapXml(content, url) {
   const lastmod = (content.updatedAt || new Date().toISOString()).slice(0, 10);
   const dynamic = [
-    ...(content.projects || []).map((p) => ({ path: `/prosjekt/${p.id}`, priority: '0.6' })),
-    // Tynne leilegheitssider (utan beskriving og utan bilete) held vi ute av
-    // sitemap – dei er framleis lenka frå /eigedom, men ikkje framheva.
-    ...(content.properties || [])
-      .filter((p) => p.slug && (p.description || (p.images || []).length))
-      .map((p) => ({ path: `/eigedom/${p.slug}`, priority: '0.5' })),
-  ];
+    ...(content.projects || []).filter(p=>p.published!==false).map((p) => ({ path: `/prosjekt/${p.id}`, priority: '0.6' })),
+];
   const items = [...ROUTES, ...dynamic]
     .map((r) => `  <url><loc>${url}${r.path}</loc><lastmod>${lastmod}</lastmod><priority>${r.priority}</priority></url>`)
     .join('\n');
@@ -134,7 +106,8 @@ function sitemapXml(content, url) {
 }
 
 function robotsTxt(url) {
+  if(new URL(url).hostname.endsWith('.onrender.com'))return 'User-agent: *\nDisallow: /\n';
   return `User-agent: *\nAllow: /\nDisallow: /admin\n\nSitemap: ${url}/sitemap.xml\n`;
 }
 
-module.exports = { baseUrl, plumberJsonLd, eigedomJsonLd, sitemapXml, robotsTxt };
+module.exports = { baseUrl, plumberJsonLd, sitemapXml, robotsTxt };

@@ -1,5 +1,7 @@
 <%- include('partials/atop', { tittel: 'Oversikt' }) %>
 
+<div class="admin-welcome"><div><h2>Velkomen til di nettside.</h2><p>Hald innhaldet oppdatert, finn førespurnader og tilpass uttrykket. Alt samla på éin stad.</p></div><div class="admin-welcome-actions"><a class="knapp" href="/admin/utforming">Rediger framsida</a><a class="knapp" href="/" target="_blank" rel="noopener">Vis nettsida ↗</a></div></div>
+
 <div class="admin-kort-rekke">
   <a class="admin-kort" href="/admin/meldingar">
     <strong><%= unread %></strong> ulesne meldingar
@@ -62,7 +64,7 @@
   <div class="admin-stolpar" role="img" aria-label="Sidevisingar per dag siste 14 dagar">
     <% for (const d of statDays) { %>
     <div class="admin-stolpe-holdar" title="<%= d.day %>: <%= d.total %> visingar">
-      <span class="admin-stolpe" style="height: <%= Math.round((d.total / maks) * 100) %>%"></span>
+      <span class="admin-stolpe stat-height-<%= Math.round((d.total / maks) * 20) * 5 %>"></span>
       <span class="admin-stolpe-dag"><%= d.day.slice(8) %></span>
     </div>
     <% } %>
@@ -98,7 +100,7 @@
   </tr>
   <tr>
     <th scope="row">E-postvarsling for skjema</th>
-    <td><%= mailConfigured ? '✅ Aktiv' : 'Ikkje sett opp – meldingar finn du uansett under «Meldingar».' %></td>
+    <td><%= mailConfigured ? '✅ Aktiv' : 'Ikkje sett opp – skjema viser telefon og e-post i staden for innsending.' %></td>
   </tr>
   <tr>
     <th scope="row">Sist endra innhald</th>
