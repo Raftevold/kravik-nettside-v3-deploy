@@ -6,17 +6,13 @@
   <div class="ramme">
     <div class="kort-rutenett kort-rutenett-2">
     <div class="kort kort-stor">
-      <span class="logo-brikke"><img src="/img/logo-comfort.png" alt="Comfort" width="137" height="26" loading="lazy" /></span>
-      <h2>Comfort-butikken</h2>
-      <p><%= p.comfortText %></p>
-      <p><a class="pil-lenke" href="https://www.comfort.no/inspirasjon-og-rad/" rel="external noopener">Inspirasjon og råd hos Comfort</a></p>
+      <span class="logo-brikke"><img src="<%= design.chainLogo ? mediaUrl(design.chainLogo,'md') : '/img/logo-anter.svg' %>" alt="<%= design.chainName %>" width="180" height="35" loading="lazy" /></span>
+      <h2><%= p.bathTitle || 'Bad og VVS' %></h2>
+      <p><%= p.anterText %></p>
+      <p><a class="pil-lenke" href="<%= safeUrl(design.chainUrl) %>" rel="external noopener"><%= design.chainLink %></a></p>
     </div>
     <div class="kort kort-stor">
-      <span class="logo-brikke">
-        <img src="/img/logo-husqvarna.png" alt="Husqvarna" width="117" height="22" loading="lazy" />
-        <img src="/img/logo-kellfri.png" alt="Kellfri" width="91" height="22" loading="lazy" />
-      </span>
-      <h2>Landbruksavdelinga</h2>
+      <h2><%= p.farmTitle || 'Landbruksavdelinga' %></h2>
       <p><%= p.landbrukText %></p>
       <p><a class="pil-lenke" href="/kontakt">Spør oss om utvalet</a></p>
     </div>
@@ -27,7 +23,7 @@
 <section class="seksjon seksjon-tona">
   <div class="ramme delt">
     <div>
-      <h2>Besøk oss i Stryn</h2>
+      <h2><%= p.visitTitle || 'Besøk oss i Stryn' %></h2>
       <% if (p.image) { %>
       <img class="butikk-bilete" src="<%= mediaUrl(p.image, 'md') %>" srcset="<%= srcset(p.image) %>" sizes="(min-width: 800px) 50vw, 95vw" alt="<%= mediaAlt(p.image) || 'Butikken vår i Stryn' %>" loading="lazy" />
       <% } %>
@@ -49,5 +45,6 @@
   </div>
 </section>
 
+<section class="seksjon" aria-labelledby="partnar-tittel"><div class="ramme"><p class="etikett">Fagmiljø og samarbeid</p><h2 id="partnar-tittel"><%= p.partnersTitle || 'Samarbeidspartnarane våre' %></h2><div class="partner-grid"><% for(const pa of (content.partners||[]).filter(p=>!p.hidden)){ %><a href="<%= safeUrl(pa.url) %>" rel="external noopener"><% if(pa.image){ %><img src="<%= mediaUrl(pa.image,'md') %>" alt="<%= pa.name %>" loading="lazy" /><% }else if(pa.logo){ %><img src="/img/<%= pa.logo %>.<%= pa.extension||'png' %>" alt="<%= pa.name %>" loading="lazy" /><% }else{ %><h3><%= pa.name %></h3><% } %><p><%= pa.text %></p><span aria-hidden="true">↗</span></a><% } %></div></div></section>
 <%- include('../partials/cta-band') %>
 <%- include('../partials/bottom') %>

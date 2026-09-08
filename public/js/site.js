@@ -13,6 +13,7 @@
   var nav = document.querySelector('.hovudnav');
   var navKnapp = document.querySelector('.nav-knapp');
   if (nav && navKnapp) {
+    nav.classList.add('nav-ready');
     navKnapp.addEventListener('click', function () {
       var open = nav.getAttribute('data-open') === 'true';
       nav.setAttribute('data-open', String(!open));
@@ -35,7 +36,8 @@
 
   function lesSamtykke() {
     try {
-      return JSON.parse(localStorage.getItem(NOKKEL));
+      var stored = JSON.parse(localStorage.getItem(NOKKEL));
+      return stored && Date.now() - Date.parse(stored.tid) < 180 * 86400000 ? stored : null;
     } catch (e) {
       return null;
     }
@@ -50,13 +52,15 @@
   function lastKart(holdar) {
     var src = holdar.getAttribute('data-kart-src');
     if (!src || holdar.querySelector('iframe')) return;
+    try { var url = new URL(src); if (url.protocol !== 'https:' || !['www.google.com','maps.google.com'].includes(url.hostname) || !url.pathname.startsWith('/maps')) return; } catch(e) { return; }
     var iframe = document.createElement('iframe');
     iframe.src = src;
     iframe.title = 'Kart som viser kvar du finn oss (Google Maps)';
     iframe.loading = 'lazy';
-    iframe.referrerPolicy = 'no-referrer-when-downgrade';
+    iframe.referrerPolicy = 'no-referrer';
     iframe.allowFullscreen = true;
-    holdar.textContent = '';
+    var placeholder = holdar.querySelector('.kart-plasshaldar');
+    if (placeholder) placeholder.hidden = true;
     holdar.appendChild(iframe);
   }
 
@@ -73,9 +77,7 @@
   }
 
   var samtykke = lesSamtykke();
-  if (!samtykke) {
-    visPanel();
-  } else if (samtykke.eksternt) {
+  if (samtykke && samtykke.eksternt) {
     lastAlleKart();
   }
 
@@ -85,6 +87,10 @@
       lagreSamtykke(alle);
       gohymPanel();
       if (alle) lastAlleKart();
+      else document.querySelectorAll('.kart-holdar').forEach(function(holder) {
+        var frame=holder.querySelector('iframe'); if(frame) frame.remove();
+        var placeholder=holder.querySelector('.kart-plasshaldar'); if(placeholder) placeholder.hidden=false;
+      });
     });
   });
 
@@ -99,9 +105,8 @@
   /* «Vis kart»-knappen gjeld som samtykke til eksternt innhald */
   document.querySelectorAll('[data-last-kart]').forEach(function (knapp) {
     knapp.addEventListener('click', function () {
-      lagreSamtykke(true);
-      gohymPanel();
-      lastAlleKart();
+      visPanel();
+      var first=panel && panel.querySelector('button'); if(first) first.focus();
     });
   });
 
@@ -225,7 +230,7 @@
     });
 
     dialog.addEventListener('close', function () {
-      bilete.src = '';
+      bilete.removeAttribute('src');
     });
   }
 })();

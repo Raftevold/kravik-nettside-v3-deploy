@@ -48,17 +48,17 @@ async function processUpload(buffer, originalName, existingIds) {
 }
 
 async function doProcess(buffer, id) {
-  const image = sharp(buffer, { failOn: 'none' }).rotate();
+  const image = sharp(buffer, { failOn: 'error', limitInputPixels: 25000000 }).rotate();
   const meta = await image.metadata();
   if (!meta.width || !meta.height) throw new Error('Fila ser ikkje ut til å vere eit gyldig bilete.');
 
   for (const size of SIZES) {
-    const out = await sharp(buffer, { failOn: 'none' })
+    const out = await sharp(buffer, { failOn: 'error', limitInputPixels: 25000000 })
       .rotate()
       .resize({ width: size.width, withoutEnlargement: true })
       .webp({ quality: size.quality })
       .toBuffer();
-    store.saveUpload(`${id}-${size.suffix}.webp`, out);
+    await store.saveUpload(`${id}-${size.suffix}.webp`, out);
   }
 
   return {
@@ -69,9 +69,9 @@ async function doProcess(buffer, id) {
   };
 }
 
-function deleteMedia(id) {
+async function deleteMedia(id) {
   for (const size of SIZES) {
-    store.deleteUpload(`${id}-${size.suffix}.webp`);
+    await store.deleteUpload(`${id}-${size.suffix}.webp`);
   }
 }
 
@@ -82,10 +82,10 @@ function deleteMedia(id) {
  * ALDRI til GitHub (persondata, jf. same regel som meldingane).
  */
 async function prepareInboxImage(buffer) {
-  const image = sharp(buffer, { failOn: 'none' }).rotate();
+  const image = sharp(buffer, { failOn: 'error', limitInputPixels: 25000000 }).rotate();
   const meta = await image.metadata();
   if (!meta.width || !meta.height) throw new Error('Fila ser ikkje ut til å vere eit gyldig bilete.');
-  return sharp(buffer, { failOn: 'none' })
+  return sharp(buffer, { failOn: 'error', limitInputPixels: 25000000 })
     .rotate()
     .resize({ width: 1600, height: 1600, fit: 'inside', withoutEnlargement: true })
     .jpeg({ quality: 80 })

@@ -7,6 +7,7 @@ const compression = require('compression');
 const store = require('./lib/store');
 const stats = require('./lib/stats');
 const googleReviews = require('./lib/googleReviews');
+const design = require('./lib/design');
 const publicRoutes = require('./routes/public');
 const adminRoutes = require('./routes/admin');
 
@@ -28,6 +29,7 @@ function escapeHtml(s) {
 function assetVersion() {
   const files = [
     'public/css/site.css',
+    'public/css/premium.css',
     'public/css/motion.css',
     'public/css/admin.css',
     'public/js/site.js',
@@ -83,7 +85,8 @@ function createApp() {
     })
   );
 
-  app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+  app.use(express.urlencoded({ extended: false, limit: '256kb', parameterLimit: 300 }));
+  app.use((req,res,next)=>{res.set('Permissions-Policy','camera=(), microphone=(), geolocation=()');next();});
 
   // Helsesjekkar. VIKTIG skilje:
   //  - /health      (Render): 200 så lenge sida kan servere innhald – òg i
@@ -118,9 +121,14 @@ function createApp() {
       return res.status(503).type('text/plain').send('Sida er under vedlikehald. Prøv igjen om litt.');
     }
     res.locals.content = content;
+    if(/\.onrender\.com$/i.test(req.hostname))res.set('X-Robots-Tag','noindex, nofollow');
     res.locals.assetV = ASSET_V;
     res.locals.plausibleDomain = PLAUSIBLE_DOMAIN;
     res.locals.site = content.site;
+    res.locals.design = design.read(content);
+    res.locals.designRows = design.rows;
+    res.locals.safeUrl = design.safeUrl;
+    res.locals.mailConfigured = require('./lib/mail').configured;
     res.locals.alertBar = content.alert;
     res.locals.currentPath = req.path;
     res.locals.escapeHtml = escapeHtml;
@@ -147,6 +155,12 @@ function createApp() {
     next();
   });
 
+  app.get('/theme.css', (req, res) => {
+    const d = design.read(store.getContent());
+    const color = (k) => /^#[0-9a-f]{6}$/i.test(d[k]) ? d[k] : design.defaults[k];
+    res.type('text/css').set('Cache-Control','no-cache').send(`:root{--petrol-mork:${color('darkColor')};--blekk:${color('darkColor')};--aqua:${color('accentColor')};--papir:${color('paperColor')}}`);
+  });
+
   // Statisk innhald med god cache
   app.use(
     '/media',
@@ -169,8 +183,9 @@ function createApp() {
   // Feilhandtering
   // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
-    console.error('[feil]', err);
+    console.error('[feil]', err.message);
     if (res.headersSent) return;
+    if(err.status===413 || err.type==='entity.too.large')return res.status(413).type('text/plain').send('Innsendinga er for stor. Gå tilbake og kort ned teksten.');
     res.status(500).render('pages/500', {
       seoTitle: 'Noko gjekk gale – Kr. A. Vik AS',
       seoDescription: 'Ein feil oppstod.',

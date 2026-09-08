@@ -1,68 +1,29 @@
-# Kr. A. Vik AS – nettside (v3 «levande»)
+# Kr. A. Vik — Anter-utgåva
 
-Moderne, rask og universelt utforma nettside for Kr. A. Vik AS – familieeigd
-rørleggarbedrift i Stryn og på Nordfjordeid sidan 1933. Bygd som erstatning for
-gamle kravik.no.
+Oppdatert nettstad for Kr. A. Vik AS i Stryn og på Nordfjordeid. Serverrendert HTML, lokal skrifttype, responsive WebP-bilete og små klientscript. Node 22 eller nyare, Express og EJS.
 
-**v3** legg eit gjennomarbeidd rørslelag oppå v2: sida kjennest levande og
-engasjerande, men aldri masete. Temaspråket er henta frå faget – vatn, flyt og
-varme for rørleggardelen, varmt kveldslys for eigedomsdelen. Sjå
-`docs/RORSLE.md` for full oversikt over effektane og prinsippa bak.
+- Nettstad: https://kravik-nettside-v3.onrender.com
+- Administrasjon: /admin
+- Privat kjelderepo: https://github.com/Raftevold/kravik-nettside-v3
+- Render-repo: https://github.com/Raftevold/kravik-nettside-v3-deploy
 
-## Rørslelaget i korte trekk
-
-- **Signaturaugneblink**: hero med luftbobler som vik unna peikaren (canvas),
-  ord-for-ord-avduking av tittelen og ei levande bølgje der vatnet møter
-  innhaldet
-- **Scroll-avduking** med stagger på kort, galleri og seksjonar – merka opp av
-  JS, så malane er urørte
-- **Mikrointeraksjonar**: koppardråpe-fyll på primærknappar, vassring ved kvart
-  klikk/tap, koparglød som følgjer peikaren over kort, ikon som «dryp», damp på
-  varme-ikonet (skjult perle)
-- **Eigedom = eige register**: sakte «gyllen time»-zoom og kveldslys på
-  leilegheitskorta, lysstøv-canvas i sidehovudet, sonar-puls på Ledig-merket
-- **Alt er progressiv forbetring**: utan JavaScript, eller med
-  `prefers-reduced-motion`, er sida identisk med v2 – alt innhald fullt synleg
-- **CSP-trygt og billeg**: ingen bibliotek, ingen inline-stilar, berre
-  transform/opacity + éin lettvektig canvas som pausar utanfor skjermen
-
-## Teknologi
-
-- **Node.js 22 + Express + EJS** – server-rendert HTML, ingen byggjesteg
-- **Innebygd CMS** på `/admin` – all tekst, bilete, tenester, kontaktinfo,
-  opningstider, referansar, SEO-felt og varsellinje kan endrast utan kode
-- **sharp** – alle bilete blir automatisk konverterte til WebP i tre storleikar
-- **GitHub-basert persistens** – innhald og opplasta bilete blir committa til
-  dette repoet og henta ned att ved oppstart, slik at endringar overlever
-  Render gratisplan sitt flyktige filsystem
-- **Tryggleik** – helmet (CSP med nonce), bcrypt, rate-limiting, CSRF-vern,
-  signerte sesjonscookies
-
-## Adresser (v3)
-
-- **Live:** https://kravik-nettside-v3.onrender.com
-- **Utviklingsrepo (privat):** https://github.com/Raftevold/kravik-nettside-v3
-- **Deploy-repo (offentleg, det Render køyrer):** https://github.com/Raftevold/kravik-nettside-v3-deploy
-- Ny kode ut i produksjon: merge `main` inn i `deploy`-greina og push til
-  `deploy`-remoten (`git push deploy deploy:main`), og trykk «Manual Deploy»
-  i Render-dashbordet.
-
-## Kom i gang lokalt
-
-```bash
-npm install
-npm start          # http://localhost:3000
+## Lokalt
+```sh
+npm ci
+npm start
+npm test
 ```
 
-Innlogging til admin: sjå `docs/ADMIN.md`.
+## Administrasjon
+**Framside og profil** styrer tekst, bilete, fargar, meny, seksjonsrekkjefølgje, synlegheit, kjedeprofil, fakta og kontaktband. **Sider og SEO** styrer hovudinnhald, overskrifter og søkjemotorfelt. **Samarbeidspartnarar** styrer namn, logo, lenkje, beskriving og synlegheit. Kontaktpersonar, tenester, prosjekt, bilete, referansar, opningstider og varsel har eigne redigeringssider.
 
-## Deploy
+Prosjekt kan lagrast som utkast. Den gamle demonstrasjonen av baderomsrenovering er eit utkast; utstillingsbilete blir presenterte som inspirasjon. Eigedomsrutene svarer 410.
 
-Sjå `render.yaml` (Render Blueprint) og `docs/DRIFT.md` for miljøvariablar,
-GitHub-synk og e-postoppsett.
+## Drift
+Innhald og publiserbare bilete blir synkroniserte til GitHub. Passord, kundemeldingar og private vedlegg blir aldri synkroniserte. Skjema gir først positiv kvittering når e-postleverandøren har akseptert meldinga. Leveringsfeil gir forståeleg feilmelding; utan oppsett blir direkte telefon/e-post vist.
 
-## Dokumentasjon
+Nødvendige driftsverdiar: SESSION_SECRET, ADMIN_PASSWORD_HASH, GITHUB_TOKEN, GITHUB_REPO, GITHUB_BRANCH og SITE_URL. E-post krev SMTP_HOST, SMTP_USER, SMTP_PASS, MAIL_FROM og CONTACT_EMAIL. Resend bruker HTTPS. Mottakaren kan overstyrast under Kontaktinfo i admin.
 
-- `docs/ANALYSE.md` – vurdering av gamle sida + strategi for den nye
-- `docs/ADMIN.md` – brukarrettleiing for administrasjonssida
-- `docs/DRIFT.md` – drift, miljøvariablar, backup og kjende avgrensingar
+Render-adressa er ei førehandsvising og blir ikkje indeksert. Ved domenelansering: set SITE_URL til faktisk domene. Render Free har dvale og flyktig disk; vel produksjonsdrift før endeleg lansering. DATA_DIR kan peike til ein privat varig disk (må initialiserast med content.json). Innboksen blir automatisk rydda etter 30 dagar, justerbart 1–90 i admin. E-postarkivet må følgjast opp separat.
+
+Sjå docs/LEVERANSE-ANTER.md for innhaldskjelder, bilete, kontrollar og nødvendige driftsavklaringar.

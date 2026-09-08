@@ -5,6 +5,7 @@
 
   <fieldset>
     <legend>Bedrifta</legend>
+    <div class="felt"><label for="legalName">Juridisk namn</label><input id="legalName" name="legalName" value="<%= site.legalName||site.name %>" /></div>
     <div class="felt"><label for="name">Namn</label>
       <input id="name" name="name" value="<%= site.name %>" required /></div>
     <div class="felt"><label for="tagline">Slagord (vist i footer)</label>
@@ -15,6 +16,7 @@
 
   <fieldset>
     <legend>Kontakt</legend>
+    <div class="felt"><label for="formRecipient">Mottakar for nettskjema</label><input id="formRecipient" name="formRecipient" type="email" value="<%= site.formRecipient||'' %>" placeholder="Tomt = mottakaren i driftsoppsettet" /><p class="felt-hint">Tomt felt bruker den eksisterande mottakaren i Render. Set post@kravik.no når Kravik skal ta imot førespurnadene. E-posttenesta må tillate levering til adressa.</p></div>
     <div class="felt"><label for="phone">Telefon</label>
       <input id="phone" name="phone" value="<%= site.phone %>" /></div>
     <div class="felt"><label for="email">E-post</label>
@@ -33,6 +35,7 @@
     <legend>Avdelingar (inntil 4)</legend>
     <% for (let i = 0; i < 4; i++) { const d = site.departments[i] || {}; %>
     <div class="felt-rad">
+      <div class="felt"><label for="dep_label_<%= i %>">Avdelingstype</label><input id="dep_label_<%= i %>" name="dep_label_<%= i %>" value="<%= d.label||'' %>" /></div>
       <div class="felt"><label for="dep_name_<%= i %>">Namn</label>
         <input id="dep_name_<%= i %>" name="dep_name_<%= i %>" value="<%= d.name || '' %>" /></div>
       <div class="felt"><label for="dep_address_<%= i %>">Adresse</label>

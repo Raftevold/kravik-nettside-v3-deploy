@@ -1,0 +1,18 @@
+<%- include('partials/atop',{tittel:'Framside og profil'}) %>
+<div class="editor-intro"><div><p class="admin-forklaring">Tilpass teksten, bileta og uttrykket. Opne ein seksjon for å redigere. Endringar blir synlege når du lagrar.</p><a href="/admin/sider/home">Rediger hovudtittel, toppbilete og SEO →</a></div><a class="knapp" href="/" target="_blank" rel="noopener">Vis nettsida ↗</a></div>
+<% if(error){ %><div class="admin-flash admin-flash-feil" role="alert" tabindex="-1"><%= error %></div><% } %>
+<form class="admin-skjema editor-skjema" method="post" action="/admin/utforming" data-dirty-form>
+<input type="hidden" name="_csrf" value="<%= csrf %>" /><input type="hidden" name="version" value="<%= content.updatedAt %>" />
+<% groups.forEach(([title,fields],index)=>{ %>
+<details class="admin-detalj editor-section" <%= index===0?'open':'' %>><summary><span class="editor-index"><%= String(index+1).padStart(2,'0') %></span><strong><%= title %></strong><span class="editor-chevron" aria-hidden="true">+</span></summary><div class="editor-fields">
+<% for(const [key,label,type] of fields){ %>
+<div class="felt <%= type==='checkbox'?'editor-switch':'' %>">
+<% if(type==='checkbox'){ %><label for="d-<%= key %>"><input type="checkbox" id="d-<%= key %>" name="<%= key %>" <%= design[key]?'checked':'' %> /><%= label %></label>
+<% }else{ %><label for="d-<%= key %>"><%= label %></label>
+<% if(type==='textarea'){ %><textarea id="d-<%= key %>" name="<%= key %>" rows="4" maxlength="10000"><%= design[key] %></textarea>
+<% }else if(type==='image'){ %><div class="editor-image-row"><select class="admin-biletveljar" id="d-<%= key %>" name="<%= key %>"><option value="">Standard / utan bilete</option><% for(const m of content.media){ %><option value="<%= m.id %>" <%= design[key]===m.id?'selected':'' %>><%= m.alt || m.id %> · <%= m.id %></option><% } %></select><img class="admin-miniatyr" <%- design[key]?'src="'+mediaUrl(design[key],'sm')+'"':'hidden' %> alt="Førehandsvising av valt bilete" width="120" height="85" /></div><a class="felt-hint" href="/admin/bilete" target="_blank" rel="noopener">Last opp bilete i biletbiblioteket ↗</a>
+<% }else{ %><input type="<%= type==='color'?'color':type==='number'?'number':'text' %>" id="d-<%= key %>" name="<%= key %>" value="<%= design[key] %>" <%- type==='number'?'min="1" max="90"':'' %> maxlength="500" />
+<% } } %></div><% } %>
+</div></details><% }) %>
+<div class="editor-savebar"><p data-save-state>Alle endringar er lagra.</p><button class="knapp knapp-primar" type="submit">Lagre endringane</button></div>
+</form><%- include('partials/abot') %>

@@ -1,0 +1,8 @@
+<section class="seksjon utstilling" aria-labelledby="utstilling-tittel"><div class="ramme">
+  <div class="utstilling-hovud"><div><p class="etikett"><%= design.galleryEyebrow %></p><h2 id="utstilling-tittel"><%= design.galleryTitle %></h2></div><div><p><%= design.galleryIntro %></p><a class="tekst-lenke" href="<%= safeUrl(design.galleryUrl) %>"><%= design.galleryLink %> <span aria-hidden="true">↗</span></a></div></div>
+  <div class="utstilling-grid">
+    <% for (const n of [1,2,3]) { const id=design['galleryImage'+n], label=design['galleryLabel'+n], tekst=design['galleryText'+n]; if(!id) continue; %>
+    <figure><a href="/prosjekt#galleri" aria-label="Sjå meir frå utstillinga: <%= label %>"><img src="<%= mediaUrl(id,'md') %>" srcset="<%= srcset(id) %>" sizes="(min-width: 750px) 32vw, 90vw" alt="<%= mediaAlt(id) || label + ' i baderomsutstillinga' %>" width="800" height="1000" loading="lazy" /></a><figcaption><h3><%= label %></h3><p><%= tekst %></p></figcaption></figure>
+    <% } %>
+  </div><p class="bilete-merknad"><%= design.galleryNote %></p>
+</div></section>

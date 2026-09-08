@@ -26,7 +26,8 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="preload" href="/fonts/manrope.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/css/site.css?v=<%= assetV %>" />
-  <link rel="stylesheet" href="/css/motion.css?v=<%= assetV %>" />
+  <link rel="stylesheet" href="/css/premium.css?v=<%= assetV %>" />
+  <link rel="stylesheet" href="/theme.css?v=<%= content.updatedAt %>" />
   <% if (typeof jsonLd !== 'undefined' && jsonLd) { %>
   <script type="application/ld+json" nonce="<%= cspNonce %>"><%- JSON.stringify(jsonLd).replace(/</g, '\\u003c') %></script>
   <% } %>
@@ -57,7 +58,7 @@
     </div>
     <div class="ramme hovudlinje">
       <a class="logo" href="/" aria-label="<%= site.name %> – til framsida">
-        <img src="/img/logo-kravik.png" alt="<%= site.name %>" width="171" height="64" />
+        <img src="<%= design.logoImage ? mediaUrl(design.logoImage, 'md') : '/img/logo-kravik-modern.svg' %>" alt="<%= site.name %>" width="230" height="76" />
       </a>
       <nav class="hovudnav" aria-label="Hovudmeny">
         <button class="nav-knapp" type="button" aria-expanded="false" aria-controls="hovudmeny">
@@ -65,19 +66,11 @@
           <span class="nav-knapp-tekst">Meny</span>
         </button>
         <ul id="hovudmeny" class="nav-liste">
-          <% const nav = [
-            ['/', 'Framsida'],
-            ['/tenester', 'Tenester'],
-            ['/prosjekt', 'Prosjekt'],
-            ['/butikk-og-landbruk', 'Butikk'],
-            ['/om-oss', 'Om oss'],
-            ['/eigedom', 'Eigedom'],
-            ['/kontakt', 'Kontakt'],
-          ]; %>
+          <% const nav = designRows(design.navItems).map(([label,href])=>[safeUrl(href),label]).filter(([href])=>href); %>
           <% for (const [href, label] of nav) { %>
           <li><a href="<%= href %>" <%- currentPath === href || (href !== '/' && currentPath.startsWith(href + '/')) ? 'aria-current="page"' : '' %>><%= label %></a></li>
           <% } %>
-          <li class="nav-cta"><a class="knapp knapp-primar" href="/kontakt#kontaktskjema">Be om tilbod</a></li>
+          <li class="nav-cta"><a class="knapp knapp-primar" href="<%= safeUrl(design.navCtaUrl) %>"><%= design.navCta %></a></li>
         </ul>
       </nav>
     </div>

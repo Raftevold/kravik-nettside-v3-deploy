@@ -22,25 +22,25 @@
       <% } %>
       <% const fv = typeof formValues !== 'undefined' ? formValues : {};
          const fe = typeof formFieldErrors !== 'undefined' && formFieldErrors ? formFieldErrors : {}; %>
-      <form method="post" action="/opplaeringsbedrift" novalidate>
+      <% if(!mailConfigured){ %><div class="infoboks"><h3>Ta kontakt direkte</h3><p><a href="mailto:<%= site.email %>"><%= site.email %></a><br /><a href="<%= telHref(site.phone) %>"><%= site.phone %></a></p><p>Kontakt oss på e-post eller telefon, så hjelper vi deg vidare.</p></div><% }else{ %><form method="post" action="/opplaeringsbedrift" novalidate>
         <div class="felt">
           <label for="s-navn">Namn <span aria-hidden="true">*</span></label>
-          <input type="text" id="s-navn" name="navn" required autocomplete="name" value="<%= fv.navn || '' %>" <%- fe.navn ? 'aria-invalid="true"' : '' %> />
+          <input type="text" id="s-navn" name="navn" maxlength="200" required autocomplete="name" value="<%= fv.navn || '' %>" <%- fe.navn ? 'aria-invalid="true"' : '' %> />
         </div>
         <div class="felt-rad">
           <div class="felt">
             <label for="s-epost">E-post</label>
-            <input type="email" id="s-epost" name="epost" autocomplete="email" value="<%= fv.epost || '' %>" aria-describedby="s-hint" <%- fe.epost ? 'aria-invalid="true"' : '' %> />
+            <input type="email" id="s-epost" name="epost" maxlength="200" autocomplete="email" value="<%= fv.epost || '' %>" aria-describedby="s-hint" <%- fe.epost ? 'aria-invalid="true"' : '' %> />
           </div>
           <div class="felt">
             <label for="s-telefon">Telefon</label>
-            <input type="tel" id="s-telefon" name="telefon" autocomplete="tel" value="<%= fv.telefon || '' %>" aria-describedby="s-hint" <%- fe.telefon ? 'aria-invalid="true"' : '' %> />
+            <input type="tel" id="s-telefon" name="telefon" maxlength="30" autocomplete="tel" value="<%= fv.telefon || '' %>" aria-describedby="s-hint" <%- fe.telefon ? 'aria-invalid="true"' : '' %> />
           </div>
         </div>
         <p class="felt-hint" id="s-hint">Fyll ut e-post eller telefon, slik at vi får svart deg.</p>
         <div class="felt">
           <label for="s-melding">Fortel kort om deg sjølv <span aria-hidden="true">*</span></label>
-          <textarea id="s-melding" name="melding" rows="5" required placeholder="Kven er du, kva utdanning/erfaring har du, og kvifor vil du bli rørleggar?" <%- fe.melding ? 'aria-invalid="true"' : '' %>><%= fv.melding || '' %></textarea>
+          <textarea id="s-melding" name="melding" maxlength="5000" rows="5" required placeholder="Kven er du, kva utdanning/erfaring har du, og kvifor vil du bli rørleggar?" <%- fe.melding ? 'aria-invalid="true"' : '' %>><%= fv.melding || '' %></textarea>
         </div>
         <div class="felt felt-skjult" aria-hidden="true">
           <label for="s-nettstad">La dette feltet stå tomt</label>
@@ -49,7 +49,7 @@
         <p class="felt-hint">Vi brukar opplysningane berre til å behandle søknaden din.
         Les meir i <a href="/personvern">personvernerklæringa</a>.</p>
         <button type="submit" class="knapp knapp-primar">Send søknad</button>
-      </form>
+      </form><% } %>
     </div>
   </div>
 </section>

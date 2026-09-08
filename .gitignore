@@ -4,3 +4,8 @@ node_modules/
 .DS_Store
 dokument-ut/
 data/innboks/
+
+data/auth.json
+data/messages.json
+data/stats.json
+data/content-backup.json

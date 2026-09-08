@@ -2,7 +2,7 @@
   "site": {
     "name": "Kr. A. Vik AS",
     "legalName": "KR A VIK AS",
-    "tagline": "Rørleggaren i Nordfjord sidan 1933",
+    "tagline": "Godt handverk. Sidan 1933.",
     "orgnr": "917 176 442",
     "phone": "57 87 14 88",
     "email": "post@kravik.no",
@@ -16,19 +16,21 @@
         "name": "Stryn – hovudkontor og butikk",
         "address": "Visnesvegen 7, 6783 Stryn",
         "phone": "57 87 14 88",
-        "note": "Comfort-butikk og landbruksavdeling"
+        "note": "Rørleggar, baderomsbutikk og landbruksavdeling",
+        "label": "Hovudkontor & butikk"
       },
       {
         "name": "Nordfjordeid – avdeling",
         "address": "Nordfjordeid",
         "phone": "971 41 237",
-        "note": "Avdelingsleiar: Sam Kjetil Torheim"
+        "note": "Avdelingsleiar: Sam Kjetil Torheim",
+        "label": "Rørleggaravdeling"
       }
     ],
     "openingHours": [],
     "openingHoursNote": "",
     "social": [],
-    "mapEmbed": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d476685.3161109886!2d5.7909074982162725!3d62.17963947959808!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x461662afffd4a859%3A0xe4c235e5ab4ca7e4!2sComfort%20Stryn%20Kr.%20A.%20Vik!5e0!3m2!1sen!2sbg!4v1598266936234!5m2!1sen!2sbg"
+    "mapEmbed": "https://www.google.com/maps?q=Visnesvegen%207%2C%206783%20Stryn&output=embed"
   },
   "alert": {
     "enabled": false,
@@ -37,10 +39,11 @@
   },
   "partners": [
     {
-      "name": "Comfort",
-      "url": "https://www.comfort.no",
-      "logo": "logo-comfort",
-      "text": "Vi er tilknytta Comfort-kjeden – rørleggar og butikk på same plass."
+      "name": "Anter",
+      "url": "https://www.anter.no/",
+      "logo": "logo-anter",
+      "text": "Lokalt handverk, med eit nasjonalt fagmiljø i ryggen.",
+      "extension": "svg"
     },
     {
       "name": "Husqvarna",
@@ -58,56 +61,43 @@
   "pages": {
     "home": {
       "seoTitle": "Rørleggar i Stryn og på Nordfjordeid | Kr. A. Vik AS",
-      "seoDescription": "Familieeigd rørleggarbedrift i Stryn og på Nordfjordeid sidan 1933. Bad, varme, sprinkler og VA. Comfort-butikk og landbruksavdeling. Ring 57 87 14 88.",
-      "heroTitle": "Rørleggaren i Nordfjord – sidan 1933",
-      "heroLead": "Familieeigd rørleggarbedrift med 21 fagfolk i Stryn og på Nordfjordeid. Frå draumebadet til komplette varmeanlegg – vi er der frå teikning til ferdig jobb.",
-      "heroImage": "hero-framsida",
-      "ctaPrimaryText": "Be om tilbod",
-      "ctaSecondaryText": "Ring oss"
+      "seoDescription": "Rørleggar i Stryn og på Nordfjordeid sidan 1933. Bad, sanitær, varme, sprinkler og VA. Kr. A. Vik er ein del av Anter. Ring 57 87 14 88.",
+      "heroTitle": "Fine bad. Solid handverk.",
+      "heroLead": "Frå det første røyrstrekket til den siste detaljen. Vi hjelper deg med bad, varme og rørleggartenester i heile Nordfjord.",
+      "heroImage": "bad-nordfjord",
+      "ctaPrimaryText": "Snakk med oss",
+      "ctaSecondaryText": "Utforsk tenestene"
     },
     "tenester": {
       "title": "Tenester",
       "seoTitle": "Tenester – bad, varme, sanitær, VA og sprinkler | Kr. A. Vik AS",
       "seoDescription": "Rørleggartenester i Nordfjord: baderom, sanitæranlegg, varme, sprinkler, VA, rørsveising, kamerainspeksjon og kjerneboring. Kr. A. Vik AS, Stryn.",
       "intro": "Vi tek på oss alt frå små servicejobbar til komplette anlegg i hus, hytter og større prosjekt. Fagfolka våre har spesialkompetanse innan mellom anna sprinkler og VA.",
-      "headerImage": "header-om-oss"
+      "headerImage": ""
     },
     "omOss": {
       "title": "Om oss",
       "seoTitle": "Om oss – familieeigd rørleggarbedrift sidan 1933 | Kr. A. Vik AS",
       "seoDescription": "Kr. A. Vik AS er ei familieeigd rørleggarbedrift i fjerde generasjon, med 21 tilsette i Stryn og på Nordfjordeid. Sentralt godkjend og Miljøfyrtårn-sertifisert.",
-      "headerImage": "header-om-oss",
-      "body": "Kr. A. Vik AS er ei familieeigd rørleggarbedrift som har vore i rørleggarbransjen sidan 1933.\n\nKristian Vik er dagleg leiar og fjerde generasjon i familien Vik som driv bedrifta. Vi er totalt 21 tilsette fordelte på to avdelingar: hovudkontor og butikk i Stryn i indre Nordfjord, og underavdeling på Nordfjordeid. Bedrifta er tilknytta Comfort-kjeden.\n\nVåre tilsette har mykje spesialkompetanse, mellom anna innan sprinkler og VA.\n\nI tillegg til rørleggardrifta har vi i Stryn ei landbruksavdeling med maskiner og varer frå mellom anna Husqvarna og Kellfri."
+      "headerImage": "",
+      "body": "Kr. A. Vik AS er ei familieeigd rørleggarbedrift som har vore i rørleggarbransjen sidan 1933.\n\nKristian Vik er dagleg leiar og fjerde generasjon i familien Vik som driv bedrifta. Vi er totalt 21 tilsette fordelte på to avdelingar: hovudkontor og butikk i Stryn i indre Nordfjord, og underavdeling på Nordfjordeid. Vi er ein del av Anter – eit landsdekkjande fellesskap av rørleggarbedrifter.\n\nVåre tilsette har mykje spesialkompetanse, mellom anna innan sprinkler og VA.\n\nI tillegg til rørleggardrifta har vi i Stryn ei landbruksavdeling med maskiner og varer frå mellom anna Husqvarna og Kellfri."
     },
     "butikk": {
       "title": "Butikk og landbruk",
-      "seoTitle": "Comfort-butikk og landbruksavdeling i Stryn | Kr. A. Vik AS",
-      "seoDescription": "Besøk Comfort-butikken vår i Visnesvegen 7 i Stryn: baderomsutstyr og VVS – pluss landbruksavdeling med maskiner og utstyr frå Husqvarna og Kellfri.",
+      "seoTitle": "Baderomsbutikk og landbruk i Stryn | Kr. A. Vik AS",
+      "seoDescription": "Baderomsutstyr, VVS og faglege råd i Visnesvegen 7 i Stryn. Landbruksavdeling med Husqvarna og Kellfri. Kr. A. Vik – ein del av Anter.",
       "headerImage": "header-kontakt",
-      "intro": "I Visnesvegen 7 i Stryn finn du både Comfort-butikken vår og landbruksavdelinga. Her møter du fagfolk bak disken – rørleggar og butikk på same plass.",
-      "comfortText": "Som del av Comfort-kjeden har vi butikk med utstyr til bad og VVS. Treng du hjelp til å planlegge badet, hjelper vi deg med teikning og løysingsval.",
+      "intro": "Sjå materiala. Prøv detaljane. Snakk med fagfolk. I Visnesvegen 7 finn du baderomsbutikk og landbruksavdeling på same plass.",
       "landbrukText": "Landbruksavdelinga i Stryn fører maskiner og varer frå mellom anna Husqvarna og Kellfri – innom oss finn du utstyr til gard, skog og hage.",
-      "image": "header-om-oss"
+      "image": "galleri-38",
+      "anterText": "Eit godt bad startar med gode val. Vi hjelper deg med innreiing, utstyr og planlegging – med rørleggarfaget som grunnlag. Hos oss kan du diskutere både uttrykket du ønskjer og løysingane bak veggen."
     },
     "opplaering": {
       "title": "Opplæringsbedrift",
       "seoTitle": "Lærling i rørleggarfaget? | Kr. A. Vik AS – godkjend opplæringsbedrift",
       "seoDescription": "Kr. A. Vik AS er godkjend opplæringsbedrift i rørleggarfaget og har til ei kvar tid 1–2 lærlingar. Vil du bli lærling i Stryn eller på Nordfjordeid? Ta kontakt!",
-      "headerImage": "header-opplaering",
+      "headerImage": "",
       "body": "Vi er opptekne av rekruttering til faget og ønskjer å gi ungdomar og vaksne høve til å fullføre ei fagutdanning.\n\nVi er stolte over å vere ei lærebedrift. Å vere lærebedrift betyr at vi er godkjende av fylkeskommunen til å ta inn lærlingar. Vi har til ei kvar tid 1–2 lærlingar i bedrifta vår."
-    },
-    "eigedom": {
-      "title": "Kr. A. Vik Eigedom AS",
-      "seoTitle": "Leilegheit til leige – Kr. A. Vik Eigedom AS",
-      "seoDescription": "Kr. A. Vik Eigedom AS leiger ut sentrumsnære leilegheiter av god standard i Stryn, Bergen, Oslo, Trondheim og Stavanger. Kontakt oss for leige.",
-      "headerImage": "header-eigedom",
-      "orgnr": "915 319 092",
-      "body": "Kr. A. Vik Eigedom AS er eit eigedomsselskap som vart etablert i 2015. Vi eig leilegheiter i Stryn, Trondheim, Stavanger, Bergen og Oslo, i tillegg til næringsbygg i Stryn. Vi investerer i sentrumsnære leilegheiter av god standard og driv utleige. Per no har vi ein portefølje på 30 leilegheiter.\n\nDagleg leiar for eigedomsselskapet er Hilde Eikenæs Vik, og styreformann er Kristian Vik.",
-      "contactName": "Hilde Eikenæs Vik",
-      "contactRole": "Dagleg leiar",
-      "contactPhone": "918 61 480",
-      "contactEmail": "hilde@kravik.no",
-      "contactImage": "hilde"
     },
     "miljo": {
       "title": "Miljø og berekraft",
@@ -139,11 +129,11 @@
       ]
     },
     "prosjekt": {
-      "title": "Prosjekt og galleri",
-      "seoTitle": "Prosjekt og bilete frå arbeid vi har utført | Kr. A. Vik AS",
-      "seoDescription": "Sjå prosjekt og bilete frå arbeid utført av Kr. A. Vik AS – baderom, varmeanlegg, sanitær og meir, i Stryn, på Nordfjordeid og elles i Nordfjord.",
-      "intro": "Her viser vi fram eit utval av prosjekta våre – og eit galleri med glimt frå arbeidskvardagen.",
-      "headerImage": "header-om-oss"
+      "title": "Baderomsinspirasjon",
+      "seoTitle": "Baderomsinspirasjon og utstilling | Kr. A. Vik AS",
+      "seoDescription": "Sjå innreiing, dusjar og armatur frå baderomsutstillinga til Kr. A. Vik i Stryn. Få hjelp til å planleggje ditt neste bad.",
+      "intro": "Material, former og detaljar. Sjå eit utval frå baderomsutstillinga vår i Stryn.",
+      "headerImage": ""
     },
     "kontakt": {
       "title": "Kontakt oss",
@@ -234,13 +224,6 @@
       "role": "Butikksjef",
       "phone": "57 87 14 88",
       "email": "aase@kravik.no"
-    },
-    {
-      "name": "Hilde Eikenæs Vik",
-      "role": "Dagleg leiar, Kr. A. Vik Eigedom AS",
-      "phone": "918 61 480",
-      "email": "hilde@kravik.no",
-      "image": "hilde-2"
     }
   ],
   "projects": [
@@ -257,65 +240,16 @@
         "nyttt-bad",
         "gammelt-bad-2"
       ],
-      "id": "renovering-bad"
+      "id": "renovering-bad",
+      "published": false
     }
   ],
-  "properties": [
-    {
-      "title": "Øvre Fjellsmauet 8, Bergen",
-      "slug": "ovre-fjellsmauet-8-bergen",
-      "image": "leilegheit-1",
-      "status": "ledig",
-      "description": "",
-      "soverom": "2",
-      "facts": [],
-      "mapEmbed": "",
-      "lat": 60.396500996913225,
-      "lng": 5.329906021928492,
-      "images": []
-    },
-    {
-      "title": "Øvregaten 7, Bergen",
-      "slug": "ovregaten-7-bergen",
-      "image": "leilegheit-2",
-      "status": "utleigd",
-      "description": "",
-      "facts": [],
-      "mapEmbed": "",
-      "images": []
-    },
-    {
-      "title": "Perhustunet, Stryn",
-      "slug": "perhustunet-stryn",
-      "image": "leilegheit-3"
-    },
-    {
-      "title": "Vinslottet, Oslo",
-      "slug": "vinslottet-oslo",
-      "image": "leilegheit-4"
-    },
-    {
-      "title": "Skottegaten 2, Bergen",
-      "slug": "skottegaten-2-bergen",
-      "image": "leilegheit-5"
-    },
-    {
-      "title": "Strandkanten Visnesvegen, Stryn",
-      "slug": "strandkanten-visnesvegen-stryn",
-      "image": "leilegheit-6"
-    }
-  ],
+  "properties": [],
   "testimonials": [
     {
       "quote": "Heilt fantastisk samarbeid! Renovering av bad. Resultatet vart fantastisk!",
       "author": "Adrian Lefdal",
       "context": "Oppussing",
-      "rating": 5
-    },
-    {
-      "quote": "Fikk i dag første klasses service av comfort stryn ved stian tusen hjertelig takk for glimrende utført arbeid mvh Eddie stryn bilpleie",
-      "author": "Eddie Doksæter",
-      "context": "Google-omtale",
       "rating": 5
     },
     {
@@ -351,136 +285,40 @@
   ],
   "gallery": [
     {
-      "image": "galleri-01"
-    },
-    {
-      "image": "galleri-02"
-    },
-    {
-      "image": "galleri-03"
-    },
-    {
-      "image": "galleri-04"
-    },
-    {
-      "image": "galleri-05"
-    },
-    {
-      "image": "galleri-06"
-    },
-    {
-      "image": "galleri-07"
-    },
-    {
-      "image": "galleri-08"
-    },
-    {
-      "image": "galleri-09"
-    },
-    {
-      "image": "galleri-10"
-    },
-    {
-      "image": "galleri-11"
-    },
-    {
-      "image": "galleri-12"
-    },
-    {
-      "image": "galleri-13"
-    },
-    {
-      "image": "galleri-14"
-    },
-    {
-      "image": "galleri-15"
-    },
-    {
-      "image": "galleri-16"
-    },
-    {
-      "image": "galleri-17"
-    },
-    {
-      "image": "galleri-18"
-    },
-    {
-      "image": "galleri-19"
-    },
-    {
-      "image": "galleri-20"
-    },
-    {
       "image": "galleri-21"
-    },
-    {
-      "image": "galleri-22"
-    },
-    {
-      "image": "galleri-23"
-    },
-    {
-      "image": "galleri-24"
-    },
-    {
-      "image": "galleri-25"
-    },
-    {
-      "image": "galleri-26"
-    },
-    {
-      "image": "galleri-27"
-    },
-    {
-      "image": "galleri-28"
-    },
-    {
-      "image": "galleri-29"
-    },
-    {
-      "image": "galleri-30"
-    },
-    {
-      "image": "galleri-31"
-    },
-    {
-      "image": "galleri-32"
-    },
-    {
-      "image": "galleri-33"
-    },
-    {
-      "image": "galleri-34"
-    },
-    {
-      "image": "galleri-35"
-    },
-    {
-      "image": "galleri-36"
-    },
-    {
-      "image": "galleri-37"
     },
     {
       "image": "galleri-38"
     },
     {
-      "image": "galleri-39"
+      "image": "galleri-34"
     },
     {
-      "image": "galleri-40"
+      "image": "galleri-04"
     },
     {
-      "image": "galleri-41"
+      "image": "galleri-33"
+    },
+    {
+      "image": "galleri-02"
+    },
+    {
+      "image": "galleri-35"
+    },
+    {
+      "image": "galleri-37"
+    },
+    {
+      "image": "galleri-18"
     },
     {
       "image": "galleri-42"
     },
     {
-      "image": "kristian"
+      "image": "galleri-03"
     },
     {
-      "image": "hilde-2"
+      "image": "galleri-22"
     }
   ],
   "media": [
@@ -500,7 +338,7 @@
       "id": "header-kontakt",
       "w": 1200,
       "h": 375,
-      "alt": ""
+      "alt": "Rørleggar som arbeider med avløpet under ein servant"
     },
     {
       "id": "header-opplaering",
@@ -584,7 +422,7 @@
       "id": "galleri-04",
       "w": 1200,
       "h": 887,
-      "alt": ""
+      "alt": "Utstilte dusjar og armatur"
     },
     {
       "id": "galleri-05",
@@ -686,7 +524,7 @@
       "id": "galleri-21",
       "w": 1177,
       "h": 1200,
-      "alt": ""
+      "alt": "Grågrøn baderomsinnreiing med rundt spegel i utstillinga"
     },
     {
       "id": "galleri-22",
@@ -764,7 +602,7 @@
       "id": "galleri-34",
       "w": 792,
       "h": 1200,
-      "alt": ""
+      "alt": "Baderomsinnreiing med rundt spegel mot terrakottafarga vegg"
     },
     {
       "id": "galleri-35",
@@ -788,7 +626,7 @@
       "id": "galleri-38",
       "w": 967,
       "h": 1200,
-      "alt": ""
+      "alt": "Lun baderomsutstilling med treverk og opplyst spegel"
     },
     {
       "id": "galleri-39",
@@ -873,7 +711,96 @@
       "w": 1408,
       "h": 768,
       "alt": ""
+    },
+    {
+      "id": "bad-nordfjord",
+      "w": 1536,
+      "h": 1024,
+      "alt": "Baderomsillustrasjon med eikeinnreiing, rektangulært spegel og dusj med glasvegg"
     }
   ],
-  "updatedAt": "2026-07-03T21:35:56.512Z"
+  "updatedAt": "2026-09-08T09:08:07.311Z",
+  "design": {
+    "logoImage": "",
+    "darkColor": "#052634",
+    "accentColor": "#68dccf",
+    "paperColor": "#f5f5ef",
+    "navItems": "Tenester | /tenester\nInspirasjon | /prosjekt\nButikk | /butikk-og-landbruk\nOm oss | /om-oss\nKontakt | /kontakt",
+    "navCta": "Be om tilbod",
+    "navCtaUrl": "/kontakt#kontaktskjema",
+    "footerLinks": "Tenester | /tenester\nInspirasjon og galleri | /prosjekt\nButikk og landbruk | /butikk-og-landbruk\nBli lærling | /opplaeringsbedrift\nMiljø og berekraft | /miljo-og-berekraft",
+    "sectionOrder": "tenester, handverk, utstilling, anter, avdelingar",
+    "heroEyebrow": "Rørleggaren i Nordfjord · Sidan 1933",
+    "heroSecondary": "Utforsk tenestene",
+    "heroSecondaryUrl": "/tenester",
+    "heroCaption": "Baderomsinspirasjon · Illustrasjon",
+    "heroImageCta": "Frå idé til ferdig bad",
+    "heroImageUrl": "/tenester#baderom",
+    "heroSignature": "Lokale fagfolk.\nEit større fellesskap.",
+    "stripeTitle": "Stryn & Nordfjordeid",
+    "stripeText": "To avdelingar. Same faglege stoltheit.",
+    "stripeServices": "Bad & sanitær / Varme / Sprinkler & VA",
+    "showServices": true,
+    "servicesEyebrow": "01 / Dette kan vi",
+    "servicesTitle": "Alt det du ser.",
+    "servicesTitleSecondary": "Og alt bak veggen.",
+    "servicesIntro": "Eit flott bad krev meir enn fine overflater. Vi tek oss av røyr, varme og tekniske anlegg – i heimar, hytter og næringsbygg.",
+    "serviceImage": "galleri-21",
+    "serviceImageEyebrow": "Planlegg det nye badet",
+    "serviceImageTitle": "Rom for ein\nbetre kvardag.",
+    "serviceImageUrl": "/tenester#baderom",
+    "featuredServices": "sanitar, varme, sprinkler, va",
+    "servicesLink": "Alle tenester – frå service til større prosjekt",
+    "showCraft": true,
+    "craftImage": "header-kontakt",
+    "craftCaption": "Faget ligg i detaljane.",
+    "craftEyebrow": "02 / Folk som kan faget",
+    "craftTitle": "Godt handverk\ngår i arv.",
+    "craftBody": "Fire generasjonar. Eitt fag. Sidan 1933 har familien Vik hjelpt folk i Nordfjord med vatn, varme og løysingar dei kan stole på.\n\nDu møter oss i Stryn og på Nordfjordeid. Vi kjenner området, tek ansvar for arbeidet og er her når du treng oss.",
+    "craftLink": "Møt Kr. A. Vik",
+    "craftUrl": "/om-oss",
+    "facts": "1933 | Historia vår starta\n4. | generasjon\n2 | avdelingar",
+    "showGallery": true,
+    "galleryEyebrow": "03 / Sjå. Kjenn. Vel.",
+    "galleryTitle": "Finn ditt uttrykk.",
+    "galleryIntro": "Innreiing, armatur og dei små detaljane som gjer badet ditt. Sjå eit utval frå utstillinga vår, eller kom innom i Stryn.",
+    "galleryLink": "Besøk butikken",
+    "galleryUrl": "/butikk-og-landbruk",
+    "galleryNote": "Bilete frå utstillinga. Utval og utstillingar kan endre seg.",
+    "galleryImage1": "galleri-38",
+    "galleryLabel1": "Lune material",
+    "galleryText1": "Treverk, lys og rolege flater.",
+    "galleryImage2": "galleri-34",
+    "galleryLabel2": "Din personlege stil",
+    "galleryText2": "Fargar og former som passar deg.",
+    "galleryImage3": "galleri-04",
+    "galleryLabel3": "Detaljar som fungerer",
+    "galleryText3": "Gode val for dusj og armatur.",
+    "showChain": true,
+    "chainName": "Anter",
+    "chainUrl": "https://www.anter.no/",
+    "chainLogo": "",
+    "chainEyebrow": "Ein del av",
+    "chainTitle": "Lokalt forankra.\nSterkare saman.",
+    "chainBody": "Vi tek med oss namnet, folka og historia vår inn i Anter. Eit fellesskap av rørleggarbedrifter som deler kunnskap og byggjer vidare på det lokale handverket.",
+    "chainLink": "Bli kjend med Anter",
+    "showDepartments": true,
+    "departmentsEyebrow": "04 / Nær deg",
+    "departmentsTitle": "Vi er her i Nordfjord.",
+    "departmentsIntro": "Ein liten jobb eller eit stort prosjekt.\nTa kontakt med avdelinga di.",
+    "apprenticeText": "Framtida treng gode fagfolk. Vi er godkjend opplæringsbedrift.",
+    "apprenticeLink": "Bli lærling hos oss",
+    "apprenticeUrl": "/opplaeringsbedrift",
+    "ctaTitle": "Kva kan vi hjelpe deg med?",
+    "ctaText": "Ring oss, send ei melding eller stikk innom butikken i Stryn. Vi hjelper deg med stort og smått.",
+    "ctaButton": "Send ein førespurnad",
+    "ctaUrl": "/kontakt#kontaktskjema",
+    "privacyExtra": "",
+    "mailProvider": "Resend (utsending via HTTPS) og verksemda si e-postløysing",
+    "messageRetentionDays": "30",
+    "showReviews": true,
+    "reviewsTitle": "Godt arbeid blir lagt merke til.",
+    "aboutFacts": "1933 | grunnlagd\n4. | generasjon i familien Vik\n2 | avdelingar: Stryn og Nordfjordeid",
+    "aboutCredentials": "Sentralt godkjend verksemd\nMiljøfyrtårn-sertifisert i 2022\nGodkjend opplæringsbedrift"
+  }
 }

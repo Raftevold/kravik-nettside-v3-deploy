@@ -12,23 +12,24 @@
   <a class="skip-link" href="#admin-innhald">Hopp til innhaldet</a>
   <div class="admin-oppsett">
     <aside class="admin-side">
-      <p class="admin-logo">Kr. A. Vik<br /><span>administrasjon</span></p>
+      <a class="admin-logo" href="/admin/oversikt"><img src="/img/logo-kravik-modern.svg" alt="Kr. A. Vik" width="170" height="56" /><span>NETTSTAD / ADMINISTRASJON</span></a>
       <nav aria-label="Adminmeny">
         <ul>
           <% const meny = [
             ['/admin/oversikt', 'Oversikt'],
             ['/admin/meldingar', 'Meldingar'],
+            ['/admin/utforming', 'Framside og profil'],
+            ['/admin/partnarar', 'Samarbeidspartnarar'],
             ['/admin/sider', 'Sider og SEO'],
             ['/admin/tenester', 'Tenester'],
             ['/admin/prosjekt', 'Prosjekt'],
             ['/admin/team', 'Kontaktpersonar'],
             ['/admin/bilete', 'Bilete og galleri'],
             ['/admin/referansar', 'Referansar'],
-            ['/admin/eigedom', 'Leilegheiter'],
             ['/admin/varsellinje', 'Varsellinje'],
             ['/admin/generelt', 'Kontaktinfo m.m.'],
             ['/admin/innstillingar', 'Innstillingar'],
-            ['/admin/handbok', '❓ Handbok'],
+            ['/admin/handbok', 'Handbok'],
           ]; %>
           <% for (const [href, label] of meny) { %>
           <li><a href="<%= href %>" <%- currentPath.startsWith(href) ? 'aria-current="page"' : '' %>><%= label %></a></li>

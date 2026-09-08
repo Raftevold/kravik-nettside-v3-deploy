@@ -4,6 +4,7 @@
   <img class="sidehovud-bilete" src="<%= mediaUrl(image, 'lg') %>" srcset="<%= srcset(image) %>" sizes="100vw" alt="<%= mediaAlt(image) %>" fetchpriority="high" />
   <% } %>
   <div class="ramme sidehovud-inner">
+    <p class="breadcrumb"><a href="/">Framsida</a><span aria-hidden="true">/</span><span><%= title %></span></p>
     <h1><%= title %></h1>
     <% if (typeof lead !== 'undefined' && lead) { %><p class="sidehovud-ingress"><%= lead %></p><% } %>
   </div>

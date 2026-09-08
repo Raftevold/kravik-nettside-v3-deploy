@@ -9,9 +9,7 @@
  * Krev miljøvariablane GITHUB_TOKEN og GITHUB_REPO (t.d. "brukar/repo").
  * Utan desse køyrer sida vidare med berre lokal lagring (og ei åtvaring).
  *
- * Merk: meldingar frå kontaktskjemaet (persondata) blir berre synkroniserte
- * om SYNC_MESSAGES=true – elles ligg dei kun lokalt, sidan git-historikk
- * aldri gløymer (GDPR art. 17).
+ * Kundemeldingar og passordhashar blir aldri synkroniserte.
  */
 const fs = require('fs');
 const path = require('path');
@@ -20,7 +18,7 @@ const TOKEN = process.env.GITHUB_TOKEN || '';
 const REPO = process.env.GITHUB_REPO || '';
 const BRANCH = process.env.GITHUB_BRANCH || 'main';
 const API = 'https://api.github.com';
-const SYNC_MESSAGES = process.env.SYNC_MESSAGES === 'true';
+const SYNC_MESSAGES = false; // Personopplysningar skal aldri til Git-historikk.
 
 const enabled = Boolean(TOKEN && REPO);
 
@@ -212,7 +210,7 @@ async function pullAll(dataDir) {
     const entries = await listDir('data');
     for (const e of entries) {
       if (e.type !== 'file' || !e.download_url) continue;
-      if (e.name === 'messages.json' && !SYNC_MESSAGES) continue;
+      if (['auth.json','messages.json'].includes(e.name)) continue;
       await downloadTo(e.download_url, path.join(dataDir, e.name));
     }
     const uploads = await listTree('data/uploads');

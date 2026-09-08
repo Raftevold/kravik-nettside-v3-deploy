@@ -1,0 +1,13 @@
+<section class="framside-hero" aria-labelledby="hero-tittel">
+  <div class="hero-tekst">
+    <p class="etikett"><span class="status-prikk" aria-hidden="true"></span> <%= design.heroEyebrow %></p>
+    <h1 id="hero-tittel"><%= p.heroTitle %></h1>
+    <p class="hero-ingress"><%= p.heroLead %></p>
+    <div class="hero-handlingar"><a class="knapp knapp-primar" href="<%= safeUrl(design.heroPrimaryUrl) %>"><%= p.ctaPrimaryText || 'Snakk med oss' %><span aria-hidden="true">↗</span></a><a class="tekst-lenke" href="<%= safeUrl(design.heroSecondaryUrl) %>"><%= design.heroSecondary %> <span aria-hidden="true">↓</span></a></div>
+    <div class="hero-signatur"><span><%= design.heroSignature %></span><a href="<%= safeUrl(design.chainUrl) %>" aria-label="<%= design.chainLink %>"><img src="<%= design.chainLogo ? mediaUrl(design.chainLogo,'md') : '/img/logo-anter-light.svg' %>" alt="<%= design.chainName %>" width="105" height="35" /></a></div>
+  </div>
+  <figure class="hero-foto">
+    <img src="<%= mediaUrl(p.heroImage, 'lg') %>" srcset="<%= srcset(p.heroImage) %>" sizes="(min-width: 900px) 58vw, 100vw" alt="<%= mediaAlt(p.heroImage) %>" fetchpriority="high" width="1600" height="1067" />
+    <figcaption><span><%= design.heroCaption %></span><a href="<%= safeUrl(design.heroImageUrl) %>"><%= design.heroImageCta %> <span aria-hidden="true">↗</span></a></figcaption>
+  </figure>
+</section>

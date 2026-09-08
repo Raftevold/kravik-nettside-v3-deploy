@@ -1,7 +1,7 @@
 /**
  * Datalager: content.json (alt redigerbart innhald), messages.json
  * (innsende kontaktskjema) og auth.json (admin-passordhash).
- * Alle skriv er atomiske lokalt og blir spegla til GitHub (sjå github.js).
+ * Skriv er atomiske lokalt. Berre offentleg innhald blir spegla til GitHub.
  * Skriva returnerer promiset frå synk-køa, slik at kritiske handlingar
  * kan vente og varsle brukaren om synken feilar.
  */
@@ -10,7 +10,7 @@ const path = require('path');
 const github = require('./github');
 
 const ROOT = path.join(__dirname, '..', '..');
-const DATA_DIR = path.join(ROOT, 'data');
+const DATA_DIR = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(ROOT, 'data');
 const UPLOADS_DIR = path.join(DATA_DIR, 'uploads');
 // Kundebilete frå kontaktskjemaet: BERRE lokalt (persondata – aldri til
 // GitHub; e-postvedlegget er det varige arkivet, jf. DRIFT.md).
@@ -18,6 +18,7 @@ const INNBOKS_DIR = path.join(DATA_DIR, 'innboks');
 
 let content = null;
 let messages = null;
+let retentionTimer;
 
 function atomicWrite(file, data) {
   const tmp = `${file}.tmp`;
@@ -75,6 +76,10 @@ async function init() {
   content = readJson(path.join(DATA_DIR, 'content.json'), null);
   if (!content) throw new Error('data/content.json manglar eller er ugyldig');
   messages = readJson(path.join(DATA_DIR, 'messages.json'), []);
+  pruneMessages();
+  clearInterval(retentionTimer);
+  retentionTimer=setInterval(pruneMessages,60*60*1000);
+  retentionTimer.unref();
 }
 
 function getContent() {
@@ -82,6 +87,7 @@ function getContent() {
 }
 
 function saveContent(next, what = 'innhald') {
+  require('./validateContent').validateContent(next);
   next.updatedAt = new Date().toISOString();
   content = next;
   const file = path.join(DATA_DIR, 'content.json');
@@ -89,15 +95,23 @@ function saveContent(next, what = 'innhald') {
   return github.pushFile(file, 'data/content.json', `admin: oppdaterte ${what}`);
 }
 
-function getMessages() {
-  return messages;
+function pruneMessages() {
+  if(!Array.isArray(messages))return;
+  const days=Math.max(1,Math.min(90,Number(content?.design?.messageRetentionDays)||30));
+  const cutoff=Date.now()-days*86400000;
+  const keep=[];
+  for(const msg of messages){
+    if(Number.isFinite(Date.parse(msg.sentAt))&&Date.parse(msg.sentAt)>=cutoff)keep.push(msg);
+    else deleteInboxImages(msg.images);
+  }
+  if(keep.length!==messages.length){messages=keep;saveMessages('automatisk sletting').catch(()=>{});}
 }
+function getMessages() { pruneMessages();return messages; }
 
 function saveMessages(what = 'meldingar') {
   const file = path.join(DATA_DIR, 'messages.json');
   atomicWrite(file, JSON.stringify(messages, null, 2));
-  // Persondata: blir berre spegla til GitHub når SYNC_MESSAGES=true
-  // (git-historikk kan ikkje slettast melding for melding – GDPR art. 17).
+  // SYNC_MESSAGES er permanent false: kundemeldingar skal aldri til git.
   if (github.SYNC_MESSAGES) {
     return github.pushFile(file, 'data/messages.json', `skjema: ${what}`);
   }
@@ -105,6 +119,7 @@ function saveMessages(what = 'meldingar') {
 }
 
 function addMessage(msg) {
+  pruneMessages();
   const record = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ...msg };
   messages.unshift(record);
   if (messages.length > 500) {

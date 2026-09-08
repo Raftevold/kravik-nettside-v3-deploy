@@ -8,12 +8,23 @@ const images = require('../lib/images');
 const { formLimiter } = require('../lib/auth');
 
 const router = express.Router();
+router.use((req,res,next)=>{
+  if(req.method!=='POST')return next();
+  const origin=req.get('origin');
+  if(req.get('sec-fetch-site')==='cross-site')return res.status(403).send('Innsendinga må kome frå vår nettside.');
+  if(origin){try{if(new URL(origin).host!==req.get('host'))return res.status(403).send('Ugyldig opphav.');}catch{return res.status(403).send('Ugyldig opphav.');}}
+  next();
+});
+function deliveryError(res,content,url,view,formValues,text='Vi kunne ikkje stadfeste at meldinga vart levert. Prøv igjen, eller kontakt oss på telefon eller e-post. Hugs å velje eventuelle bilete på nytt.'){
+  const p=content.pages[view==='kontakt'?'kontakt':'opplaering'];
+  return res.status(503).render('pages/'+view,{seoTitle:p.seoTitle,seoDescription:p.seoDescription,canonical:url+'/'+(view==='kontakt'?'kontakt':'opplaeringsbedrift'),jsonLd:null,sent:false,formError:text,formFieldErrors:{},formValues});
+}
 
 // Kundebilete i tilbodsskjemaet: maks 4 filer à 8 MB. Kvar fil blir
 // validert og re-koda gjennom sharp før ho blir brukt til noko som helst.
 const kontaktUpload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 8 * 1024 * 1024, files: 4 },
+  limits: { fileSize: 8 * 1024 * 1024, files: 4, fields: 12, fieldSize: 12000, parts: 16 },
 });
 
 function kontaktUploadMedFeil(req, res, next) {
@@ -92,7 +103,7 @@ const REDIRECTS = new Map([
   ['/default.aspx', '/'],
   ['/om-informasjonskapsler', '/informasjonskapslar'],
   ['/comfortavisa', '/tenester'],
-  ['/kr-a-vik-eigedom-as', '/eigedom'],
+
   ['/opplæringsbedrift', '/opplaeringsbedrift'],
   ['/miljø-og-bærekraft', '/miljo-og-berekraft'],
   ['/miljo-og-baerekraft', '/miljo-og-berekraft'],
@@ -154,40 +165,7 @@ router.get(
   }))
 );
 
-router.get('/eigedom', (req, res, next) => {
-  try {
-    const content = store.getContent();
-    const url = seo.baseUrl(req);
-    res.render('pages/eigedom', {
-      seoTitle: content.pages.eigedom.seoTitle,
-      seoDescription: content.pages.eigedom.seoDescription,
-      canonical: `${url}/eigedom`,
-      jsonLd: seo.eigedomJsonLd(content, url),
-    });
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.get('/eigedom/:slug', (req, res, next) => {
-  try {
-    const content = store.getContent();
-    const property = (content.properties || []).find((p) => p.slug === req.params.slug);
-    if (!property) return next();
-    const url = seo.baseUrl(req);
-    res.render('pages/eigedom-detalj', {
-      property,
-      seoTitle: `${property.title} – Kr. A. Vik Eigedom AS`,
-      seoDescription: property.description
-        ? property.description.slice(0, 155)
-        : `${property.title} – utleigeleilegheit frå Kr. A. Vik Eigedom AS. Kontakt oss for leige.`,
-      canonical: `${url}/eigedom/${property.slug}`,
-      jsonLd: seo.eigedomJsonLd(content, url),
-    });
-  } catch (err) {
-    next(err);
-  }
-});
+router.get(['/eigedom','/eigedom/*','/kr-a-vik-eigedom-as'], (req,res)=>res.status(410).render('pages/410',{seoTitle:'Sida er teken bort | Kr. A. Vik',seoDescription:'Eigedomsdelen er teken bort.',jsonLd:null}));
 
 router.get(
   '/prosjekt',
@@ -201,7 +179,7 @@ router.get('/prosjekt/:id', (req, res, next) => {
   try {
     const content = store.getContent();
     const project = (content.projects || []).find((p) => p.id === req.params.id);
-    if (!project) return next();
+    if (!project || project.published === false) return next();
     const url = seo.baseUrl(req);
     res.render('pages/prosjekt-detalj', {
       project,
@@ -244,7 +222,9 @@ function validateSubmission(body) {
   const name = String(body.navn || '').trim().slice(0, 200);
   const email = String(body.epost || '').trim().slice(0, 200);
   const phone = String(body.telefon || '').trim().slice(0, 50);
-  const message = String(body.melding || '').trim().slice(0, 5000);
+  const message = String(body.melding || '').trim();
+  if(message.length>5000){errors.push('Meldinga kan ha høgst 5000 teikn.');fieldErrors.melding=true;}
+  if(phone && !/^[+\d ()-]{5,30}$/.test(phone)){errors.push('Telefonnummeret ser ikkje gyldig ut.');fieldErrors.telefon=true;}
   if (!name) {
     errors.push('Skriv inn namnet ditt.');
     fieldErrors.navn = true;
@@ -293,21 +273,24 @@ router.post('/kontakt', formLimiter, kontaktUploadMedFeil, async (req, res, next
     // Kundebilete: valider + krymp via sharp, lagra flyktig for innboksen,
     // og legg ved e-posten (det varige arkivet). Ei øydelagd fil skal aldri
     // velte innsendinga – ho blir berre hoppa over.
+    if(!mail.configured)return deliveryError(res,content,url,'kontakt',{navn:name,epost:email,telefon:phone,melding:message,jobbtype:jobtype,adresse:address});
     const vedlegg = [];
     const bileteFiler = [];
+    const decodedFiles = [];
     for (const fil of (req.files || []).slice(0, 4)) {
-      if (!/^image\/(jpeg|png|webp|avif|gif|heic|heif)$/.test(fil.mimetype)) continue;
+      if (!/^image\/(jpeg|png|webp|avif)$/.test(fil.mimetype)) return deliveryError(res,content,url,'kontakt',{navn:name,epost:email,telefon:phone,melding:message},'Eit vedlegg har feil filtype. Bruk JPG, PNG, WebP eller AVIF.');
       try {
         const jpeg = await images.prepareInboxImage(fil.buffer);
         const filnamn = `${crypto.randomBytes(8).toString('hex')}.jpg`;
-        store.saveInboxImage(filnamn, jpeg);
+        decodedFiles.push({name:filnamn,buffer:jpeg});
         bileteFiler.push(filnamn);
         vedlegg.push({ filename: `bilete-${vedlegg.length + 1}.jpg`, content: jpeg });
       } catch (err) {
-        console.error('[kontakt] Hoppa over ugyldig biletfil:', err.message);
+        return deliveryError(res,content,url,'kontakt',{navn:name,epost:email,telefon:phone,melding:message},'Eit vedlegg kunne ikkje lesast. Vel eit gyldig JPG-, PNG-, WebP- eller AVIF-bilete og prøv igjen.');
       }
     }
 
+    for(const file of decodedFiles) store.saveInboxImage(file.name,file.buffer);
     const msg = {
       type: jobtype ? 'tilbod' : 'kontakt',
       name,
@@ -321,13 +304,9 @@ router.post('/kontakt', formLimiter, kontaktUploadMedFeil, async (req, res, next
       read: false,
     };
     const rec = store.addMessage(msg);
-    // Asynkron, valfri – utfallet blir notert på meldinga så admin ser om
-    // e-postvarslinga faktisk gjekk ut (viktig på gratisplanen, der
-    // innboksen kan bli tømd ved omstart).
-    mail.notifyNewMessage(msg, content.site.name, vedlegg).then((ok) => {
-      rec.mailSent = ok;
-      store.touchMessages().catch(() => {});
-    });
+    const delivered = await mail.notifyNewMessage(msg, content.site.name, vedlegg);
+    if(!delivered){await store.deleteMessage(rec.id);return deliveryError(res,content,url,'kontakt',{navn:name,epost:email,telefon:phone,melding:message,jobbtype:jobtype,adresse:address});}
+    rec.mailSent=true;await store.touchMessages();
 
     return res.redirect('/kontakt?sendt=1#kontaktskjema');
   } catch (err) {
@@ -336,7 +315,7 @@ router.post('/kontakt', formLimiter, kontaktUploadMedFeil, async (req, res, next
 });
 
 // Lærling-søknad frå opplæringssida – hamnar i same innboks, merkt «lærling»
-router.post('/opplaeringsbedrift', formLimiter, (req, res, next) => {
+router.post('/opplaeringsbedrift', formLimiter, async (req, res, next) => {
   try {
     const content = store.getContent();
     const url = seo.baseUrl(req);
@@ -368,10 +347,9 @@ router.post('/opplaeringsbedrift', formLimiter, (req, res, next) => {
       read: false,
     };
     const rec = store.addMessage(msg);
-    mail.notifyNewMessage(msg, content.site.name).then((ok) => {
-      rec.mailSent = ok;
-      store.touchMessages().catch(() => {});
-    });
+    const delivered = await mail.notifyNewMessage(msg, content.site.name);
+    if(!delivered){await store.deleteMessage(rec.id);return deliveryError(res,content,url,'opplaering',{navn:name,epost:email,telefon:phone,melding:message});}
+    rec.mailSent=true;await store.touchMessages();
 
     return res.redirect('/opplaeringsbedrift?sendt=1#soknad');
   } catch (err) {
