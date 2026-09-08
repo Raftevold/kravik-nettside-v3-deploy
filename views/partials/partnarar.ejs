@@ -1,0 +1,26 @@
+<section class="seksjon" aria-labelledby="partnar-tittel">
+  <div class="ramme">
+    <div class="seksjon-hovud">
+      <p class="etikett">Fagmiljø og samarbeid</p>
+      <h2 id="partnar-tittel"><%= p.partnersTitle || 'Samarbeidspartnarane våre' %></h2>
+    </div>
+    <div class="partnarar-grid">
+      <% for(const pa of (content.partners||[]).filter(p=>!p.hidden)){
+        const dark=(pa.surface || (!pa.image && pa.logo ? 'dark' : 'light'))==='dark';
+        const logo=dark && pa.logo==='logo-anter' ? 'logo-anter-light' : pa.logo;
+      %>
+      <a class="partnar-kort" href="<%= safeUrl(pa.url) %>" rel="external noopener">
+        <span class="partnar-logo <%= dark?'partnar-logo-mork':'' %>">
+          <% if(pa.image){ %>
+          <img src="<%= mediaUrl(pa.image,'md') %>" alt="" loading="lazy" />
+          <% }else if(logo){ %>
+          <img src="/img/<%= logo %>.<%= pa.extension||'png' %>" alt="" loading="lazy" />
+          <% }else{ %><span aria-hidden="true"><%= pa.name %></span><% } %>
+        </span>
+        <div class="partnar-tekst"><h3><%= pa.name %></h3><p><%= pa.text %></p></div>
+        <span class="partnar-lenkje">Besøk nettsida <span aria-hidden="true">↗</span></span>
+      </a>
+      <% } %>
+    </div>
+  </div>
+</section>
