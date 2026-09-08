@@ -37,3 +37,10 @@ Eit administrator-passordhash har historisk vore spora i deploy-repoet (seinare 
 Verksemda må stadfeste datoen for kjedebytet, godkjenne marknadsføringsinnhald, inngå/avklare nødvendige databehandlaravtalar og overføringsgrunnlag, og følgje sletterutinane for e-post og fagsystem. Personverninformasjonen beskriver dette oppsettet. Automatisk sletting gjeld den mellombelse nettsideinnboksen, ikkje e-postarkivet.
 
 Regelgrunnlag brukt: https://www.uutilsynet.no/regelverk/kva-seier-forskrifta/153 , https://www.datatilsynet.no/personvern-pa-ulike-omrader/internett-og-apper/bruk-av-informasjonskapsler-og-andre-sporingsteknologier/ , https://www.datatilsynet.no/rettigheter-og-plikter/virksomhetenes-plikter/informasjon-og-apenhet/hva-skal-virksomheten-gi-informasjon-om/ .
+
+## UI-finjustering etter tilbakemelding
+Samla overskrift, ingress og lenkje i ei felles lesegruppe. Redusert seksjonsluft, fjerna forskyving i galleriet og retta avdelingsraden til to fylte kolonnar. Lærlinglinja er samla i ei eiga, kompakt flate. Framside er lagd til i den redigerbare menyen.
+
+Partnarane har jamne kort med mørke logoflater og tydelege handlingar. Logo-bakgrunn kan veljast lys/mørk i admin. Telefonikon og nummer har fast storleik og blir ikkje brotne over fleire linjer. Botnområdet har ikkje lenger dobbel topp-padding.
+
+Visuell kontroll av forside, galleri, mobilmeny og partnarar i nettlesar. Layout kontrollert ved breidder 320, 390, 768, 1024, 1440 og 1920 px. Dei 12 eksisterande funksjonstestane passerer. Dette er ei målretta UI-kontroll, ikkje ein full skjermlesarrevisjon.

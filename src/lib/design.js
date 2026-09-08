@@ -2,7 +2,7 @@ const groups = [
   ['Profil og navigasjon', [
     ['logoImage','Eiga logo (tomt = den moderniserte Kravik-logoen)','image',''],
     ['darkColor','Mørk profilfarge','color','#052634'],['accentColor','Aksentfarge','color','#68dccf'],['paperColor','Bakgrunnsfarge','color','#f5f5ef'],
-    ['navItems','Meny – éi linje: Tekst | /adresse','textarea','Tenester | /tenester\nInspirasjon | /prosjekt\nButikk | /butikk-og-landbruk\nOm oss | /om-oss\nKontakt | /kontakt'],
+    ['navItems','Meny – éi linje: Tekst | /adresse','textarea','Framside | /\nTenester | /tenester\nInspirasjon | /prosjekt\nButikk | /butikk-og-landbruk\nOm oss | /om-oss\nKontakt | /kontakt'],
     ['navCta','Knapp i menyen','text','Be om tilbod'],['navCtaUrl','Lenkje på menyknappen','url','/kontakt#kontaktskjema'],
     ['footerLinks','Snarvegar nedst – éi linje: Tekst | /adresse','textarea','Tenester | /tenester\nInspirasjon og galleri | /prosjekt\nButikk og landbruk | /butikk-og-landbruk\nBli lærling | /opplaeringsbedrift\nMiljø og berekraft | /miljo-og-berekraft'],
     ['sectionOrder','Rekkjefølgje – tenester, handverk, utstilling, anter, avdelingar','text','tenester, handverk, utstilling, anter, avdelingar'],

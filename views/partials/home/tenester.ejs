@@ -1,5 +1,5 @@
 <section class="seksjon tenester-framside" aria-labelledby="tenester-tittel"><div class="ramme">
-  <div class="redaksjon-hovud"><p class="etikett"><%= design.servicesEyebrow %></p><div><h2 id="tenester-tittel"><%= design.servicesTitle %><br /><span class="tekst-dus"><%= design.servicesTitleSecondary %></span></h2><p><%= design.servicesIntro %></p></div></div>
+  <div class="seksjon-hovud"><p class="etikett"><%= design.servicesEyebrow %></p><h2 id="tenester-tittel"><%= design.servicesTitle %><br /><span class="tekst-dus"><%= design.servicesTitleSecondary %></span></h2><p class="seksjon-ingress"><%= design.servicesIntro %></p></div>
   <div class="teneste-fokus">
     <a class="baderom-kort" href="<%= safeUrl(design.serviceImageUrl) %>"><img src="<%= mediaUrl(design.serviceImage, 'md') %>" alt="<%= mediaAlt(design.serviceImage) %>" loading="lazy" width="800" height="1000" /><span class="baderom-kort-tekst"><span class="etikett"><%= design.serviceImageEyebrow %></span><strong><%= design.serviceImageTitle %></strong><span class="sirkel-pil" aria-hidden="true">↗</span></span></a>
     <div class="teneste-rader">

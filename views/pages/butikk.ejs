@@ -2,7 +2,7 @@
 <% const p = content.pages.butikk; %>
 <%- include('../partials/sidehovud', { title: p.title, lead: p.intro, image: p.headerImage }) %>
 
-<section class="seksjon">
+<section class="seksjon butikk-intro">
   <div class="ramme">
     <div class="kort-rutenett kort-rutenett-2">
     <div class="kort kort-stor">
@@ -45,6 +45,6 @@
   </div>
 </section>
 
-<section class="seksjon" aria-labelledby="partnar-tittel"><div class="ramme"><p class="etikett">Fagmiljø og samarbeid</p><h2 id="partnar-tittel"><%= p.partnersTitle || 'Samarbeidspartnarane våre' %></h2><div class="partner-grid"><% for(const pa of (content.partners||[]).filter(p=>!p.hidden)){ %><a href="<%= safeUrl(pa.url) %>" rel="external noopener"><% if(pa.image){ %><img src="<%= mediaUrl(pa.image,'md') %>" alt="<%= pa.name %>" loading="lazy" /><% }else if(pa.logo){ %><img src="/img/<%= pa.logo %>.<%= pa.extension||'png' %>" alt="<%= pa.name %>" loading="lazy" /><% }else{ %><h3><%= pa.name %></h3><% } %><p><%= pa.text %></p><span aria-hidden="true">↗</span></a><% } %></div></div></section>
+<%- include('../partials/partnarar', {p}) %>
 <%- include('../partials/cta-band') %>
 <%- include('../partials/bottom') %>

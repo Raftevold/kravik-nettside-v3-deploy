@@ -34,7 +34,8 @@ module.exports=({flash,persist})=>{
         const image=String(req.body['image'+i]||'');
         if(image&&!c.media.some(m=>m.id===image))throw new Error('Ukjend logo for '+name+'.');
         const original=(c.partners||[])[i];
-        items.push({name,url,image,text:String(req.body['text'+i]||'').trim().slice(0,1000),logo:original?.logo||'',extension:original?.extension||'png',hidden:req.body['hidden'+i]==='on'});
+        const surface=['light','dark'].includes(req.body['surface'+i])?req.body['surface'+i]:(original?.surface||(!image&&original?.logo?'dark':'light'));
+        items.push({name,url,image,surface,text:String(req.body['text'+i]||'').trim().slice(0,1000),logo:original?.logo||'',extension:original?.extension||'png',hidden:req.body['hidden'+i]==='on'});
       }
       c.partners=items;
       await persist(req,store.saveContent(c,'samarbeidspartnarar'),'Samarbeidspartnarane er lagra.');

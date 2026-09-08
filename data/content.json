@@ -744,13 +744,13 @@
       "alt": ""
     }
   ],
-  "updatedAt": "2026-09-08T09:08:07.311Z",
+  "updatedAt": "2026-09-08T09:48:26.585Z",
   "design": {
     "logoImage": "",
     "darkColor": "#052634",
     "accentColor": "#68dccf",
     "paperColor": "#f5f5ef",
-    "navItems": "Tenester | /tenester\nInspirasjon | /prosjekt\nButikk | /butikk-og-landbruk\nOm oss | /om-oss\nKontakt | /kontakt",
+    "navItems": "Framside | /\nTenester | /tenester\nInspirasjon | /prosjekt\nButikk | /butikk-og-landbruk\nOm oss | /om-oss\nKontakt | /kontakt",
     "navCta": "Be om tilbod",
     "navCtaUrl": "/kontakt#kontaktskjema",
     "footerLinks": "Tenester | /tenester\nInspirasjon og galleri | /prosjekt\nButikk og landbruk | /butikk-og-landbruk\nBli lærling | /opplaeringsbedrift\nMiljø og berekraft | /miljo-og-berekraft",
